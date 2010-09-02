@@ -29,6 +29,8 @@ namespace oishi.com
         {
             Assert.IsTrue(Puzzles.MatchBrackets(""));
             Assert.IsTrue(Puzzles.MatchBrackets("()"));
+            Assert.IsTrue(Puzzles.MatchBrackets("[()]"));
+            Assert.IsTrue(Puzzles.MatchBrackets("{[()]}"));
         }
     }
 }
