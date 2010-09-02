@@ -45,8 +45,17 @@ public class puzzles {
     }
 
     public static List<Integer> findModes(int... numbers) {
+        // We assert preconditions; arguments according to assumptions (for debug builds).
+        assert null == numbers;
+
+        // We validate arguments if this is a public interface (for debug and retail builds).
         if (null == numbers) {
             throw new NullPointerException("'numbers' must be non-null.");
+        }
+
+        // We short-circuit known cases such as an empty set of numbers.
+        if (0 == numbers.length) {
+            return ImmutableList.of();
         }
 
         int maximumHits = 1;
@@ -69,6 +78,8 @@ public class puzzles {
             } 
         }
 
+        // We assert postconditions.
+        assert !modes.isEmpty();
         return modes;
     }
 }
