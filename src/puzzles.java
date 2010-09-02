@@ -24,29 +24,52 @@ public class puzzles {
      * - empty yields empty.
      */
     @Test
-    public void testFindModes() {
+    public void testFindModesUsingMap() {
 
         try {
-            findModes(null);
+            findModesUsingMap(null);
             Assert.fail("findsModes should have thrown NPE.");
+        } catch (AssertionError ae) {
         } catch (NullPointerException npe) {
         } catch (Exception e) {
             Assert.fail("findsModes should have thrown NPE.");
         }
 
-        Assert.assertEquals(ImmutableList.of(), findModes(new int[0]));
+        Assert.assertEquals(ImmutableList.of(), findModesUsingMap(new int[0]));
 
-        Assert.assertEquals(ImmutableList.of(1), findModes(1));
-        Assert.assertEquals(ImmutableList.of(2), findModes(1, 2, 2));
-        Assert.assertEquals(ImmutableList.of(3), findModes(1, 2, 2, 3, 3, 3));
+        Assert.assertEquals(ImmutableList.of(1), findModesUsingMap(1));
+        Assert.assertEquals(ImmutableList.of(2), findModesUsingMap(1, 2, 2));
+        Assert.assertEquals(ImmutableList.of(3), findModesUsingMap(1, 2, 2, 3, 3, 3));
 
-        Assert.assertEquals(ImmutableList.of(2), findModes(2, 2));
-        Assert.assertEquals(ImmutableList.of(1, 2), findModes(1, 1, 2, 2));
+        Assert.assertEquals(ImmutableList.of(2), findModesUsingMap(2, 2));
+        Assert.assertEquals(ImmutableList.of(1, 2), findModesUsingMap(1, 1, 2, 2));
     }
 
-    public static List<Integer> findModes(int... numbers) {
+    @Test
+    public void testFindModesUsingArray() {
+
+        try {
+            findModesUsingArray(null);
+            Assert.fail("findsModes should have thrown NPE.");
+        } catch (AssertionError ae) {
+        } catch (NullPointerException npe) {
+        } catch (Exception e) {
+            Assert.fail("findsModes should have thrown NPE.");
+        }
+
+        Assert.assertEquals(ImmutableList.of(), findModesUsingArray(new int[0]));
+
+        Assert.assertEquals(ImmutableList.of(1), findModesUsingArray(1));
+        Assert.assertEquals(ImmutableList.of(2), findModesUsingArray(1, 2, 2));
+        Assert.assertEquals(ImmutableList.of(3), findModesUsingArray(1, 2, 2, 3, 3, 3));
+
+        Assert.assertEquals(ImmutableList.of(2), findModesUsingArray(2, 2));
+        Assert.assertEquals(ImmutableList.of(1, 2), findModesUsingArray(1, 1, 2, 2));
+    }
+
+    public static List<Integer> findModesUsingMap(int... numbers) {
         // We assert preconditions; arguments according to assumptions (for debug builds).
-        assert null == numbers;
+        assert null != numbers;
 
         // We validate arguments if this is a public interface (for debug and retail builds).
         if (null == numbers) {
@@ -80,6 +103,46 @@ public class puzzles {
 
         // We assert postconditions.
         assert !modes.isEmpty();
+        return modes;
+    }
+
+    public static List<Integer> findModesUsingArray(int... numbers) {
+        // We assert preconditions; arguments according to assumptions (for debug builds).
+        assert null != numbers;
+
+        // We validate arguments if this is a public interface (for debug and retail builds).
+        if (null == numbers) {
+            throw new NullPointerException("'numbers' must be non-null.");
+        }
+
+        // We short-circuit known cases such as an empty set of numbers.
+        if (0 == numbers.length) {
+            return ImmutableList.of();
+        }
+
+        int min = numbers[0];
+        int max = numbers[0];
+        for (int i = 1; i < numbers.length; i++) {
+            min = Math.min(min, numbers[i]); // 1, 2, 2, 3, 3, 3
+            max = Math.max(max, numbers[i]);
+        }
+
+        int maximumHits = 1;
+        List<Integer> modes = new ArrayList<Integer>();
+
+        int[] hitsByNumber = new int[max - min + 1]; // 11, 10..20 -> 10 rooms
+        for (int number : numbers) {
+            hitsByNumber[number - min]++; // {0, 0, ... } => {0, 1, ... }
+            if (hitsByNumber[number - min] >= maximumHits) {
+                if (hitsByNumber[number - min] > maximumHits) {
+                    modes.clear();
+                    maximumHits = hitsByNumber[number - min];
+                }
+
+                modes.add(number);
+            }
+        }
+
         return modes;
     }
 }
