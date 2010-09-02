@@ -27,6 +27,7 @@ namespace oishi.com
         [Test]
         public void TestMatchBrackets()
         {
+            // minimal test cases
             Assert.IsTrue(Puzzles.MatchBrackets(""));
             Assert.IsTrue(Puzzles.MatchBrackets("()"));
             Assert.IsTrue(Puzzles.MatchBrackets("[()]"));
