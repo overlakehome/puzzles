@@ -9,8 +9,8 @@ h5. to get to normal workflow of edit, revert, cache, commit, and push to remote
 
 # (edit files)
 # checkout to revert changes, e.g. @git checkout .@
-# add changes to cache (also called index), e.g. @git add src/Puzzles.cs@
-# reset changes out of cache (optional), e.g. @git reset src/puzzles.java@
+# insert changes to cache (also called index), e.g. @git add src/Puzzles.cs@
+# remove changes out of cache (optional), e.g. @git reset src/puzzles.java@
 # diff --cached before commit, e.g. @git diff --cached@ 
 # commit changes, e.g. @git commit -m 'added readme.textile.'@
 # push to remote git repo, e.g. @git push git(at)github.com:0ishi/puzzles.git@
@@ -18,15 +18,15 @@ h5. to get to normal workflow of edit, revert, cache, commit, and push to remote
 
 h5. to shortcut common git commands using your favorite shell aliases.
 
-alias gst='git status' # status of changes
-alias gco='git checkout' # revert changes
-alias gdf='git diff' # diff of index with HEAD
-alias gdfcached='git diff --cached' # diff of working and index
-alias gdfhead='git diff HEAD' # diff of working and HEAD
-alias gad='git add' # into cache
-alias gci='git commit' # commit
-alias grs='git reset' # out of cache
-alias github='cd /Users/henry/github'
-alias puzzles='cd /Users/henry/github/puzzles'
-alias gps='git push' # push
-alias gpl='git pull' # pull
+bq. alias gst='git status' # status of changes
+bq. alias gco='git checkout' # revert changes
+bq. alias gdf='git diff' # diff of index with HEAD
+bq. alias gdfcached='git diff --cached' # diff of working and index
+bq. alias gdfhead='git diff HEAD' # diff of working and HEAD
+bq. alias gad='git add' # into cache
+bq. alias gci='git commit' # commit
+bq. alias grs='git reset' # out of cache
+bq. alias github='cd /Users/henry/github'
+bq. alias puzzles='cd /Users/henry/github/puzzles'
+bq. alias gps='git push' # push
+bq. alias gpl='git pull' # pull
