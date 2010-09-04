@@ -1,20 +1,20 @@
-h5. to jumpstart this puzzles git repo into your localhost.
+h5. to jumpstart this puzzles git repo into a local repo (of %{color:blue}your choice%).
 
-# git config --global user.name "Henry Lee"
-# git config --global user.email honesthenry@gmail.com
-# git clone git://github.com/0ishi/puzzles.git puzzles
-# cd puzzles # change dir. into your local repository.
+# git config --global user.name %{color:blue}"Henry Lee"%
+# git config --global user.email %{color:blue}honesthenry@gmail.com%
+# git clone git://github.com/0ishi/puzzles.git %{color:blue}puzzles%
+# cd %{color:blue}puzzles% # change directory into local repository.
 
 h5. workflow of edit, revert, cache, commit, and push to remote.
 
 # (edit files)
-# checkout to revert changes.
-# add changes to cache (also called index)
-# reset changes out of cache.
-# diff --cached before commit.
-# commit changes.
-# push to remote git repo.
-# pull from remote git repo.
+# checkout to revert changes, e.g. @git checkout .@
+# add changes to cache (also called index), e.g. @git add src/Puzzles.cs@
+# _reset changes out of cache (optional)_, e.g. @git reset src/puzzles.java@
+# diff --cached before commit, e.g. @git diff --cached@ 
+# ==commit changes, e.g. ==@git commit -m 'added readme.textile.'@
+# push to remote git repo, e.g. @git push git@github.com:0ishi/puzzles.git@
+# _pull from remote git repo (optional)_, e.g. @git pull@
 
 h5. to shortcut common git commands using your shell aliases.
 
