@@ -1,9 +1,9 @@
 h5. to jumpstart this puzzles git repo into a local repo of %{color:blue}your choices%.
 
-# git config --global user.name %{color:blue}"Henry Lee"%
-# git config --global user.email %{color:blue}honesthenry@gmail.com%
-# git clone git://github.com/0ishi/puzzles.git %{color:blue}puzzles%
-# cd %{color:blue}puzzles% # change directory into local repository.
+# @git config --global user.name@ %{color:blue}"Henry Lee"%
+# @git config --global user.email@ %{color:blue}honesthenry@gmail.com%
+# @git clone git://github.com/0ishi/puzzles.git@ %{color:blue}puzzles%
+# @cd@ %{color:blue}@puzzles@% # change directory into your local repo.
 
 h5. to get to normal workflow of edit, revert, cache, commit, and push to remote.
 
