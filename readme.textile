@@ -1,0 +1,32 @@
+h5. to jumpstart this puzzles git repo into your localhost.
+
+# git config --global user.name "Henry Lee"
+# git config --global user.email honesthenry@gmail.com
+# git clone git://github.com/0ishi/puzzles.git puzzles
+# cd puzzles # change dir. into your local repository.
+
+h5. workflow of edit, revert, cache, commit, and push to remote.
+
+# (edit files)
+# checkout to revert changes.
+# add changes to cache (also called index)
+# reset changes out of cache.
+# diff --cached before commit.
+# commit changes.
+# push to remote git repo.
+# pull from remote git repo.
+
+h5. to shortcut common git commands using your shell aliases.
+
+alias gst='git status' # status of changes
+alias gco='git checkout' # revert changes
+alias gdf='git diff' # diff of index with HEAD
+alias gdfcached='git diff --cached' # diff of working and index
+alias gdfhead='git diff HEAD' # diff of working and HEAD
+alias gad='git add' # into cache
+alias gci='git commit' # commit
+alias grs='git reset' # out of cache
+alias github='cd /Users/henry/github'
+alias puzzles='cd /Users/henry/github/puzzles'
+alias gps='git push' # push
+alias gpl='git pull' # pull
