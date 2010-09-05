@@ -1,24 +1,25 @@
 h4. to jumpstart this puzzles git repo into a local repo of @your choices@.
 
 # @git config --global user.name@ @"Henry Lee"@
-# @git config --global user.email@ @honesthenry(at)gmail.com@
+# @git config --global user.email@ <pre>honesthenry@gmail.com</pre>
 # @git clone git://github.com/0ishi/puzzles.git@ @puzzles@
 # @cd@ %{color:blue}@puzzles@% # change directory into your local repo.
 
 h4. to get to normal workflow of edit, revert, cache, commit, and push to remote.
 
 # (edit files)
-# checkout to revert changes, e.g. @git checkout .@
-# insert changes to cache (also called index), e.g. @git add src/Puzzles.cs@
-# remove changes out of cache (optional), e.g. @git reset src/puzzles.java@
-# diff --cached before commit, e.g. @git diff --cached@ 
-# commit changes, e.g. @git commit -m 'added readme.textile.'@
-# push to remote git repo, e.g. @git push git(at)github.com:0ishi/puzzles.git@
-# pull from remote git repo (optional), e.g. @git pull@
+# checkout to revert changes, e.g. <pre>git checkout .</pre>
+# insert changes to cache (also called index), e.g. <pre>git add src/Puzzles.cs</pre>
+# remove changes out of cache (optional), e.g. <pre>git reset src/puzzles.java</pre>
+# diff --cached before commit, e.g. <pre>git diff --cached</pre>
+# commit changes, e.g. <pre>git commit -m 'added readme.textile.'</pre>
+# push to remote git repo, e.g. <pre>git push git@github.com:0ishi/puzzles.git</pre>
+# pull from remote git repo (optional), e.g. <pre>git pull</pre>
 
 h4. to shortcut most common git commands using your favorite shell aliases.
 
-bq. alias gst='git status' # status of changes
+<pre>
+alias gst='git status' # status of changes
 alias gco='git checkout' # revert changes
 alias gdf='git diff' # diff of index with HEAD
 alias gdfcached='git diff --cached' # diff of working and index
@@ -30,3 +31,4 @@ alias github='cd /Users/henry/github'
 alias puzzles='cd /Users/henry/github/puzzles'
 alias gps='git push' # push
 alias gpl='git pull' # pull
+</pre>
