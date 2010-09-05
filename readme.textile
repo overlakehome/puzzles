@@ -12,7 +12,7 @@ h4. to get to normal workflow of edit, revert, cache, commit, and push to remote
 # put changes to cache (also called index), e.g. @git add src/Puzzles.cs@
 # get rid of changes out of cache (optional), e.g. @git reset src/puzzles.java@
 # diff --cached before commit, e.g. @git diff --cached@
-# commit changes, e.g. @git commit -m 'added readme.textile.'@
+# commit changes, e.g. @git commit -m 'added Puzzles.cs.'@
 # push to remote git repo, e.g. [@git push git@github.com:0ishi/puzzles.git@]
 # pull from remote git repo (optional), e.g. @git pull@
 
@@ -27,8 +27,10 @@ alias gdfhead='git diff HEAD' # diff of working and HEAD
 alias gad='git add' # into cache
 alias gci='git commit' # commit
 alias grs='git reset' # out of cache
-alias github='cd /Users/henry/github'
-alias puzzles='cd /Users/henry/github/puzzles'
 alias gps='git push' # push
 alias gpl='git pull' # pull
+alias github='cd /Users/henry/github' # on mac osx
+alias puzzles='cd /Users/henry/github/puzzles' # on mac osx
 </pre>
+
+윈도우즈에서 Git http://github.com/0ishi/puzzles/wiki/Git-on-Windows
