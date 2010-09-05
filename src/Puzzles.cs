@@ -13,8 +13,7 @@ namespace oishi.com
             List<int> modes = new List<int>();
             int count = 1;
             Dictionary<int, int> hitbynumbers = new Dictionary<int, int>();
-            foreach (int i in numbers)
-            {
+            foreach (int i in numbers) {
                 if (hitbynumbers.ContainsKey(i)) hitbynumbers[i]++ ;
                 else hitbynumbers[i] = 1;
 
@@ -23,7 +22,6 @@ namespace oishi.com
                 modes.Add(i);
 
                 count = hitbynumbers[i];
-
             }
 
             return modes;
@@ -31,105 +29,111 @@ namespace oishi.com
 
         public static List<int> FindModesThruSort (params int[] numbers)
         {
-            List<int> modes2 = new List<int>();
-            if (numbers.Length == 0) return new List<int>(new int[]{});
+            List<int> modes = new List<int>();
+            if (numbers.Length == 0) {
+                return new List<int>(new int[]{});
+            }
 
             Array.Sort(numbers);
 
             int count = 1;
             int maxcount = 1;
-            modes2.Add(numbers[0]);
-            for (int i = 1; i < numbers.Length; i++)
-            {
-                if (maxcount == 1) modes2.Add(numbers[i]);
-                if (numbers[i] != numbers[i-1]) {count = 1; continue; }
+            modes.Add(numbers[0]);
+            for (int i = 1; i < numbers.Length; i++) {
+                if (maxcount == 1) {
+                    modes.Add(numbers[i]);
+                }
+
+                if (numbers[i] != numbers[i-1]) {
+                    count = 1;
+                    continue;
+                }
+
                 count++;
 
                 if (count < maxcount) continue;
-                if (count > maxcount) modes2.Clear();
-                modes2.Add(numbers[i]);
+                if (count > maxcount) modes.Clear();
+                modes.Add(numbers[i]);
                 maxcount = count;
-
             }
 
-            return modes2;
+            return modes;
         }
 
         public static List<int> FindModesUsingArray(params int[] numbers)
         {
-            if (null == numbers) throw new NullReferenceException("'numbers' must be non-null.");
+            if (null == numbers) {
+                throw new NullReferenceException("'numbers' must be non-null.");
+            }
 
-            List<int> modes3 = new List<int> ();
-                int max = 0;
-                int min = 0;
-                foreach (int i in numbers)
-                {
-                    min = Math.Min(i, min);
-                    max = Math.Max(i, max);
-                }
-
+            List<int> modes = new List<int> ();
+            int max = 0;
+            int min = 0;
+            foreach (int i in numbers) {
+                min = Math.Min(i, min);
+                max = Math.Max(i, max);
+            }
 
             int[] places = new int[max - min + 1];
             int count = 1;
 
-            foreach (int i in numbers)
-            {
+            foreach (int i in numbers) {
                 places[i-min]++;
 
-                    if (places[i-min] < count ) continue;
-                    if (places[i-min] > count ) modes3.Clear();
-                    modes3.Add(i);
-                    count = places[i-min];
-                }
+                if (places[i-min] < count ) continue;
+                if (places[i-min] > count ) modes.Clear();
+                modes.Add(i);
+                count = places[i-min];
+            }
 
-            return modes3;
+            return modes;
         }
 
         public static List<int> FindMissingNumbersUsingArray(params int[] numbers)
         {
-                int max = 0;
-                int min = 0;
-                foreach (int i in numbers)
-                {
-                    min = Math.Min(i, min);
-                    max = Math.Max(i, max);
-                }
+            int max = 0;
+            int min = 0;
+            foreach (int i in numbers) {
+                min = Math.Min(i, min);
+                max = Math.Max(i, max);
+            }
+
             List<int> missedlist = new List<int> ();
             Array.Sort(numbers);
-            for ( int i = 1; i < numbers.Length; i++)
-            {
+            for ( int i = 1; i < numbers.Length; i++) {
                 if ( numbers[i] <= numbers[i-1] + 1 ) continue;
-                for (int missed = numbers[i-1] + 1; missed < numbers[i]; missed++)
-                {
+                for (int missed = numbers[i-1] + 1; missed < numbers[i]; missed++) {
                     missedlist.Add(missed);
                 }
-             }
+            }
+
             return missedlist;
         }
 
         public static List<int> FindMissingNumbersUsingDictionary(params int[] numbers)
         {
-            if (numbers.Length == 0) return new List<int>(new int[]{});
+            if (numbers.Length == 0) {
+                return new List<int>(new int[]{});
+            }
 
+            int max = numbers[0];
+            int min = numbers[0];
+            foreach (int i in numbers) {
+                min = Math.Min(i, min);
+                max = Math.Max(i, max);
+            }
 
-                int max = numbers[0];
-                int min = numbers[0];
-                foreach (int i in numbers)
-                {
-                    min = Math.Min(i, min);
-                    max = Math.Max(i, max);
-                }
             List<int> missedlist = new List<int> ();
             Dictionary<int, int> stored = new Dictionary<int, int>();
 
-            foreach ( int i in numbers)
-            {
+            foreach ( int i in numbers) {
                 stored[i] = 1;
             }
-            for ( int j = min + 1; j < max; j++ )
-            {
+
+            for ( int j = min + 1; j < max; j++ ) {
                 if (stored.ContainsKey(j) == false) { missedlist.Add(j); continue;}
             }
+
             return missedlist;
         }
 
@@ -177,8 +181,7 @@ namespace oishi.com
             try {
                 Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindModesThruSort(null));
                 Assert.Fail("");
-            } catch (NullReferenceException nre) {
-                // OK
+            } catch (NullReferenceException) {
             }
         }
 
@@ -196,8 +199,7 @@ namespace oishi.com
             try {
                 Assert.AreEqual(new List<int>(new  int[]{5}), Puzzles.FindMissingNumbersUsingDictionary(null));
                 Assert.Fail("");
-            } catch (NullReferenceException nre) {
-                // OK
+            } catch (NullReferenceException) {
             }
         }
 
@@ -215,8 +217,7 @@ namespace oishi.com
             try {
                 Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindMissingNumbersUsingDictionary(null));
                 Assert.Fail("");
-            } catch (NullReferenceException nre) {
-                // OK
+            } catch (NullReferenceException) {
             }
         }
 
@@ -225,7 +226,6 @@ namespace oishi.com
         {
             Assert.IsTrue(Puzzles.MatchBrackets(""));
             Assert.IsTrue(Puzzles.MatchBrackets("()"));
-
         }
 
         private void testFindModes(Func<int[], List<int>> findModes) {
