@@ -29,7 +29,6 @@ namespace oishi.com
             return modes;
         }
 
-        //Count modes after sorting
         public static List<int> FindModesThruSort (params int[] numbers)
         {
             List<int> modes2 = new List<int>();
@@ -54,11 +53,12 @@ namespace oishi.com
             }
 
             return modes2;
-
         }
 
         public static List<int> FindModesUsingArray(params int[] numbers)
         {
+            if (null == numbers) throw new NullReferenceException("'numbers' must be non-null.");
+
             List<int> modes3 = new List<int> ();
                 int max = 0;
                 int min = 0;
@@ -154,20 +154,12 @@ namespace oishi.com
     {
         [Test]
         public void TestFindModesUsingDictionary() {
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindModesUsingDictionary(new int[]{}));
-            Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindModesUsingDictionary(new int[]{1, 3, 3, 5, 5, 5, 8, 8}));
-            Assert.AreEqual(new List<int>(new int[]{3, 8}), Puzzles.FindModesUsingDictionary(new int[]{1, 3, 3, 8, 8}));
-            Assert.AreEqual(new List<int>(new int[]{1}), Puzzles.FindModesUsingDictionary(new int[]{1}));
-            Assert.AreEqual(new List<int>(new int[]{1,2}), Puzzles.FindModesUsingDictionary(new int[]{1, 2}));
-            Assert.AreEqual(new List<int>(new int[]{1,2}), Puzzles.FindModesUsingDictionary(new int[]{1, 1, 2, 2}));
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindModesUsingDictionary(new int[]{1, 2, 2}));
-            Assert.AreEqual(new List<int>(new int[]{2, 1}), Puzzles.FindModesUsingDictionary(new int[]{3, 2, 1, 2, 1}));
-            try {
-                Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindModesUsingDictionary(null));
-                Assert.Fail("");
-            } catch (NullReferenceException nre) {
-                // OK
-            }
+            testFindModes(input => Puzzles.FindModesUsingDictionary(input));
+        }
+
+        [Test]
+        public void TestFindModesUsingArray() {
+            testFindModes(input => Puzzles.FindModesUsingArray(input));
         }
 
         [Test]
@@ -184,24 +176,6 @@ namespace oishi.com
             Assert.AreEqual(new List<int>(new int[]{1, 2}), Puzzles.FindModesThruSort(new int[]{3, 2, 1, 2, 1}));
             try {
                 Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindModesThruSort(null));
-                Assert.Fail("");
-            } catch (NullReferenceException nre) {
-                // OK
-            }
-        }
-
-        [Test]
-        public void TestFindModesUsingArray() {
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindModesUsingArray(new int[]{}));
-            Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindModesUsingArray(new int[]{1, 3, 3, 5, 5, 5, 8, 8}));
-            Assert.AreEqual(new List<int>(new int[]{3, 8}), Puzzles.FindModesUsingArray(new int[]{1, 3, 3, 8, 8}));
-            Assert.AreEqual(new List<int>(new int[]{1}), Puzzles.FindModesUsingArray(new int[]{1}));
-            Assert.AreEqual(new List<int>(new int[]{1,2}), Puzzles.FindModesUsingArray(new int[]{1, 2}));
-            Assert.AreEqual(new List<int>(new int[]{1,2}), Puzzles.FindModesUsingArray(new int[]{1, 1, 2, 2}));
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindModesUsingArray(new int[]{1, 2, 2}));
-            Assert.AreEqual(new List<int>(new int[]{2, 1}), Puzzles.FindModesUsingArray(new int[]{3, 2, 1, 2, 1}));
-            try {
-                Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindModesUsingArray(null));
                 Assert.Fail("");
             } catch (NullReferenceException nre) {
                 // OK
@@ -252,6 +226,22 @@ namespace oishi.com
             Assert.IsTrue(Puzzles.MatchBrackets(""));
             Assert.IsTrue(Puzzles.MatchBrackets("()"));
 
+        }
+
+        private void testFindModes(Func<int[], List<int>> findModes) {
+            Assert.AreEqual(new List<int>(new int[]{}), findModes(new int[]{}));
+            Assert.AreEqual(new List<int>(new int[]{5}), findModes(new int[]{1, 3, 3, 5, 5, 5, 8, 8}));
+            Assert.AreEqual(new List<int>(new int[]{3, 8}), findModes(new int[]{1, 3, 3, 8, 8}));
+            Assert.AreEqual(new List<int>(new int[]{1}), findModes(new int[]{1}));
+            Assert.AreEqual(new List<int>(new int[]{1,2}), findModes(new int[]{1, 2}));
+            Assert.AreEqual(new List<int>(new int[]{1,2}), findModes(new int[]{1, 1, 2, 2}));
+            Assert.AreEqual(new List<int>(new int[]{2}), findModes(new int[]{1, 2, 2}));
+            Assert.AreEqual(new List<int>(new int[]{2, 1}), findModes(new int[]{3, 2, 1, 2, 1}));
+            try {
+                Assert.AreEqual(new List<int>(new int[]{5}), findModes(null));
+                Assert.Fail("");
+            } catch (NullReferenceException) {
+            }
         }
     }
 }
