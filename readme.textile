@@ -33,4 +33,4 @@ alias github='cd /Users/henry/github' # on mac osx
 alias puzzles='cd /Users/henry/github/puzzles' # on mac osx
 </pre>
 
-윈도우즈에서 Git http://github.com/0ishi/puzzles/wiki/Git-on-Windows
+"윈도우즈에서 Git 사용":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
