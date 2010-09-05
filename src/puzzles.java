@@ -7,6 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 public class puzzles {
@@ -25,31 +26,21 @@ public class puzzles {
      */
     @Test
     public void testFindModesUsingMap() {
-
-        try {
-            findModesUsingMap(null);
-            Assert.fail("findsModes should have thrown NPE.");
-        } catch (AssertionError ae) {
-        } catch (NullPointerException npe) {
-        } catch (Exception e) {
-            Assert.fail("findsModes should have thrown NPE.");
-        }
-
-        Assert.assertEquals(ImmutableList.of(), findModesUsingMap(new int[0]));
-
-        Assert.assertEquals(ImmutableList.of(1), findModesUsingMap(1));
-        Assert.assertEquals(ImmutableList.of(2), findModesUsingMap(1, 2, 2));
-        Assert.assertEquals(ImmutableList.of(3), findModesUsingMap(1, 2, 2, 3, 3, 3));
-
-        Assert.assertEquals(ImmutableList.of(2), findModesUsingMap(2, 2));
-        Assert.assertEquals(ImmutableList.of(1, 2), findModesUsingMap(1, 1, 2, 2));
+        testFindModes(new Function<int[], List<Integer>>() {
+            public List<Integer> apply(int[] input) { return findModesUsingMap(input); };
+        });
     }
 
     @Test
     public void testFindModesUsingArray() {
+        testFindModes(new Function<int[], List<Integer>>() {
+            public List<Integer> apply(int[] input) { return findModesUsingArray(input); };
+        });
+    }
 
+    public void testFindModes(Function<int[], List<Integer>> findModes) {
         try {
-            findModesUsingArray(null);
+            findModes.apply(null);
             Assert.fail("findsModes should have thrown NPE.");
         } catch (AssertionError ae) {
         } catch (NullPointerException npe) {
@@ -57,14 +48,14 @@ public class puzzles {
             Assert.fail("findsModes should have thrown NPE.");
         }
 
-        Assert.assertEquals(ImmutableList.of(), findModesUsingArray(new int[0]));
+        Assert.assertEquals(ImmutableList.of(), findModes.apply(new int[0]));
 
-        Assert.assertEquals(ImmutableList.of(1), findModesUsingArray(1));
-        Assert.assertEquals(ImmutableList.of(2), findModesUsingArray(1, 2, 2));
-        Assert.assertEquals(ImmutableList.of(3), findModesUsingArray(1, 2, 2, 3, 3, 3));
+        Assert.assertEquals(ImmutableList.of(1), findModes.apply(new int[] {1}));
+        Assert.assertEquals(ImmutableList.of(2), findModes.apply(new int[] {1, 2, 2}));
+        Assert.assertEquals(ImmutableList.of(3), findModes.apply(new int[] {1, 2, 2, 3, 3, 3}));
 
-        Assert.assertEquals(ImmutableList.of(2), findModesUsingArray(2, 2));
-        Assert.assertEquals(ImmutableList.of(1, 2), findModesUsingArray(1, 1, 2, 2));
+        Assert.assertEquals(ImmutableList.of(2), findModes.apply(new int[] {2, 2}));
+        Assert.assertEquals(ImmutableList.of(1, 2), findModes.apply(new int[] {1, 1, 2, 2}));
     }
 
     public static List<Integer> findModesUsingMap(int... numbers) {
