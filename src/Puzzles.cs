@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 
+// FIXME:
+// - return HashSet instead of List in FindModes methods.
 namespace oishi.com
 {
     [TestFixture]
     public class Puzzles {
-
         public static List<int> FindModesUsingDictionary(params int[] numbers)
         {
             List<int> modes = new List<int>();
@@ -158,12 +159,12 @@ namespace oishi.com
     {
         [Test]
         public void TestFindModesUsingDictionary() {
-            testFindModes(input => Puzzles.FindModesUsingDictionary(input));
+            testFindModes(x => Puzzles.FindModesUsingDictionary(x));
         }
 
         [Test]
         public void TestFindModesUsingArray() {
-            testFindModes(input => Puzzles.FindModesUsingArray(input));
+            testFindModes(x => Puzzles.FindModesUsingArray(x));
         }
 
         [Test]
@@ -187,38 +188,12 @@ namespace oishi.com
 
         [Test]
         public void TestFindMissingNumbersUsingArray() {
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingArray(new int[]{}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingArray(new int[]{1, 3, 3, 5, 5, 5, 8, 8}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingArray(new int[]{8, 9, 1, 3, 5}));
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingArray(new int[]{3, 1}));
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingArray(new int[]{10, 10, 10}));
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingArray(new int[]{1, 2, 3, 4}));
-
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingArray(new int[]{1, 1, 3, 3}));
-            Assert.AreEqual(new List<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}), Puzzles.FindMissingNumbersUsingArray(new int[]{10, 1}));
-            try {
-                Assert.AreEqual(new List<int>(new  int[]{5}), Puzzles.FindMissingNumbersUsingDictionary(null));
-                Assert.Fail("");
-            } catch (NullReferenceException) {
-            }
+            testFindMissingNumbers(x => Puzzles.FindMissingNumbersUsingArray(x));
         }
 
         [Test]
         public void TestFindMissingNumbersUsingDictionary() {
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{1, 3, 3, 5, 5, 5, 8, 8}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{8, 9, 1, 3, 5}));
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{3, 1}));
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{10, 10, 10}));
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{1, 2, 3, 4}));
-
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{1, 1, 3, 3}));
-            Assert.AreEqual(new List<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{10, 1}));
-            try {
-                Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindMissingNumbersUsingDictionary(null));
-                Assert.Fail("");
-            } catch (NullReferenceException) {
-            }
+            testFindMissingNumbers(x => Puzzles.FindMissingNumbersUsingDictionary(x));
         }
 
         [Test]
@@ -226,6 +201,23 @@ namespace oishi.com
         {
             Assert.IsTrue(Puzzles.MatchBrackets(""));
             Assert.IsTrue(Puzzles.MatchBrackets("()"));
+        }
+
+        private void testFindMissingNumbers(Func<int[], List<int>> findMissingNumbers) {
+            Assert.AreEqual(new List<int>(new int[]{}), findMissingNumbers(new int[]{}));
+            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), findMissingNumbers(new int[]{1, 3, 3, 5, 5, 5, 8, 8}));
+            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), findMissingNumbers(new int[]{8, 9, 1, 3, 5}));
+            Assert.AreEqual(new List<int>(new int[]{2}), findMissingNumbers(new int[]{3, 1}));
+            Assert.AreEqual(new List<int>(new int[]{}), findMissingNumbers(new int[]{10, 10, 10}));
+            Assert.AreEqual(new List<int>(new int[]{}), findMissingNumbers(new int[]{1, 2, 3, 4}));
+
+            Assert.AreEqual(new List<int>(new int[]{2}), findMissingNumbers(new int[]{1, 1, 3, 3}));
+            Assert.AreEqual(new List<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}), findMissingNumbers(new int[]{10, 1}));
+            try {
+                Assert.AreEqual(new List<int>(new int[]{5}), findMissingNumbers(null));
+                Assert.Fail("");
+            } catch (NullReferenceException) {
+            }
         }
 
         private void testFindModes(Func<int[], List<int>> findModes) {
