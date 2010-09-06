@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using System.Text;
 
 // FIXME:
 // - return HashSet instead of List in FindModes methods.
@@ -177,6 +178,64 @@ namespace oishi.com
 
         }
 
+        public static string NumberToString(int number)
+        {
+            bool minus = false;
+            if (number < 0 ) {
+                minus = true;
+                number = number * -1;
+            }
+            StringBuilder sb = new StringBuilder();
+            if (number == 0) {
+                sb.Insert(0, '0');
+                return sb.ToString();
+            }
+            while (number > 0)
+            {
+                char num = (char)('0' + number % 10);
+                sb.Insert(0, num);
+                number = number / 10;
+            }
+            if(minus) sb.Insert(0, '-');
+            return sb.ToString();
+        }
+
+        public static int StringToNumber(string text)
+        {
+            bool negative = false;
+            int i = 0;
+            while (i < text.Length && (text[i] > '9' || text[i] < '0')) {
+                if ( text[i] == '+') {
+                    i++; continue;
+                }
+                if (text[i] == '-'){
+                    negative = true; i++; continue;
+                }
+                if (text[i] == ' ') {
+                    i++; continue;
+                }
+
+                throw new ArgumentException("'text' must begin with a sign, or a digit.");
+            }
+
+            if (i >= text.Length) {
+                throw new ArgumentException("'text' must contains a digit.");
+            }
+
+            int number = 0;
+            for (int j = i; j < text.Length; j++)
+            {
+                if (text[j] > '9' || text[j] < '0') break;
+                number = number * 10 + (text[j] - '0');
+            }
+
+            if (negative) {
+                return -number;
+            } else {
+                return number;
+            }
+        }
+
         public static bool MatchBrackets(string input)
         {
             Stack<char> brackets = new Stack<char> ();
@@ -233,6 +292,35 @@ namespace oishi.com
             Assert.AreEqual(3, Puzzles.Median(new int[]{3}));
             Assert.AreEqual(2.5, Puzzles.Median(new int[]{2,3}));
             Assert.AreEqual(3.5, Puzzles.Median(new int[]{3,6,2,1,4,5}));
+        }
+
+        [Test]
+        public void TestNumberToString() {
+            Assert.AreEqual("3", Puzzles.NumberToString(3));
+            Assert.AreEqual("35", Puzzles.NumberToString(35));
+            Assert.AreEqual("-35", Puzzles.NumberToString(-35));
+            Assert.AreEqual("0", Puzzles.NumberToString(0));
+        }
+
+        [Test]
+        public void TestStringToNumber(){
+            Assert.AreEqual(1, Puzzles.StringToNumber("1"));
+            Assert.AreEqual(12, Puzzles.StringToNumber("12"));
+            Assert.AreEqual(321, Puzzles.StringToNumber("321"));
+            Assert.AreEqual(1, Puzzles.StringToNumber("+1"));
+            Assert.AreEqual(-1, Puzzles.StringToNumber("-1"));
+            Assert.AreEqual(1, Puzzles.StringToNumber(" 1"));
+            Assert.AreEqual(1, Puzzles.StringToNumber(" +1"));
+            Assert.AreEqual(-1, Puzzles.StringToNumber(" - 1"));
+            Assert.AreEqual(1, Puzzles.StringToNumber(" ++ 1"));
+            Assert.AreEqual(-1, Puzzles.StringToNumber(" -- 1"));
+            Assert.AreEqual(-123, Puzzles.StringToNumber(" -- 123-"));
+            Assert.AreEqual(-123, Puzzles.StringToNumber(" -- 123a"));
+            try{
+                Puzzles.StringToNumber("+");
+                Assert.Fail("It should have thrown an argument exception.");
+            } catch(ArgumentException) {
+            }
         }
 
         [Test]
