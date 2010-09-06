@@ -8,7 +8,8 @@ h4. to jumpstart this puzzles git repo into a local repo of @your choices@.
 h4. to get to normal workflow of edit, revert, cache, commit, and push to remote.
 
 # (edit files)
-# checkout to revert local changes (optional), e.g. @git checkout .@
+# status of your local changes (optional), e.g. @git status@
+# discard your local changes (optional), e.g. @git checkout .@
 # put changes to cache (also called index), e.g. @git add src/Puzzles.cs@
 # get rid of changes out of cache (optional), e.g. @git reset src/puzzles.java@
 # diff --cached before commit, e.g. @git diff --cached@
@@ -31,6 +32,14 @@ alias gps='git push' # push
 alias gpl='git pull' # pull
 alias github='cd /Users/henry/github' # on mac osx
 alias puzzles='cd /Users/henry/github/puzzles' # on mac osx
+</pre>
+
+h5. to produce colorful output with git commands.
+
+<pre>
+git config --global color.diff auto
+git config --global color.status auto
+git config --global color.branch auto
 </pre>
 
 "윈도우즈에서 Git 사용":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
