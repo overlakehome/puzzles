@@ -138,6 +138,45 @@ namespace oishi.com
             return missedlist;
         }
 
+        public static List<int> FindMissingNumbersUsingBitmap(params int[] numbers)
+        {
+            if (numbers.Length == 0) {
+                return new List<int>(new int[]{});
+            }
+
+            int max = numbers[0];
+            int min = numbers[0];
+            foreach (int i in numbers) {
+                min = Math.Min(i, min);
+                max = Math.Max(i, max);
+            }
+
+            List<int> missingNumber = new List<int>();
+            BitArray stored = new BitArray(max-min+1);
+            foreach (int i in numbers) {
+                stored[i-min] = true;
+            }
+
+            for (int i = min + 1; i < max; i++) {
+                if(stored[i-min] == false) missingNumber.Add(i);
+            }
+
+            return missingNumber;
+        }
+
+        public static double Median(int[] numbers)
+        {
+            Array.Sort(numbers);
+            if (numbers.Length % 2 == 0) {
+                double median = 0;
+                median =  (numbers[numbers.Length/2 - 1] + numbers[numbers.Length/2])/2.0;
+                return median;
+            }
+
+            return numbers[(numbers.Length + 1)/2 - 1];
+
+        }
+
         public static bool MatchBrackets(string input)
         {
             Stack<char> brackets = new Stack<char> ();
@@ -194,6 +233,33 @@ namespace oishi.com
         [Test]
         public void TestFindMissingNumbersUsingDictionary() {
             testFindMissingNumbers(x => Puzzles.FindMissingNumbersUsingDictionary(x));
+        }
+
+        [Test]
+        public void TestFindMissingNumbersUsingBitmap() {
+            // FIXME: factor this test function out.
+            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingBitmap(new int[] {}));
+            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{1,3,3,5,5,5,8,8}));
+            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{8,9,1,3,5}));
+            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{3,1}));
+            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{10,10}));
+              Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{1, 2, 3, 4}));
+            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{1, 1, 3, 3}));
+            Assert.AreEqual(new List<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{10, 1}));
+            try {
+                Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindMissingNumbersUsingDictionary(null));
+                Assert.Fail("");
+            } catch (NullReferenceException) {
+            }
+        }
+
+        [Test]
+        public void TestMedian() {
+            Assert.AreEqual(3, Puzzles.Median(new int[]{1,2,3,4,5}));
+            Assert.AreEqual(3.5 , Puzzles.Median(new int[]{1,2,3,4,5,6}));
+            Assert.AreEqual(3, Puzzles.Median(new int[]{3}));
+            Assert.AreEqual(2.5, Puzzles.Median(new int[]{2,3}));
+            Assert.AreEqual(3.5, Puzzles.Median(new int[]{3,6,2,1,4,5}));
         }
 
         [Test]
