@@ -34,12 +34,14 @@ alias github='cd /Users/henry/github' # on mac osx
 alias puzzles='cd /Users/henry/github/puzzles' # on mac osx
 </pre>
 
-h5. to produce colorful output with git commands.
+h4. to produce colorful output with git commands.
 
 <pre>
 git config --global color.diff auto
 git config --global color.status auto
 git config --global color.branch auto
 </pre>
+
+h4. resources
 
 "윈도우즈에서 Git 사용":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
