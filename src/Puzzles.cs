@@ -237,20 +237,7 @@ namespace oishi.com
 
         [Test]
         public void TestFindMissingNumbersUsingBitmap() {
-            // FIXME: factor this test function out.
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingBitmap(new int[] {}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{1,3,3,5,5,5,8,8}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{8,9,1,3,5}));
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{3,1}));
-            Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingBitmap(new int[]{10,10}));
-              Assert.AreEqual(new List<int>(new int[]{}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{1, 2, 3, 4}));
-            Assert.AreEqual(new List<int>(new int[]{2}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{1, 1, 3, 3}));
-            Assert.AreEqual(new List<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}), Puzzles.FindMissingNumbersUsingDictionary(new int[]{10, 1}));
-            try {
-                Assert.AreEqual(new List<int>(new int[]{5}), Puzzles.FindMissingNumbersUsingDictionary(null));
-                Assert.Fail("");
-            } catch (NullReferenceException) {
-            }
+            testFindMissingNumbers(x => Puzzles.FindMissingNumbersUsingBitmap(x));
         }
 
         [Test]
