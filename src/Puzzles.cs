@@ -243,18 +243,18 @@ namespace oishi.com
         }
 
         private void testFindMissingNumbers(Func<int[], List<int>> findMissingNumbers) {
-            Assert.AreEqual(new List<int>(new int[]{}), findMissingNumbers(new int[]{}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), findMissingNumbers(new int[]{1, 3, 3, 5, 5, 5, 8, 8}));
-            Assert.AreEqual(new List<int>(new int[]{2,4,6,7}), findMissingNumbers(new int[]{8, 9, 1, 3, 5}));
-            Assert.AreEqual(new List<int>(new int[]{2}), findMissingNumbers(new int[]{3, 1}));
-            Assert.AreEqual(new List<int>(new int[]{}), findMissingNumbers(new int[]{10, 10, 10}));
-            Assert.AreEqual(new List<int>(new int[]{}), findMissingNumbers(new int[]{1, 2, 3, 4}));
 
-            Assert.AreEqual(new List<int>(new int[]{2}), findMissingNumbers(new int[]{1, 1, 3, 3}));
-            Assert.AreEqual(new List<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}), findMissingNumbers(new int[]{10, 1}));
+            Assert.IsTrue(new HashSet<int>().SetEquals(findMissingNumbers(new int[]{})));
+            Assert.IsTrue(new HashSet<int>(new int[]{2,4,6,7}).SetEquals(findMissingNumbers(new int[]{1, 3, 3, 5, 5, 5, 8, 8})));
+            Assert.IsTrue(new HashSet<int>(new int[]{2,4,6,7}).SetEquals(findMissingNumbers(new int[]{8, 9, 1, 3, 5})));
+            Assert.IsTrue(new HashSet<int>(new int[]{2}).SetEquals(findMissingNumbers(new int[]{3, 1})));
+            Assert.IsTrue(new HashSet<int>(new int[]{}).SetEquals(findMissingNumbers(new int[]{10, 10, 10})));
+            Assert.IsTrue(new HashSet<int>(new int[]{}).SetEquals(findMissingNumbers(new int[]{1, 2, 3, 4})));
+            Assert.IsTrue(new HashSet<int>(new int[]{2}).SetEquals(findMissingNumbers(new int[]{1, 1, 3, 3})));
+            Assert.IsTrue(new HashSet<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}).SetEquals(findMissingNumbers(new int[]{10, 1})));
             try {
-                Assert.AreEqual(new List<int>(new int[]{5}), findMissingNumbers(null));
-                Assert.Fail("");
+                findMissingNumbers(null);
+                Assert.Fail("'findMissingNumbers' should have thrown a null reference exception.");
             } catch (NullReferenceException) {
             }
         }
