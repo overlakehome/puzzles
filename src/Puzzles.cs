@@ -180,16 +180,16 @@ namespace oishi.com
 
         public static string NumberToString(int number)
         {
+            if (number == 0){
+                return "0";
+            }
+
             bool minus = false;
             if (number < 0 ) {
                 minus = true;
                 number = number * -1;
             }
             StringBuilder sb = new StringBuilder();
-            if (number == 0) {
-                sb.Insert(0, '0');
-                return sb.ToString();
-            }
             while (number > 0)
             {
                 char num = (char)('0' + number % 10);
@@ -202,6 +202,8 @@ namespace oishi.com
 
         public static int StringToNumber(string text)
         {
+            if (null == text) throw new ArgumentNullException("text");
+            if (text.Length == 0) throw new ArgumentException("'text' must be non-empty.");
             bool negative = false;
             int i = 0;
             while (i < text.Length && (text[i] > '9' || text[i] < '0')) {
@@ -234,6 +236,71 @@ namespace oishi.com
             } else {
                 return number;
             }
+        }
+
+        public static string ReverseStringUsingStringBuilder(string text){
+
+            if (text == null) throw new ArgumentException("'text' shoun't be null");
+            if (text.Length  == 0 ) throw new ArgumentException("'text' shouldn't be empty");
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < text.Length; i++){
+                sb.Insert(0, text[i]);
+            }
+            return sb.ToString();
+        }
+
+        public static string ReverseStringUsingChars(String text){
+            if (text == null) throw new ArgumentException("'text' shoun't be null");
+            if (text.Length  == 0 ) throw new ArgumentException("'text' shouldn't be empty");
+            int i = 0;
+            int j = text.Length - 1;
+            while (i < text.Length && text[i] == ' '){
+               i++;
+            }
+            while (j >= 0 && text[j] == ' '){
+                j--;
+            }
+
+            char[] reversed = new char[j-i+1];
+            // for (int head = 0; i < reversed.Length; i++){
+            for (int head = 0; head < reversed.Length; head++){
+                reversed[head] = text[j - head];
+            }
+//            char[] reversed = text.ToCharArray();
+//            for (int i = 0; i < (reversed.Length + 1)/2; i++){
+//                char stored = reversed[i];
+//                reversed[i] = reversed[reversed.Length - 1 - i];
+//                reversed[reversed.Length - 1 - i] = stored;
+
+            return new string(reversed);
+        }
+
+        public static int[] LastIndexesOfChars(string s, char[] chars){
+            int[] lastIndexes = new int[chars.Length];
+            for (int i = 0; i < chars.Length; i++){
+                lastIndexes[i] = -1;
+                for (int j = 0; j < s.Length; j++) {
+                    if (s[j] == chars[i]) {
+                        lastIndexes[i] = j;
+                    }
+                }
+            }
+
+            return lastIndexes;
+        }
+
+        public static int[] LastIndexOfCharUsingDictionary (string s, char[] chars){
+            Dictionary<char, int> lastIndexs = new Dictionary<char, int>();
+            int[] lastIndexsResult = new int[]{chars.Length};
+            for(int i = 0 ; i < s.Length; i++){
+                lastIndexs[s[i]] = i;
+            }
+            for(int i = 0; i < chars.Length; i++) {
+                if(lastIndexs.ContainsKey(chars[i])){
+                    lastIndexsResult[i] = lastIndexs[chars[i]];
+                }
+            }
+            return lastIndexsResult;
         }
 
         public static bool MatchBrackets(string input)
@@ -321,6 +388,41 @@ namespace oishi.com
                 Assert.Fail("It should have thrown an argument exception.");
             } catch(ArgumentException) {
             }
+        }
+
+        [Test]
+        public void TestReverseStringUsingStringBuilder(){
+            Assert.AreEqual("edcba", Puzzles.ReverseStringUsingStringBuilder("abcde"));
+            Assert.AreEqual("aa12", Puzzles.ReverseStringUsingStringBuilder("21aa"));
+            Assert.AreEqual("a", Puzzles.ReverseStringUsingStringBuilder("a"));
+            Assert.AreEqual("edc ba", Puzzles.ReverseStringUsingStringBuilder("ab cde"));
+           try{
+                Puzzles.ReverseStringUsingStringBuilder("");
+                Assert.Fail("It should have thrown an argument exception.");
+            } catch(ArgumentException) {
+            }
+        }
+
+        [Test]
+        public void TestReverseStringUsingChars(){
+            Assert.AreEqual("edcba", Puzzles.ReverseStringUsingChars("abcde"));
+            Assert.AreEqual("aa12", Puzzles.ReverseStringUsingChars("21aa"));
+            Assert.AreEqual("a", Puzzles.ReverseStringUsingChars("a"));
+            Assert.AreEqual("edc ba", Puzzles.ReverseStringUsingChars("ab cde"));
+            Assert.AreEqual("321", Puzzles.ReverseStringUsingChars("    123"));
+            Assert.AreEqual("321", Puzzles.ReverseStringUsingChars("    123   "));
+           try{
+                Puzzles.ReverseStringUsingChars("");
+                Assert.Fail("It should have thrown an argument exception.");
+            } catch(ArgumentException) {
+            }
+        }
+
+        [Test]
+        public void TestLastIndexesOfChars(){
+            Assert.AreEqual(new int[]{3}, Puzzles.LastIndexesOfChars("abcde", new char[]{'d'}));
+            Assert.AreEqual(new int[]{1, 3}, Puzzles.LastIndexesOfChars("hello", new char[] {'e','l'}));
+            Assert.AreEqual(new int[]{4, 1}, Puzzles.LastIndexesOfChars("hello", new char[] {'o','e'}));
         }
 
         [Test]
