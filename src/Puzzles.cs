@@ -29,34 +29,30 @@ namespace oishi.com
             return modes;
         }
 
-        public static HashSet<int> FindModesThruSort (params int[] numbers)
+        public static HashSet<int> FindModesUsingSort (params int[] numbers)
         {
-            HashSet<int> modes = new HashSet<int>();
             if (numbers.Length == 0) {
                 return new HashSet<int>();
             }
 
+            // time to sort: O(nlogn)
+            // space to sort: O(1)
             Array.Sort(numbers);
 
-            int count = 1;
-            int maxcount = 1;
+            // time to scan: O(n)
+            // space to yield modes: O(n)
+            HashSet<int> modes = new HashSet<int>();
             modes.Add(numbers[0]);
-            for (int i = 1; i < numbers.Length; i++) {
-                if (maxcount == 1) {
+            for (int i = 1, count = 1, maxcount = 1; i < numbers.Length; i++) {
+                count = (numbers[i] == numbers[i-1]) ? count + 1 : 1;
+                if (count >= maxcount) {
+                    if (count > maxcount) {
+                        modes.Clear();
+                    }
+
                     modes.Add(numbers[i]);
+                    maxcount = count;
                 }
-
-                if (numbers[i] != numbers[i-1]) {
-                    count = 1;
-                    continue;
-                }
-
-                count++;
-
-                if (count < maxcount) continue;
-                if (count > maxcount) modes.Clear();
-                modes.Add(numbers[i]);
-                maxcount = count;
             }
 
             return modes;
@@ -316,7 +312,7 @@ namespace oishi.com
             return nonRepeated;
         }
 
-        public static string ReplaceWord(string input, string replace, string pattern) {
+        public static string ReplaceSubstring(string input, string pattern, string replace) {
             StringBuilder sb = new StringBuilder();
             for (int tail = 0; tail < input.Length; ) {
                 while (tail < input.Length && input[tail] != pattern[0]) {
@@ -369,8 +365,8 @@ namespace oishi.com
         }
 
         [Test]
-        public void TestFindModesThruSort() {
-            testFindModes(x => Puzzles.FindModesThruSort(x));
+        public void TestFindModesUsingSort() {
+            testFindModes(x => Puzzles.FindModesUsingSort(x));
         }
 
         [Test]
@@ -480,15 +476,36 @@ namespace oishi.com
         }
 
         [Test]
-        public void TestReplaceWords() {
-            Assert.AreEqual("hellohi", Puzzles.ReplaceWord("helloworld", "hi", "world"));
-            Assert.AreEqual("helloworl", Puzzles.ReplaceWord("helloworl", "hi", "world"));
-            Assert.AreEqual("hi", Puzzles.ReplaceWord("world", "hi", "world"));
-            Assert.AreEqual("hihi", Puzzles.ReplaceWord("worldworld", "hi", "world"));
-            Assert.AreEqual("hellohihi", Puzzles.ReplaceWord("helloworldworld", "hi", "world"));
-            Assert.AreEqual("hihellohi", Puzzles.ReplaceWord("worldhelloworld", "hi", "world"));
-            Assert.AreEqual("hellowordwrdhi", Puzzles.ReplaceWord("hellowordwrdworld", "hi", "world"));
-            Assert.AreEqual("hellohiwwrl", Puzzles.ReplaceWord("helloworldwwrl", "hi", "world"));
+        public void TestReplaceSubstring() {
+            // FIXME: boundary value analysis, equivalent class partitioning, and combinational technique.
+            //
+            // negative cases:
+            // - input is null.
+            // - input is empty.
+            // - pattern is null.
+            // - pattern is empty.
+            // - replace is null.
+
+            // positive cases:
+            // - replace is empty.
+            // - input begins and ends with a match.
+            // - input begins and ends with 2 matches.
+            // - input contains 2 matches in the middle.
+            // - input begins, or ends with an incomplete match.
+            // - input has not even an incomplete match.
+            //
+            // some interesting cases.
+            // - pattern equals replace, e.g. "abc", "xyz", "xyz".
+            // - replace yeilds another match, e.g. "abb", "ab", "a"
+
+            Assert.AreEqual("hello", Puzzles.ReplaceSubstring("helloworld", "world", ""));
+            Assert.AreEqual("helloworl", Puzzles.ReplaceSubstring("helloworl", "world", "hi"));
+            Assert.AreEqual("hi", Puzzles.ReplaceSubstring("world", "world", "hi"));
+            Assert.AreEqual("hihi", Puzzles.ReplaceSubstring("worldworld", "world", "hi"));
+            Assert.AreEqual("hellohihi", Puzzles.ReplaceSubstring("helloworldworld", "world", "hi"));
+            Assert.AreEqual("hihellohi", Puzzles.ReplaceSubstring("worldhelloworld", "world", "hi"));
+            Assert.AreEqual("hellowordwrdhi", Puzzles.ReplaceSubstring("hellowordwrdworld", "world", "hi"));
+            Assert.AreEqual("hellohiwwrl", Puzzles.ReplaceSubstring("helloworldwwrl", "world", "hi"));
         }
 
         [Test]
