@@ -165,7 +165,7 @@ namespace oishi.com
             return missingNumber;
         }
 
-        public static double Median(int[] numbers)
+        public static double FindMedian(int[] numbers)
         {
             Array.Sort(numbers);
             if (numbers.Length % 2 == 0) {
@@ -285,22 +285,66 @@ namespace oishi.com
 
         public static int[] LastIndexesOfCharsUsingDictionary (string s, char[] chars){
             Dictionary<char, int> lastIndexs = new Dictionary<char, int>();
-            int[] lastIndexsResult = new int[]{chars.Length};
+            int[] lastIndexes = new int[chars.Length];
             for(int i = 0 ; i < s.Length; i++){
                 lastIndexs[s[i]] = i;
             }
 
             for(int i = 0; i < chars.Length; i++) {
                 if(lastIndexs.ContainsKey(chars[i])){
-                    lastIndexsResult[i] = lastIndexs[chars[i]];
+                    lastIndexes[i] = lastIndexs[chars[i]];
                 }
             }
 
-            return lastIndexsResult;
+            return lastIndexes;
         }
 
-        public static bool MatchBrackets(string input)
-        {
+        public static List<char> FindNonRepeatedChars(string s){
+            Dictionary<char, bool> map = new Dictionary<char, bool>();
+            List<char> nonRepeated = new List<char>();
+            for (int i = 0; i < s.Length; i++){
+                if(map.ContainsKey(s[i])) map[s[i]] = false;
+                else {
+                    map[s[i]] = true;
+                }
+            }
+
+            for (int i = 0; i < s.Length; i++){
+                if(map[s[i]]) nonRepeated.Add(s[i]);
+            }
+
+            return nonRepeated;
+        }
+
+        public static string ReplaceWord(string text, string replace, string delete) {
+            StringBuilder sb = new StringBuilder();
+            for (int head = 0, tail = 0; tail < text.Length; head++, tail++) {
+                while (text[tail] != delete[0] && tail < text.Length) {
+                    sb.Append(text[tail]);
+                    tail++;
+                }
+
+                head = tail;
+                for (int i = 0; i < delete.Length; i++){
+                    if (delete[i] == text[tail]) tail ++;
+                    else break;
+                }
+
+                if (tail != head + delete.Length - 1) {
+                    while (head < tail) {
+                        sb.Append(text[head]);
+                    }
+                }
+                else {
+                        sb.Append(replace);
+                        head = tail;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public static bool MatchBrackets(string input){
             Stack<char> brackets = new Stack<char> ();
             foreach (char c in input) {
                 if ('(' == c) brackets.Push(')');
@@ -349,12 +393,12 @@ namespace oishi.com
         }
 
         [Test]
-        public void TestMedian() {
-            Assert.AreEqual(3, Puzzles.Median(new int[]{1,2,3,4,5}));
-            Assert.AreEqual(3.5 , Puzzles.Median(new int[]{1,2,3,4,5,6}));
-            Assert.AreEqual(3, Puzzles.Median(new int[]{3}));
-            Assert.AreEqual(2.5, Puzzles.Median(new int[]{2,3}));
-            Assert.AreEqual(3.5, Puzzles.Median(new int[]{3,6,2,1,4,5}));
+        public void TestFindMedian() {
+            Assert.AreEqual(3, Puzzles.FindMedian(new int[]{1,2,3,4,5}));
+            Assert.AreEqual(3.5 , Puzzles.FindMedian(new int[]{1,2,3,4,5,6}));
+            Assert.AreEqual(3, Puzzles.FindMedian(new int[]{3}));
+            Assert.AreEqual(2.5, Puzzles.FindMedian(new int[]{2,3}));
+            Assert.AreEqual(3.5, Puzzles.FindMedian(new int[]{3,6,2,1,4,5}));
         }
 
         [Test]
@@ -420,7 +464,6 @@ namespace oishi.com
         }
 
         [Test]
-        [Ignore] // FIXME: unhandled exception thrown, IndexOutOfRangeException.
         public void TestLastIndexesOfCharsUsingDictionary() {
             testLastIndexesOfChars((x, y) => Puzzles.LastIndexesOfCharsUsingDictionary(x, y));
         }
@@ -429,6 +472,28 @@ namespace oishi.com
             Assert.AreEqual(new int[]{3}, lastIndexesOfChars("abcde", new char[]{'d'}));
             Assert.AreEqual(new int[]{1, 3}, lastIndexesOfChars("hello", new char[] {'e','l'}));
             Assert.AreEqual(new int[]{4, 1}, lastIndexesOfChars("hello", new char[] {'o','e'}));
+        }
+
+        [Test]
+        public void TestFindNonRepeatedChars(){
+            Assert.AreEqual(new char[]{'a', 'c'}, Puzzles.FindNonRepeatedChars("abcbdd"));
+            Assert.AreEqual(new char[]{'a', 'b', 'c', 'd'}, Puzzles.FindNonRepeatedChars("abcd"));
+            Assert.AreEqual(new char[]{}, Puzzles.FindNonRepeatedChars("aabbcc"));
+            Assert.AreEqual(new char[]{'m', 'y'}, Puzzles.FindNonRepeatedChars("hellohellomyhello"));
+            Assert.AreEqual(new char[]{'3'}, Puzzles.FindNonRepeatedChars("hihi3"));
+        }
+
+        [Test]
+        [Ignore] // FIXME: this test case hands the mono develop IDE.
+        public void TestReplaceWords(){
+            Assert.AreEqual("hellohi", Puzzles.ReplaceWord("helloworld", "hi", "world"));
+            Assert.AreEqual("hello", Puzzles.ReplaceWord("helloworl", "hi", "world"));
+            Assert.AreEqual("hi", Puzzles.ReplaceWord("world", "hi", "world"));
+            Assert.AreEqual("hihi", Puzzles.ReplaceWord("worldworld", "hi", "world"));
+            Assert.AreEqual("hellohihi", Puzzles.ReplaceWord("helloworldworld", "hi", "world"));
+            Assert.AreEqual("hihellohi", Puzzles.ReplaceWord("worldhelloworld", "hi", "world"));
+            Assert.AreEqual("hellohi", Puzzles.ReplaceWord("hellowordwrdworld", "hi", "world"));
+            Assert.AreEqual("hellohi", Puzzles.ReplaceWord("helloworldwwrl", "hi", "world"));
         }
 
         [Test]
