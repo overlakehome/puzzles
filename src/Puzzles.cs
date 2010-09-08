@@ -4,26 +4,28 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.Text;
 
-// FIXME:
-// - return HashSet instead of List in FindModes methods.
 namespace oishi.com
 {
     [TestFixture]
     public class Puzzles {
         public static HashSet<int> FindModesUsingDictionary(params int[] numbers)
         {
+            // space to yield modes: O(n)
             HashSet<int> modes = new HashSet<int>();
-            int count = 1;
-            Dictionary<int, int> hitbynumbers = new Dictionary<int, int>();
-            foreach (int i in numbers) {
-                if (hitbynumbers.ContainsKey(i)) hitbynumbers[i]++ ;
-                else hitbynumbers[i] = 1;
 
-                if (hitbynumbers[i] < count) continue;
-                if (hitbynumbers[i] > count) modes.Clear();
+            // time to scan the input: O(n)
+            // space to keep a dictionary: O(1.6 n) = O(n)
+            int maxHits = 1;
+            Dictionary<int, int> hitByNumbers = new Dictionary<int, int>();
+            foreach (int i in numbers) {
+                if (hitByNumbers.ContainsKey(i)) hitByNumbers[i]++ ;
+                else hitByNumbers[i] = 1;
+
+                if (hitByNumbers[i] < maxHits) continue;
+                if (hitByNumbers[i] > maxHits) modes.Clear();
                 modes.Add(i);
 
-                count = hitbynumbers[i];
+                maxHits = hitByNumbers[i];
             }
 
             return modes;
@@ -31,12 +33,8 @@ namespace oishi.com
 
         public static HashSet<int> FindModesUsingSort (params int[] numbers)
         {
-            if (numbers.Length == 0) {
-                return new HashSet<int>();
-            }
-
             // time to sort: O(nlogn)
-            // space to sort: O(1)
+            // space to sort: O(logn) because of recursive calls.
             Array.Sort(numbers);
 
             // time to scan: O(n)
