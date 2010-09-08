@@ -316,28 +316,24 @@ namespace oishi.com
             return nonRepeated;
         }
 
-        public static string ReplaceWord(string text, string replace, string delete) {
+        public static string ReplaceWord(string input, string replace, string pattern) {
             StringBuilder sb = new StringBuilder();
-            for (int head = 0, tail = 0; tail < text.Length; head++, tail++) {
-                while (text[tail] != delete[0] && tail < text.Length) {
-                    sb.Append(text[tail]);
+            for (int tail = 0; tail < input.Length; ) {
+                while (tail < input.Length && input[tail] != pattern[0]) {
+                    sb.Append(input[tail]);
                     tail++;
                 }
 
-                head = tail;
-                for (int i = 0; i < delete.Length; i++){
-                    if (delete[i] == text[tail]) tail ++;
-                    else break;
+                int head = tail;
+                for (int i = 0; tail < input.Length && i < pattern.Length && input[tail] == pattern[i]; tail++, i++) {
                 }
 
-                if (tail != head + delete.Length - 1) {
-                    while (head < tail) {
-                        sb.Append(text[head]);
-                    }
+                int span = tail - head;
+                if (span != pattern.Length) {
+                    sb.Append(input, head, span);
                 }
                 else {
-                        sb.Append(replace);
-                        head = tail;
+                    sb.Append(replace);
                 }
             }
 
@@ -484,16 +480,15 @@ namespace oishi.com
         }
 
         [Test]
-        [Ignore] // FIXME: this test case hands the mono develop IDE.
-        public void TestReplaceWords(){
+        public void TestReplaceWords() {
             Assert.AreEqual("hellohi", Puzzles.ReplaceWord("helloworld", "hi", "world"));
-            Assert.AreEqual("hello", Puzzles.ReplaceWord("helloworl", "hi", "world"));
+            Assert.AreEqual("helloworl", Puzzles.ReplaceWord("helloworl", "hi", "world"));
             Assert.AreEqual("hi", Puzzles.ReplaceWord("world", "hi", "world"));
             Assert.AreEqual("hihi", Puzzles.ReplaceWord("worldworld", "hi", "world"));
             Assert.AreEqual("hellohihi", Puzzles.ReplaceWord("helloworldworld", "hi", "world"));
             Assert.AreEqual("hihellohi", Puzzles.ReplaceWord("worldhelloworld", "hi", "world"));
-            Assert.AreEqual("hellohi", Puzzles.ReplaceWord("hellowordwrdworld", "hi", "world"));
-            Assert.AreEqual("hellohi", Puzzles.ReplaceWord("helloworldwwrl", "hi", "world"));
+            Assert.AreEqual("hellowordwrdhi", Puzzles.ReplaceWord("hellowordwrdworld", "hi", "world"));
+            Assert.AreEqual("hellohiwwrl", Puzzles.ReplaceWord("helloworldwwrl", "hi", "world"));
         }
 
         [Test]
