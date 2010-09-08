@@ -16,16 +16,16 @@ namespace oishi.com
             // time to scan the input: O(n)
             // space to keep a dictionary: O(1.6 n) = O(n)
             int maxHits = 1;
-            Dictionary<int, int> hitByNumbers = new Dictionary<int, int>();
+            Dictionary<int, int> hitsByNumber = new Dictionary<int, int>();
             foreach (int i in numbers) {
-                if (hitByNumbers.ContainsKey(i)) hitByNumbers[i]++ ;
-                else hitByNumbers[i] = 1;
+                if (hitsByNumber.ContainsKey(i)) hitsByNumber[i]++ ;
+                else hitsByNumber[i] = 1;
 
-                if (hitByNumbers[i] < maxHits) continue;
-                if (hitByNumbers[i] > maxHits) modes.Clear();
+                if (hitsByNumber[i] < maxHits) continue;
+                if (hitsByNumber[i] > maxHits) modes.Clear();
                 modes.Add(i);
 
-                maxHits = hitByNumbers[i];
+                maxHits = hitsByNumber[i];
             }
 
             return modes;
@@ -96,8 +96,8 @@ namespace oishi.com
 
             List<int> missedlist = new List<int> ();
             Array.Sort(numbers);
-            for ( int i = 1; i < numbers.Length; i++) {
-                if ( numbers[i] <= numbers[i-1] + 1 ) continue;
+            for (int i = 1; i < numbers.Length; i++) {
+                if (numbers[i] <= numbers[i-1] + 1) continue;
                 for (int missed = numbers[i-1] + 1; missed < numbers[i]; missed++) {
                     missedlist.Add(missed);
                 }
