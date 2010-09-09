@@ -33,6 +33,10 @@ namespace oishi.com
 
         public static HashSet<int> FindModesUsingSort (params int[] numbers)
         {
+            if (numbers.Length == 0) {
+                return new HashSet<int>();
+            }
+
             // time to sort: O(nlogn)
             // space to sort: O(logn) because of recursive calls.
             Array.Sort(numbers);
@@ -311,6 +315,12 @@ namespace oishi.com
         }
 
         public static string ReplaceSubstring(string input, string pattern, string replace) {
+            if (input == null) throw new ArgumentNullException("input");
+            if (pattern  == null) throw new ArgumentNullException("pattern");
+            if (replace  == null) throw new ArgumentNullException("replace");
+            if (input.Length == 0) return "";
+            if (pattern.Length == 0) throw new ArgumentException("'pattern' must be non-empty.");
+
             StringBuilder sb = new StringBuilder();
             for (int tail = 0; tail < input.Length; ) {
                 while (tail < input.Length && input[tail] != pattern[0]) {
@@ -327,7 +337,11 @@ namespace oishi.com
                     sb.Append(input, head, span);
                 }
                 else {
-                    sb.Append(replace);
+                    if (replace.Length == 0) {
+                        break;
+                    } else {
+                        sb.Append(replace);
+                    }
                 }
             }
 
@@ -347,6 +361,9 @@ namespace oishi.com
 
             return 0 == brackets.Count;
         }
+//        public static void CalculatorUsingStack(string input){
+//            Stack<char> operands = new Stack<char>();
+//            Stack<char> operators = new Stack<char>();
     }
 
     [TestFixture]
@@ -477,7 +494,7 @@ namespace oishi.com
         public void TestReplaceSubstring() {
             // FIXME: boundary value analysis, equivalent class partitioning, and combinational technique.
             //
-            // negative cases:
+            // negative cases:ok
             // - input is null.
             // - input is empty.
             // - pattern is null.
@@ -485,25 +502,54 @@ namespace oishi.com
             // - replace is null.
 
             // positive cases:
-            // - replace is empty.
-            // - input begins and ends with a match.
-            // - input begins and ends with 2 matches.
-            // - input contains 2 matches in the middle.
-            // - input begins, or ends with an incomplete match.
-            // - input has not even an incomplete match.
+            // - replace is empty. -ok
+            // - input begins and ends with a match. - ok
+            // - input begins and ends with 2 matches. - ok
+            // - input contains 2 matches in the middle. -ok
+            // - input begins, or ends with an incomplete match.-ok
+            // - input has not even an incomplete match.-ok
+            // - replace string is longer than input and it matches in the beginning
+            // -
             //
             // some interesting cases.
             // - pattern equals replace, e.g. "abc", "xyz", "xyz".
             // - replace yeilds another match, e.g. "abb", "ab", "a"
 
             Assert.AreEqual("hello", Puzzles.ReplaceSubstring("helloworld", "world", ""));
+            Assert.AreEqual("hihello", Puzzles.ReplaceSubstring("worldhello", "world", "hi"));
+            Assert.AreEqual("hellohi", Puzzles.ReplaceSubstring("helloworld", "world", "hi"));
+            Assert.AreEqual("hihihello", Puzzles.ReplaceSubstring("worldworldhello", "world", "hi"));
+            Assert.AreEqual("hellohihi", Puzzles.ReplaceSubstring("helloworldworld", "world", "hi"));
+            Assert.AreEqual("hellohihihello", Puzzles.ReplaceSubstring("helloworldworldhello", "world", "hi"));
+            Assert.AreEqual("worlhello", Puzzles.ReplaceSubstring("worlhello", "world", "hi"));
             Assert.AreEqual("helloworl", Puzzles.ReplaceSubstring("helloworl", "world", "hi"));
             Assert.AreEqual("hi", Puzzles.ReplaceSubstring("world", "world", "hi"));
             Assert.AreEqual("hihi", Puzzles.ReplaceSubstring("worldworld", "world", "hi"));
-            Assert.AreEqual("hellohihi", Puzzles.ReplaceSubstring("helloworldworld", "world", "hi"));
-            Assert.AreEqual("hihellohi", Puzzles.ReplaceSubstring("worldhelloworld", "world", "hi"));
-            Assert.AreEqual("hellowordwrdhi", Puzzles.ReplaceSubstring("hellowordwrdworld", "world", "hi"));
-            Assert.AreEqual("hellohiwwrl", Puzzles.ReplaceSubstring("helloworldwwrl", "world", "hi"));
+            Assert.AreEqual("hi", Puzzles.ReplaceSubstring("world", "world", "hi"));
+            Assert.AreEqual("", Puzzles.ReplaceSubstring("", "world", "helloworld"));
+            Assert.AreEqual("hello", Puzzles.ReplaceSubstring("hello", "world", "helloworld"));
+
+            try {
+                Puzzles.ReplaceSubstring("hello", "", "helloworld");
+                Assert.Fail("'ReplaceSubstring' should have thrown an argument exception.");
+            } catch (ArgumentException) {
+            }
+
+            try {
+                Puzzles.ReplaceSubstring(null, "world", "hi");
+                Assert.Fail("'ReplaceSubstring' should have thrown an argument null exception.");
+            } catch (ArgumentNullException) {
+            }
+            try {
+                Puzzles.ReplaceSubstring("hello", null, "hi");
+                Assert.Fail("'ReplaceSubstring' should have thrown an argument null exception.");
+            } catch (ArgumentNullException) {
+            }
+            try {
+                Puzzles.ReplaceSubstring("hello", "world", null);
+                Assert.Fail("'ReplaceSubstring' should have thrown an argument null exception.");
+            } catch (ArgumentNullException) {
+            }
         }
 
         [Test]
@@ -511,6 +557,15 @@ namespace oishi.com
         {
             Assert.IsTrue(Puzzles.MatchBrackets(""));
             Assert.IsTrue(Puzzles.MatchBrackets("()"));
+            Assert.IsTrue(Puzzles.MatchBrackets("({})"));
+            Assert.IsTrue(Puzzles.MatchBrackets("({[]})"));
+            Assert.IsFalse(Puzzles.MatchBrackets("("));
+            Assert.IsFalse(Puzzles.MatchBrackets("({"));
+            Assert.IsFalse(Puzzles.MatchBrackets("({["));
+            Assert.IsFalse(Puzzles.MatchBrackets(")"));
+            Assert.IsTrue(Puzzles.MatchBrackets("({})[]"));
+            Assert.IsFalse(Puzzles.MatchBrackets("({}))"));
+            Assert.IsTrue(Puzzles.MatchBrackets("(abc)d"));
         }
 
         private void testFindMissingNumbers(Func<int[], List<int>> findMissingNumbers) {
