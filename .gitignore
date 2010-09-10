@@ -1,0 +1,4 @@
+*.class
+*.userprefs
+*.pidb
+bin/
