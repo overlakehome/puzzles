@@ -1,61 +1,59 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using NUnit.Framework;
 
-// FIXME:
-// - return HashSet instead of List in FindModes methods.
 namespace oishi.com
 {
-    [TestFixture]
-    public class Puzzles {
+    public partial class Puzzles {
         public static HashSet<int> FindModesUsingDictionary(params int[] numbers)
         {
+            // space to yield modes: O(n)
             HashSet<int> modes = new HashSet<int>();
-            int count = 1;
-            Dictionary<int, int> hitbynumbers = new Dictionary<int, int>();
-            foreach (int i in numbers) {
-                if (hitbynumbers.ContainsKey(i)) hitbynumbers[i]++ ;
-                else hitbynumbers[i] = 1;
 
-                if (hitbynumbers[i] < count) continue;
-                if (hitbynumbers[i] > count) modes.Clear();
+            // time to scan the input: O(n)
+            // space to keep a dictionary: O(1.6 n) = O(n)
+            int maxHits = 1;
+            Dictionary<int, int> hitsByNumber = new Dictionary<int, int>();
+            foreach (int i in numbers) {
+                if (hitsByNumber.ContainsKey(i)) hitsByNumber[i]++ ;
+                else hitsByNumber[i] = 1;
+
+                if (hitsByNumber[i] < maxHits) continue;
+                if (hitsByNumber[i] > maxHits) modes.Clear();
                 modes.Add(i);
 
-                count = hitbynumbers[i];
+                maxHits = hitsByNumber[i];
             }
 
             return modes;
         }
 
-        public static HashSet<int> FindModesThruSort (params int[] numbers)
+        public static HashSet<int> FindModesUsingSort (params int[] numbers)
         {
-            HashSet<int> modes = new HashSet<int>();
             if (numbers.Length == 0) {
                 return new HashSet<int>();
             }
 
+            // time to sort: O(nlogn)
+            // space to sort: O(logn) because of recursive calls.
             Array.Sort(numbers);
 
-            int count = 1;
-            int maxcount = 1;
+            // time to scan: O(n)
+            // space to yield modes: O(n)
+            HashSet<int> modes = new HashSet<int>();
             modes.Add(numbers[0]);
-            for (int i = 1; i < numbers.Length; i++) {
-                if (maxcount == 1) {
+            for (int i = 1, count = 1, maxcount = 1; i < numbers.Length; i++) {
+                count = (numbers[i] == numbers[i-1]) ? count + 1 : 1;
+                if (count >= maxcount) {
+                    if (count > maxcount) {
+                        modes.Clear();
+                    }
+
                     modes.Add(numbers[i]);
+                    maxcount = count;
                 }
-
-                if (numbers[i] != numbers[i-1]) {
-                    count = 1;
-                    continue;
-                }
-
-                count++;
-
-                if (count < maxcount) continue;
-                if (count > maxcount) modes.Clear();
-                modes.Add(numbers[i]);
-                maxcount = count;
             }
 
             return modes;
@@ -101,8 +99,8 @@ namespace oishi.com
 
             List<int> missedlist = new List<int> ();
             Array.Sort(numbers);
-            for ( int i = 1; i < numbers.Length; i++) {
-                if ( numbers[i] <= numbers[i-1] + 1 ) continue;
+            for (int i = 1; i < numbers.Length; i++) {
+                if (numbers[i] <= numbers[i-1] + 1) continue;
                 for (int missed = numbers[i-1] + 1; missed < numbers[i]; missed++) {
                     missedlist.Add(missed);
                 }
@@ -164,7 +162,7 @@ namespace oishi.com
             return missingNumber;
         }
 
-        public static double Median(int[] numbers)
+        public static double FindMedian(int[] numbers)
         {
             Array.Sort(numbers);
             if (numbers.Length % 2 == 0) {
@@ -177,8 +175,179 @@ namespace oishi.com
 
         }
 
-        public static bool MatchBrackets(string input)
+        public static string NumberToString(int number)
         {
+            if (number == 0){
+                return "0";
+            }
+
+            bool minus = false;
+            if (number < 0 ) {
+                minus = true;
+                number = number * -1;
+            }
+            StringBuilder sb = new StringBuilder();
+            while (number > 0)
+            {
+                char num = (char)('0' + number % 10);
+                sb.Insert(0, num);
+                number = number / 10;
+            }
+            if(minus) sb.Insert(0, '-');
+            return sb.ToString();
+        }
+
+        public static int StringToNumber(string text)
+        {
+            if (null == text) throw new ArgumentNullException("text");
+            if (text.Length == 0) throw new ArgumentException("'text' must be non-empty.");
+            bool negative = false;
+            int i = 0;
+            while (i < text.Length && (text[i] > '9' || text[i] < '0')) {
+                if ( text[i] == '+') {
+                    i++; continue;
+                }
+                if (text[i] == '-'){
+                    negative = true; i++; continue;
+                }
+                if (text[i] == ' ') {
+                    i++; continue;
+                }
+
+                throw new ArgumentException("'text' must begin with a sign, or a digit.");
+            }
+
+            if (i >= text.Length) {
+                throw new ArgumentException("'text' must contains a digit.");
+            }
+
+            int number = 0;
+            for (int j = i; j < text.Length; j++)
+            {
+                if (text[j] > '9' || text[j] < '0') break;
+                number = number * 10 + (text[j] - '0');
+            }
+
+            if (negative) {
+                return -number;
+            } else {
+                return number;
+            }
+        }
+
+        public static string ReverseStringUsingStringBuilder(string text){
+
+            if (text == null) throw new ArgumentException("'text' shoun't be null");
+            if (text.Length  == 0 ) throw new ArgumentException("'text' shouldn't be empty");
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < text.Length; i++){
+                sb.Insert(0, text[i]);
+            }
+            return sb.ToString();
+        }
+
+        public static string ReverseStringUsingChars(String text){
+            if (text == null) throw new ArgumentException("'text' shoun't be null");
+            if (text.Length  == 0 ) throw new ArgumentException("'text' shouldn't be empty");
+            int i = 0;
+            int j = text.Length - 1;
+            while (i < text.Length && text[i] == ' '){
+               i++;
+            }
+            while (j >= 0 && text[j] == ' '){
+                j--;
+            }
+
+            char[] reversed = new char[j-i+1];
+            for (int head = 0; head < reversed.Length; head++){
+                reversed[head] = text[j - head];
+            }
+
+            return new string(reversed);
+        }
+
+        public static int[] LastIndexesOfChars(string s, params char[] chars){
+            int[] lastIndexes = new int[chars.Length];
+            for (int i = 0; i < chars.Length; i++){
+                lastIndexes[i] = -1;
+                for (int j = 0; j < s.Length; j++) {
+                    if (s[j] == chars[i]) {
+                        lastIndexes[i] = j;
+                    }
+                }
+            }
+
+            return lastIndexes;
+        }
+
+        public static int[] LastIndexesOfCharsUsingDictionary (string s, char[] chars){
+            Dictionary<char, int> lastIndexs = new Dictionary<char, int>();
+            int[] lastIndexes = new int[chars.Length];
+            for(int i = 0 ; i < s.Length; i++){
+                lastIndexs[s[i]] = i;
+            }
+
+            for(int i = 0; i < chars.Length; i++) {
+                if(lastIndexs.ContainsKey(chars[i])){
+                    lastIndexes[i] = lastIndexs[chars[i]];
+                }
+            }
+
+            return lastIndexes;
+        }
+
+        public static List<char> FindNonRepeatedChars(string s){
+            Dictionary<char, bool> map = new Dictionary<char, bool>();
+            List<char> nonRepeated = new List<char>();
+            for (int i = 0; i < s.Length; i++){
+                if(map.ContainsKey(s[i])) map[s[i]] = false;
+                else {
+                    map[s[i]] = true;
+                }
+            }
+
+            for (int i = 0; i < s.Length; i++){
+                if(map[s[i]]) nonRepeated.Add(s[i]);
+            }
+
+            return nonRepeated;
+        }
+
+        public static string ReplaceSubstring(string input, string pattern, string replace) {
+            if (input == null) throw new ArgumentNullException("input");
+            if (pattern  == null) throw new ArgumentNullException("pattern");
+            if (replace  == null) throw new ArgumentNullException("replace");
+            if (input.Length == 0) return "";
+            if (pattern.Length == 0) throw new ArgumentException("'pattern' must be non-empty.");
+
+            StringBuilder sb = new StringBuilder();
+            for (int tail = 0; tail < input.Length; ) {
+                while (tail < input.Length && input[tail] != pattern[0]) {
+                    sb.Append(input[tail]);
+                    tail++;
+                }
+
+                int head = tail;
+                for (int i = 0; tail < input.Length && i < pattern.Length && input[tail] == pattern[i]; tail++, i++) {
+                }
+
+                int span = tail - head;
+                if (span != pattern.Length) {
+                    sb.Append(input, head, span);
+                }
+                else {
+                    if (replace.Length == 0) {
+                        break;
+                    } else {
+                        sb.Append(replace);
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public static bool MatchBrackets(string input){
             Stack<char> brackets = new Stack<char> ();
             foreach (char c in input) {
                 if ('(' == c) brackets.Push(')');
@@ -191,88 +360,9 @@ namespace oishi.com
 
             return 0 == brackets.Count;
         }
+//        public static void CalculatorUsingStack(string input){
+//            Stack<char> operands = new Stack<char>();
+//            Stack<char> operators = new Stack<char>();
     }
 
-    [TestFixture]
-    public class PuzzlesTest
-    {
-        [Test]
-        public void TestFindModesUsingDictionary() {
-            testFindModes(x => Puzzles.FindModesUsingDictionary(x));
-        }
-
-        [Test]
-        public void TestFindModesUsingArray() {
-            testFindModes(x => Puzzles.FindModesUsingArray(x));
-        }
-
-        [Test]
-        public void TestFindModesThruSort() {
-            testFindModes(x => Puzzles.FindModesThruSort(x));
-        }
-
-        [Test]
-        public void TestFindMissingNumbersUsingArray() {
-            testFindMissingNumbers(x => Puzzles.FindMissingNumbersUsingArray(x));
-        }
-
-        [Test]
-        public void TestFindMissingNumbersUsingDictionary() {
-            testFindMissingNumbers(x => Puzzles.FindMissingNumbersUsingDictionary(x));
-        }
-
-        [Test]
-        public void TestFindMissingNumbersUsingBitmap() {
-            testFindMissingNumbers(x => Puzzles.FindMissingNumbersUsingBitmap(x));
-        }
-
-        [Test]
-        public void TestMedian() {
-            Assert.AreEqual(3, Puzzles.Median(new int[]{1,2,3,4,5}));
-            Assert.AreEqual(3.5 , Puzzles.Median(new int[]{1,2,3,4,5,6}));
-            Assert.AreEqual(3, Puzzles.Median(new int[]{3}));
-            Assert.AreEqual(2.5, Puzzles.Median(new int[]{2,3}));
-            Assert.AreEqual(3.5, Puzzles.Median(new int[]{3,6,2,1,4,5}));
-        }
-
-        [Test]
-        public void TestMatchBrackets()
-        {
-            Assert.IsTrue(Puzzles.MatchBrackets(""));
-            Assert.IsTrue(Puzzles.MatchBrackets("()"));
-        }
-
-        private void testFindMissingNumbers(Func<int[], List<int>> findMissingNumbers) {
-
-            Assert.IsTrue(new HashSet<int>().SetEquals(findMissingNumbers(new int[]{})));
-            Assert.IsTrue(new HashSet<int>(new int[]{2,4,6,7}).SetEquals(findMissingNumbers(new int[]{1, 3, 3, 5, 5, 5, 8, 8})));
-            Assert.IsTrue(new HashSet<int>(new int[]{2,4,6,7}).SetEquals(findMissingNumbers(new int[]{8, 9, 1, 3, 5})));
-            Assert.IsTrue(new HashSet<int>(new int[]{2}).SetEquals(findMissingNumbers(new int[]{3, 1})));
-            Assert.IsTrue(new HashSet<int>(new int[]{}).SetEquals(findMissingNumbers(new int[]{10, 10, 10})));
-            Assert.IsTrue(new HashSet<int>(new int[]{}).SetEquals(findMissingNumbers(new int[]{1, 2, 3, 4})));
-            Assert.IsTrue(new HashSet<int>(new int[]{2}).SetEquals(findMissingNumbers(new int[]{1, 1, 3, 3})));
-            Assert.IsTrue(new HashSet<int>(new int[]{2, 3, 4, 5, 6, 7, 8, 9}).SetEquals(findMissingNumbers(new int[]{10, 1})));
-            try {
-                findMissingNumbers(null);
-                Assert.Fail("'findMissingNumbers' should have thrown a null reference exception.");
-            } catch (NullReferenceException) {
-            }
-        }
-
-        private void testFindModes(Func<int[], HashSet<int>> findModes) {
-            Assert.IsTrue(findModes(new int[]{}).SetEquals(new int[0]));
-            Assert.IsTrue(findModes(new int[]{1, 3, 3, 5, 5, 5, 8, 8}).SetEquals(new int[]{5}));
-            Assert.IsTrue(findModes(new int[]{1, 3, 3, 8, 8}).SetEquals(new int[]{3, 8}));
-            Assert.IsTrue(findModes(new int[]{1}).SetEquals(new int[]{1}));
-            Assert.IsTrue(findModes(new int[]{1, 2}).SetEquals(new int[]{1,2}));
-            Assert.IsTrue(findModes(new int[]{1, 1, 2, 2}).SetEquals(new int[]{1,2}));
-            Assert.IsTrue(findModes(new int[]{1, 2, 2}).SetEquals(new int[]{2}));
-            Assert.IsTrue(findModes(new int[]{3, 2, 1, 2, 1}).SetEquals(new int[]{2, 1}));
-            try {
-                findModes(null);
-                Assert.Fail("'findModes' should have thrown a null reference exception.");
-            } catch (NullReferenceException) {
-            }
-        }
-    }
 }
