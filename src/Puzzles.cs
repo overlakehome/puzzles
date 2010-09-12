@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -361,69 +362,77 @@ namespace oishi.com
             return 0 == brackets.Count;
         }
 
-        public static string[] PostfixOf(params string[] infixExp){
-            Stack<string> oper = new Stack<string>();
-            List<string> output = new List<string>();
+        public static string[] PostfixOf(params string[] infix){
+            Stack<string> stack = new Stack<string>();
+            List<string> postfix = new List<string>(infix.Length); // the same capacity as the infix.
 
-            for (int i = 0; i < infixExp.Length; i++){
-                if (infixExp[i] == "*" || infixExp[i] == "/") {
-                    oper.Push(infixExp[i]);
-                } else if (infixExp[i] == "+" || infixExp[i] == "-") {
-                    while (oper.Count > 0){
-                        output.Add(oper.Pop());
+            Regex digits = new Regex(@"^\d+$"); // \d+ matches any decimal digits.
+            Regex @operator = new Regex(@"^[+\-*/]$");
+
+            foreach (string s in infix) {
+                if (digits.IsMatch(s)) {
+                    postfix.Add(s);
+                } else if (@operator.IsMatch(s)) {
+                    // output all the operators that are higher than, or equal to the current input.
+                    if ("+" == s || "-" == s) {
+                        while (stack.Count > 0) { // pop
+                            postfix.Add(stack.Pop());
+                        }
+                    } else {
+                        Debug.Assert("*" == s || "/" == s);
+                        while (stack.Count > 0 && "*" == stack.Peek() || "/" == stack.Peek()) {
+                            postfix.Add(stack.Pop());
+                        }
                     }
-                    oper.Push(infixExp[i]);
-                }
-                else if (Regex.IsMatch(infixExp[i], "^[0-9]+$")) {
-                    output.Add(infixExp[i]);
-                }
-                else {
-                    throw new ArgumentException(" 'infixExp[i]' has an invalid string ");
+
+                    stack.Push(s);
+                } else {
+                    throw new ArgumentException(string.Format("'infix' contains an invalid token '{0}'.", s));
                 }
             }
-            while(oper.Count > 0){
-                output.Add(oper.Pop());
+
+            while (stack.Count > 0) {
+                postfix.Add(stack.Pop());
             }
-            return output.ToArray();
+
+            return postfix.ToArray();
         }
 
-        public static int Calculate(string[] infixExpAndCal){
-            string[] postfixExp = PostfixOf(infixExpAndCal);
-            Stack<string> oper = new Stack<string>();
-            int cal1, cal2;
-            for (int i = 0; i < postfixExp.Length; i++){
-                if (postfixExp[i] == "+" || postfixExp[i] == "-" || postfixExp[i] == "*" || postfixExp[i] == "/" ){
-                    if ( oper.Count < 2 ) throw new ArgumentException ("'postfixExp' has invalid expression");
-                    else {
-                        cal2 =int.Parse(oper.Pop());
-                        cal1 =int.Parse(oper.Pop());
-                        if (postfixExp[i] == "+" ){
-                            cal1 = cal1 + cal2;
-                            oper.Push(cal1.ToString());
-                        }
-                        else if (postfixExp[i] == "-" ){
-                            cal1 = cal1 - cal2;
-                            oper.Push(cal1.ToString());
-                        }
-                        else if (postfixExp[i] == "*" ){
-                            cal1 = cal1 * cal2;
-                            oper.Push(cal1.ToString());
-                        }
-                        else if (postfixExp[i] == "/" ){
-                            cal1 = cal1 / cal2;
-                            oper.Push(cal1.ToString());
-                        }
+        public static int EvaluatePostfix(string[] postfix) {
+            Regex digits = new Regex(@"^\d+$"); // \d+ matches any decimal digits.
+            Regex @operator = new Regex(@"^[+\-*/]$");
+
+            Stack<string> stack = new Stack<string>();
+            foreach (string s in postfix) {
+                if (@operator.IsMatch(s)) {
+                    if (stack.Count < 2) {
+                        throw new InvalidOperationException("'postfix' has invalid expression.");
                     }
+
+                    int rhs = int.Parse(stack.Pop());
+                    int lhs = int.Parse(stack.Pop());
+                    int eval;
+                    switch (s) {
+                        case "+": eval = lhs + rhs; break;
+                        case "-": eval = lhs - rhs; break;
+                        case "*": eval = lhs * rhs; break;
+                        case "/": eval = lhs / rhs; break;
+                        default: throw new InvalidOperationException("'postfix' has invalid expression.");
+                    }
+
+                    stack.Push(eval.ToString());
                 }
                 else {
-                     oper.Push(postfixExp[i]);
+                    Debug.Assert(digits.IsMatch(s));
+                    stack.Push(s);
                 }
             }
-            if (oper.Count > 1 ) throw new ArgumentException(" 'postfixExp' has invalid expression");
-            else {
-                cal1 = int.Parse(oper.Pop());
-                return cal1;
+
+            if (stack.Count > 1) {
+                throw new InvalidOperationException("'postfix' has invalid expression.");
             }
-         }
+
+            return int.Parse(stack.Pop());
+        }
     }
 }

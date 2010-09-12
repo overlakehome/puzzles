@@ -1,4 +1,7 @@
 *.class
-*.userprefs
 *.pidb
+*.sln
+*.userprefs
 bin/
+temp/
+test-results/

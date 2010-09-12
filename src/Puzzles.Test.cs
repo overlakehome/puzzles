@@ -205,36 +205,30 @@ namespace oishi.com
         public void TestPostfixOf() {
             Assert.AreEqual(new string[] {"1", "3", "4", "*" , "+", "5", "+"}, Puzzles.PostfixOf(new string[] {"1", "+", "3", "*", "4", "+", "5"}));
             Assert.AreEqual(new string[] {"1", "2", "3", "*" , "+", "4", "-"}, Puzzles.PostfixOf(new string[] {"1", "+", "2", "*", "3", "-", "4"}));
-            Assert.AreEqual(new string[] {"1", "3","+"}, Puzzles.PostfixOf(new string[] {"1", "+", "3"}));
-
+            Assert.AreEqual(new string[] {"1", "3", "+"}, Puzzles.PostfixOf(new string[] {"1", "+", "3"}));
         }
 
         [Test]
-        public void TestCalculate() {
-            Assert.AreEqual(18, Puzzles.Calculate(new string[] {"1", "3", "4", "*" , "+", "5", "+"}));        }
-
-
-        [Test]
-        public void TestPostfixOfandCalculate() {
-            Assert.AreEqual(18, Puzzles.Calculate(new string[] {"1", "+", "3", "*", "4", "+", "5"}));
-            Assert.AreEqual(8, Puzzles.Calculate(new string[] {"1", "+", "3", "*", "4", "-", "5"}));
-            Assert.AreEqual(4, Puzzles.Calculate(new string[] {"1", "+", "3"}));
-            Assert.AreEqual(-25, Puzzles.Calculate(new string[] {"1", "-", "3", "*", "4", "*", "2", "-", "2"}));
-            Assert.AreEqual(11, Puzzles.Calculate(new string[] {"1", "+", "10", "/", "2", "+", "5"}));
+        public void TestEvaluatePostfix() {
+            Assert.AreEqual(18, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3", "*", "4", "+", "5"})));
+            Assert.AreEqual(8, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3", "*", "4", "-", "5"})));
+            Assert.AreEqual(4, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3"})));
+            Assert.AreEqual(-25, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "-", "3", "*", "4", "*", "2", "-", "2"})));
+            Assert.AreEqual(11, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "10", "/", "2", "+", "5"})));
             try {
-                Puzzles.Calculate(new string[] {"1", "+"});
+                Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+"}));
                 Assert.Fail("'postfixExp' should have tnhrown an argument exception.");
-            } catch(ArgumentException){
+            } catch(InvalidOperationException){
             }
             try {
-                Puzzles.Calculate(new string[] {"+", "+", "3", "*", "4", "+", "5"});
+                Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"+", "+", "3", "*", "4", "+", "5"}));
                 Assert.Fail("'postfixExp' should have tnhrown an argument exception.");
-            } catch(ArgumentException){
+            } catch(InvalidOperationException){
             }
             try {
-                Puzzles.Calculate(new string[] {"1", "+", "3", "3", "4", "+", "5"});
+                Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3", "3", "4", "+", "5"}));
                 Assert.Fail("'postfixExp' should have tnhrown an argument exception.");
-            } catch(ArgumentException){
+            } catch(InvalidOperationException){
             }
         }
 
