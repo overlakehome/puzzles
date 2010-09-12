@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using NUnit.Framework;
+using System.Text.RegularExpressions;
 
 namespace oishi.com
 {
@@ -360,9 +360,70 @@ namespace oishi.com
 
             return 0 == brackets.Count;
         }
-//        public static void CalculatorUsingStack(string input){
-//            Stack<char> operands = new Stack<char>();
-//            Stack<char> operators = new Stack<char>();
-    }
 
+        public static string[] PostfixOf(params string[] infixExp){
+            Stack<string> oper = new Stack<string>();
+            List<string> output = new List<string>();
+
+            for (int i = 0; i < infixExp.Length; i++){
+                if (infixExp[i] == "*" || infixExp[i] == "/") {
+                    oper.Push(infixExp[i]);
+                } else if (infixExp[i] == "+" || infixExp[i] == "-") {
+                    while (oper.Count > 0){
+                        output.Add(oper.Pop());
+                    }
+                    oper.Push(infixExp[i]);
+                }
+                else if (Regex.IsMatch(infixExp[i], "^[0-9]+$")) {
+                    output.Add(infixExp[i]);
+                }
+                else {
+                    throw new ArgumentException(" 'infixExp[i]' has an invalid string ");
+                }
+            }
+            while(oper.Count > 0){
+                output.Add(oper.Pop());
+            }
+            return output.ToArray();
+        }
+
+        public static int Calculate(string[] infixExpAndCal){
+            string[] postfixExp = PostfixOf(infixExpAndCal);
+            Stack<string> oper = new Stack<string>();
+            int cal1, cal2;
+            for (int i = 0; i < postfixExp.Length; i++){
+                if (postfixExp[i] == "+" || postfixExp[i] == "-" || postfixExp[i] == "*" || postfixExp[i] == "/" ){
+                    if ( oper.Count < 2 ) throw new ArgumentException ("'postfixExp' has invalid expression");
+                    else {
+                        cal2 =int.Parse(oper.Pop());
+                        cal1 =int.Parse(oper.Pop());
+                        if (postfixExp[i] == "+" ){
+                            cal1 = cal1 + cal2;
+                            oper.Push(cal1.ToString());
+                        }
+                        else if (postfixExp[i] == "-" ){
+                            cal1 = cal1 - cal2;
+                            oper.Push(cal1.ToString());
+                        }
+                        else if (postfixExp[i] == "*" ){
+                            cal1 = cal1 * cal2;
+                            oper.Push(cal1.ToString());
+                        }
+                        else if (postfixExp[i] == "/" ){
+                            cal1 = cal1 / cal2;
+                            oper.Push(cal1.ToString());
+                        }
+                    }
+                }
+                else {
+                     oper.Push(postfixExp[i]);
+                }
+            }
+            if (oper.Count > 1 ) throw new ArgumentException(" 'postfixExp' has invalid expression");
+            else {
+                cal1 = int.Parse(oper.Pop());
+                return cal1;
+            }
+         }
+    }
 }
