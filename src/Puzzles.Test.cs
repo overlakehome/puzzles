@@ -231,6 +231,27 @@ namespace oishi.com
             } catch(InvalidOperationException){
             }
         }
+		
+		[Test]
+		public void TestListAndArray() {
+			int[] array = new int[] { 1, 9, 7, 11, 3, 7, 5 };
+			List<int> list = new List<int>(array);
+			
+			// test cases for array
+			Array.Sort(array, (x, y) => y - x);
+			
+			Assert.AreEqual(2, Array.FindIndex(array, x => x == 7));
+			Assert.AreEqual(4, Array.FindLastIndex(array, x => x == 7));
+			
+			string[] names = Array.ConvertAll(array, x => x.ToString());
+			
+			Array.Sort(names, (x, y) => y.CompareTo(x));
+			
+			Assert.IsTrue(Array.TrueForAll(array, x => x % 2 == 1));
+			
+			// test cases for list
+			
+		}
 
         private void testFindMissingNumbers(Func<int[], List<int>> findMissingNumbers) {
 
