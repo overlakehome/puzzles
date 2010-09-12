@@ -398,7 +398,7 @@ namespace oishi.com
             return postfix.ToArray();
         }
 
-        public static int EvaluatePostfix(string[] postfix) {
+        public static int EvaluatePostfix(params string[] postfix) {
             Regex digits = new Regex(@"^\d+$"); // \d+ matches any decimal digits.
             Regex @operator = new Regex(@"^[+\-*/]$");
 
@@ -421,11 +421,11 @@ namespace oishi.com
                     }
 
                     stack.Push(eval.ToString());
-                }
-                else {
-                    Debug.Assert(digits.IsMatch(s));
+                } else if (digits.IsMatch(s)) {
                     stack.Push(s);
-                }
+                } else {
+                    throw new InvalidOperationException("'postfix' has invalid expression.");
+				}
             }
 
             if (stack.Count > 1) {
