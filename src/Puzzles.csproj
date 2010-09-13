@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="Puzzles.cs" />
     <Compile Include="Puzzles.Test.cs" />
+    <Compile Include="Stackable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
