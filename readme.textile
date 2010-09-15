@@ -44,4 +44,5 @@ git config --global color.branch auto
 
 h4. resources
 
-"윈도우즈에서 Git 사용":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
+"윈도우즈에서 Git-1.7.x.x-exe (데스크탑 용) 설치":http://code.google.com/p/msysgit/
+"윈도우즈에서 Git 사용 가이드":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
