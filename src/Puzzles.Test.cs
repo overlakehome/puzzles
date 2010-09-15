@@ -233,6 +233,7 @@ namespace oishi.com
         }
 		
 		[Test]
+		[Ignore]
 		public void TestListAndArray() {
 			int[] array = new int[] { 1, 9, 7, 11, 3, 7, 5 };
 			
@@ -243,7 +244,7 @@ namespace oishi.com
 			Assert.AreEqual(5, Array.FindLastIndex(array, x => x == 7));
 			
 			string[] names = Array.ConvertAll(array, x => x.ToString());
-			int[] toThe3rd = Array.ConvertAll(array, x => x *x * x);
+			//int[] toThe3rd = Array.ConvertAll(array, x => x *x * x);
 			
 			Array.Sort(names, (x, y) => y.CompareTo(x));
 			
