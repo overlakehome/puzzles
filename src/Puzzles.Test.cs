@@ -132,18 +132,7 @@ namespace oishi.com
         public void TestReplaceSubstring() {
             // FIXME: boundary value analysis, equivalent class partitioning, and combinational technique.
             //
-            // negative cases:ok
-            // - input is null.
-            // - input is empty.
-            // - pattern is null.
-            // - pattern is empty.
-            // - replace is null.
-
             // positive cases:
-            // - replace is empty. -ok
-            // - input begins and ends with a match. - ok
-            // - input begins and ends with 2 matches. - ok
-            // - input contains 2 matches in the middle. -ok
             // - input begins, or ends with an incomplete match.-ok
             // - input has not even an incomplete match.-ok
             // - replace string is longer than input and it matches in the beginning
@@ -152,6 +141,10 @@ namespace oishi.com
             // some interesting cases.
             // - pattern equals replace, e.g. "abc", "xyz", "xyz".
             // - replace yeilds another match, e.g. "abb", "ab", "a"
+
+            // missing cases:
+            // - pattern is longer than input. the result is input.
+            // - pattern is same as replace. the result is input.
 
             Assert.AreEqual("hello", Puzzles.ReplaceSubstring("helloworld", "world", ""));
             Assert.AreEqual("hihello", Puzzles.ReplaceSubstring("worldhello", "world", "hi"));
@@ -178,11 +171,13 @@ namespace oishi.com
                 Assert.Fail("'ReplaceSubstring' should have thrown an argument null exception.");
             } catch (ArgumentNullException) {
             }
+
             try {
                 Puzzles.ReplaceSubstring("hello", null, "hi");
                 Assert.Fail("'ReplaceSubstring' should have thrown an argument null exception.");
             } catch (ArgumentNullException) {
             }
+
             try {
                 Puzzles.ReplaceSubstring("hello", "world", null);
                 Assert.Fail("'ReplaceSubstring' should have thrown an argument null exception.");
@@ -205,6 +200,74 @@ namespace oishi.com
             Assert.IsFalse(Puzzles.MatchBrackets("({}))"));
             Assert.IsTrue(Puzzles.MatchBrackets("(abc)d"));
         }
+
+        [Test]
+        public void TestPostfixOf() {
+            Assert.AreEqual(new string[] {"1", "3", "4", "*" , "+", "5", "+"}, Puzzles.PostfixOf(new string[] {"1", "+", "3", "*", "4", "+", "5"}));
+            Assert.AreEqual(new string[] {"1", "2", "3", "*" , "+", "4", "-"}, Puzzles.PostfixOf(new string[] {"1", "+", "2", "*", "3", "-", "4"}));
+            Assert.AreEqual(new string[] {"1", "3", "+"}, Puzzles.PostfixOf(new string[] {"1", "+", "3"}));
+        }
+
+        [Test]
+        public void TestEvaluatePostfix() {
+            Assert.AreEqual(18, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3", "*", "4", "+", "5"})));
+            Assert.AreEqual(8, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3", "*", "4", "-", "5"})));
+            Assert.AreEqual(4, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3"})));
+            Assert.AreEqual(-25, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "-", "3", "*", "4", "*", "2", "-", "2"})));
+            Assert.AreEqual(11, Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "10", "/", "2", "+", "5"})));
+            try {
+                Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+"}));
+                Assert.Fail("'postfixExp' should have tnhrown an argument exception.");
+            } catch(InvalidOperationException){
+            }
+            try {
+                Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"+", "+", "3", "*", "4", "+", "5"}));
+                Assert.Fail("'postfixExp' should have tnhrown an argument exception.");
+            } catch(InvalidOperationException){
+            }
+            try {
+                Puzzles.EvaluatePostfix(Puzzles.PostfixOf(new string[] {"1", "+", "3", "3", "4", "+", "5"}));
+                Assert.Fail("'postfixExp' should have tnhrown an argument exception.");
+            } catch(InvalidOperationException){
+            }
+        }
+		
+		[Test]
+		[Ignore]
+		public void TestListAndArray() {
+			int[] array = new int[] { 1, 9, 7, 11, 3, 7, 5 };
+			
+			// test cases for array
+			Array.Sort(array, (x, y) => y - x);
+			
+			Assert.AreEqual(2, Array.FindIndex(array, x => x == 7));
+			Assert.AreEqual(5, Array.FindLastIndex(array, x => x == 7));
+			
+			string[] names = Array.ConvertAll(array, x => x.ToString());
+			//int[] toThe3rd = Array.ConvertAll(array, x => x *x * x);
+			
+			Array.Sort(names, (x, y) => y.CompareTo(x));
+			
+			Assert.IsTrue(Array.TrueForAll(array, x => x % 2 == 1));
+			
+			// test cases for list
+			// list.Sort(array, (x, y) => y - x);
+			List<int> list = new List<int>(array);
+			list.Sort((x, y) => y - x);
+			
+			// Assert.AreEqual(2, Array.FindIndex(array, x => x == 7));
+			// Assert.AreEqual(5, Array.FindLastIndex(array, x=> x == 7));
+			Assert.AreEqual(2, list.FindIndex(x => x == 7));
+			Assert.AreEqual(5, list.FindLastIndex(x=> x == 7));
+
+			//string[] listnames = Array.ConvertAll(array, x => x.ToString());
+			//int[] listToThe3rd = Array.ConvertAll(array, x => x * x * x);
+			
+			// list.Sort(listnames, (x, y) => y.CompareTo(x));
+			
+			//Assert.IsTrue(list.ConvertAll(array, x => x % 2 == 1));
+			                              
+		}
 
         private void testFindMissingNumbers(Func<int[], List<int>> findMissingNumbers) {
 
