@@ -4,8 +4,8 @@ using NUnit.Framework;
 namespace oishi.com
 {
 	public class Stackable{
-		int top;
-		int[] array;
+		private int top;
+		private int[] array;
 		
 		public Stackable(int capacity){
 			if ( capacity <= 0 ) throw new ArgumentException ("'capacity' must be positive");
@@ -35,27 +35,40 @@ namespace oishi.com
 		}
 	}
 	
+	// FIXME: Make me a circular buffer http://www.vias.org/javacourse/chap16_04.html
 	public class Queueable {
-		int[] array;
-		int head;
-		int tail;
+		private int[] array;
+		private int head;
+		private int tail;
 		
 		public Queueable(int capacity) {
-			if (capacity <= 0) throw new ArgumentException("'capacity' must be positive");
+			if (capacity <= 0) {
+				throw new ArgumentException("'capacity' must be positive.");
+			}
+			
 			head = -1;
 			tail = -1;
 			array = new int[capacity];
 		}
 		
-		public void enqueue(int n){
-			if (array.Length - 1 == tail) throw new InvalidOperationException("'The queue is full");
-			if (head < 0) head = 0;
+		public void enqueue(int n) {
+			if (array.Length - 1 == tail) {
+				throw new InvalidOperationException("'The queue is full.");
+			}
+			
+			if (head < 0) {
+				head = 0;
+			}
+			
 			tail++;
 			array[tail] = n;
 		}
 		
 		public int dequeue() {
-			if (head > tail || head < 0) throw new InvalidOperationException("'The queue is empty");
+			if (head > tail || head < 0) {
+				throw new InvalidOperationException("'The queue is empty");
+			}
+			
 			return array[head++];
 		}
 		
