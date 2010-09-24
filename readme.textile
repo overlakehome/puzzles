@@ -22,9 +22,9 @@ h4. to shortcut most common git commands using your favorite shell aliases.
 <pre>
 alias gst='git status' # status of changes
 alias gco='git checkout' # revert changes
-alias gdf='git diff' # diff of index with HEAD
-alias gdfcached='git diff --cached' # diff of working and index
-alias gdfhead='git diff HEAD' # diff of working and HEAD
+alias gdf='git diff' # changes in the working tree not yet staged for the next commit.
+alias gdfcached='git diff --cached' # Changes between the staged index and the last commit.
+alias gdfhead='git diff HEAD' # changes in the working tree since the last commit.
 alias gad='git add' # into cache
 alias gci='git commit' # commit
 alias grs='git reset' # out of cache
