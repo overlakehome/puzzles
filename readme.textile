@@ -1,4 +1,4 @@
-h4. to jumpstart this puzzles git repo into a local repo of @your choices@.
+﻿h4. to jumpstart this puzzles git repo into a local repo of @your choices@.
 
 # @git config --global user.name@ @"Henry Lee"@
 # @git config --global user.email@ [@honesthenry@gmail.com@]
@@ -46,3 +46,16 @@ h4. resources
 
 "윈도우즈에서 Git-1.7.x.x-exe (데스크탑 용) 설치":http://code.google.com/p/msysgit/
 "윈도우즈에서 Git 사용 가이드":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
+
+h5. to configure p4merge and p4diff, ~/.gitconfig (git config file) needs these lines:
+
+[merge]
+	keepBackup = false;
+	tool = p4merge
+[mergetool "p4merge"]
+	cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+	keepTemporaries = false
+	trustExitCode = false
+	keepBackup = false
+[diff]
+	external = p4diff
