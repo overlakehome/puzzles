@@ -13,7 +13,7 @@ h4. to get to normal workflow of edit, revert, cache, commit, and push to remote
 # put changes to cache (also called index), e.g. @git add src/Puzzles.cs@
 # get rid of changes out of cache (optional), e.g. @git reset src/puzzles.java@
 # diff --cached before commit, e.g. @git diff --cached@
-# commit changes, e.g. @git commit -a -m 'added Puzzles.cs.'@ 
+# commit changes from cache, e.g. @git commit -m 'added Puzzles.cs.'@ 
 # push to remote git repo, e.g. [@git push git@github.com:0ishi/puzzles.git@]
 # pull from remote git repo (optional), e.g. @git pull@
 
