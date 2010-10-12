@@ -1,4 +1,4 @@
-﻿h4. to jumpstart this puzzles git repo into a local repo of @your choices@.
+h4. to jumpstart this puzzles git repo into a local repo of @your choices@.
 
 # @git config --global user.name@ @"Henry Lee"@
 # @git config --global user.email@ [@honesthenry@gmail.com@]
@@ -16,7 +16,7 @@ h4. to get to normal workflow of edit, revert, cache, commit, and push to remote
 # commit changes from cache, e.g. @git commit -m 'added Puzzles.cs.'@ 
 # push to remote git repo, e.g. [@git push git@github.com:0ishi/puzzles.git@]
 # pull from remote git repo (optional), e.g. @git pull@
-# conflicting changes (optional), e.g. @git mergetool@
+# merge conflicting changes (optional), e.g. @git mergetool@
 
 h4. to shortcut most common git commands using your favorite shell aliases.
 
@@ -43,12 +43,7 @@ git config --global color.status auto
 git config --global color.branch auto
 </pre>
 
-h4. resources
-
-"윈도우즈에서 Git-1.7.x.x-exe (데스크탑 용) 설치":http://code.google.com/p/msysgit/
-"윈도우즈에서 Git 사용 가이드":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
-
-h5. to configure p4merge and p4diff, ~/.gitconfig (git config file) needs these lines:
+h4. "to configure p4merge & p4diff":http://www.andymcintosh.com/?p=33, ~/.gitconfig (git config file) needs these lines:
 
 <pre>
 [merge]
@@ -62,3 +57,8 @@ h5. to configure p4merge and p4diff, ~/.gitconfig (git config file) needs these 
 [diff]
     external = p4diff
 </pre>
+
+h4. resources
+
+"윈도우즈에서 Git-1.7.x.x-exe (데스크탑 용) 설치":http://code.google.com/p/msysgit/
+"윈도우즈에서 Git 사용 가이드":http://github.com/0ishi/puzzles/wiki/Git-on-Windows
