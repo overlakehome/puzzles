@@ -16,6 +16,7 @@ h4. to get to normal workflow of edit, revert, cache, commit, and push to remote
 # commit changes from cache, e.g. @git commit -m 'added Puzzles.cs.'@ 
 # push to remote git repo, e.g. [@git push git@github.com:0ishi/puzzles.git@]
 # pull from remote git repo (optional), e.g. @git pull@
+# conflicting changes (optional), e.g. @git mergetool@
 
 h4. to shortcut most common git commands using your favorite shell aliases.
 
@@ -50,12 +51,12 @@ h4. resources
 h5. to configure p4merge and p4diff, ~/.gitconfig (git config file) needs these lines:
 
 [merge]
-	keepBackup = false;
-	tool = p4merge
+    keepBackup = false;
+    tool = p4merge
 [mergetool "p4merge"]
-	cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
-	keepTemporaries = false
-	trustExitCode = false
-	keepBackup = false
+    cmd = p4merge "$BASE" "$LOCAL" "$REMOTE" "$MERGED"
+    keepTemporaries = false
+    trustExitCode = false
+    keepBackup = false
 [diff]
-	external = p4diff
+    external = p4diff
