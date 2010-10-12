@@ -50,6 +50,7 @@ h4. resources
 
 h5. to configure p4merge and p4diff, ~/.gitconfig (git config file) needs these lines:
 
+<pre>
 [merge]
     keepBackup = false;
     tool = p4merge
@@ -60,3 +61,4 @@ h5. to configure p4merge and p4diff, ~/.gitconfig (git config file) needs these 
     keepBackup = false
 [diff]
     external = p4diff
+</pre>
