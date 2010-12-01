@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Stack;
 
 import junit.framework.Assert;
 
@@ -11,6 +13,193 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 public class puzzles {
+    public static class DNode<T> {
+        public T item;
+        public DNode<T> next;
+        public DNode<T> prev;
+
+        public static <T> DNode<T> reverse(DNode<T> current) {
+            if (null == current) return current;
+
+            while (null != current.next) {
+                DNode<T> save = current.next;
+                current.next = current.prev;
+                current.prev = save;
+                current = save;
+            }
+
+            return current;
+        }
+    }
+
+    public static class BNode<T> {
+        public T item;
+        public BNode<T> left;
+        public BNode<T> right;
+        public BNode<T> parent;
+
+        public static <T> void findKthLargest(BNode<T> current, int k) {
+            if (null == current || k == 0) return;
+
+            findKthLargest(current.right, k);
+            if (0 == --k) {
+                System.out.print(current.item);
+            }
+
+            findKthLargest(current.left, k);
+        }
+
+        public static <T> List<BNode<T>> yieldInorder(BNode<T> current) {
+            if (null ==  current) return ImmutableList.of();
+
+            List<BNode<T>> output = new ArrayList<BNode<T>>();
+            if (null != current.left) output.addAll(yieldInorder(current.left));
+            output.add(current);
+            if (null != current.right) output.addAll(yieldInorder(current.right));
+            return output;
+        }
+
+        public static <T> List<BNode<T>> yieldInorderFast(BNode<T> current) {
+            List<BNode<T>> output = new ArrayList<BNode<T>>();
+            Stack<BNode<T>> stack = new Stack<BNode<T>>();
+
+            while (null != current || !stack.isEmpty()) {
+                if (null == current) {
+                    current = stack.pop();
+                    output.add(current);
+                    current = current.right;
+                } else {
+                    stack.push(current);
+                    current = current.left;
+                }
+            }
+
+            return output;
+        }
+
+        public static <T> List<BNode<T>> yieldPreorder(BNode<T> current) {
+            List<BNode<T>> output = new ArrayList<BNode<T>>();
+            Stack<BNode<T>> stack = new Stack<BNode<T>>();
+
+            while (null != current || !stack.isEmpty()) {
+                if (null == current) {
+                    current = stack.pop();
+                } else {
+                    output.add(current);
+                    stack.push(current.right);
+                    current = current.left;
+                }
+            }
+
+            return output;
+        }
+
+        public static <T> List<BNode<T>> yieldPostorder(BNode<T> current) {
+            List<BNode<T>> output = new ArrayList<BNode<T>>();
+            Stack<BNode<T>> stack = new Stack<BNode<T>>();
+
+            while (null != current || !stack.isEmpty()) {
+                if (null == current) {
+                    while (!stack.isEmpty() && null == stack.peek().right) {
+                        current = stack.pop();
+                        output.add(current);
+                    }
+
+                    current = stack.isEmpty() ? null : stack.peek().right;
+                } else {
+                    stack.push(current);
+                    current = current.left;
+                }
+            }
+
+            return output;
+        }
+
+        public static <T> int findHeight(BNode<T> current) {
+            return null == current ? -1 : 1 + Math.max(findHeight(current.left), findHeight(current.right));
+        }
+
+        public static <T> int findDistance(BNode<T> lhs, BNode<T> rhs) {
+            Map<BNode<T>, Integer> map = new HashMap<BNode<T>, Integer>();
+            for (int i = 0; null != lhs; lhs = lhs.parent) {
+                map.put(lhs, i++);
+            }
+
+            for (int i = 0; null != rhs; rhs = rhs.parent) {
+                if (map.containsKey(rhs)) return i + map.get(rhs);
+                i++;
+            }
+
+            return -1; // disjoint
+        }
+    }
+
+    public static void knuthShuffle(List<Integer> list) {
+        Random random = new Random();
+        for (int i = 0; i < list.size(); i++) {
+            int j = i + random.nextInt(list.size() - i);
+            Integer save = list.get(j);
+            list.set(j, list.get(i));
+            list.set(i, save);
+        }
+    }
+
+    public static int rand7() {
+        int rand21;
+        do { 
+            rand21 = 5 * (rand5() - 1); // 0, 5, ..., 20.
+            rand21 += rand5(); // 1, 2, ..., 5.
+        } while (rand21 > 21);
+
+        assert rand21 >= 1 && rand21 <= 21;
+        return rand21 % 7 + 1; // 1, 2, ..., 7
+    }
+
+    public boolean matchesWildcard(String pattern, String input) {
+        if (pattern.equals(input)) return true;
+
+        int i = 0, j = 0;
+        for (; i < pattern.length() && j < input.length(); i++, j++) {
+            // recursive cases
+            if ('*' == pattern.charAt(i)) {
+                return matchesWildcard(pattern.substring(i), input.substring(j + 1))
+                       || matchesWildcard(pattern.substring(i + 1), input.substring(j + 1))
+                       || matchesWildcard(pattern.substring(i + 1), input.substring(j));
+            }
+
+            if ('?' != pattern.charAt(i) && pattern.charAt(i) != input.charAt(j)) return false;
+        }
+
+        if (i == pattern.length() && j == input.length()) return true;
+        if ('*' == pattern.charAt(i)) return true;
+        
+        return false;
+    }
+
+    public boolean bracketsMatching(String s) {
+        Stack<Character> brackets = new Stack<Character>();
+        for (int i = 0; i < s.length(); i++) {
+            Character c = s.charAt(i);
+            if ('(' == c) brackets.push(')');
+            else if ('[' == c) brackets.push(']');
+            else if ('{' == c) brackets.push('}');
+            else {
+                if (')' != c && ']' != c && '}' != c) continue;
+                if (brackets.isEmpty() || brackets.peek() != c) return false;
+                brackets.pop();
+            }
+        }
+
+        return brackets.empty();
+    }
+
+    public static boolean isPowerOf2(int x) {
+        return (0 == (x & x - 1)) && (x > 0);
+    }
+
+    public static int rand5() {
+        return new Random().nextInt() % 5 + 1;
+    }
 
     /*
      * Positive test cases:
