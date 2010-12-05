@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Stack;
 
@@ -10,9 +11,110 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 public class puzzles {
+    @Test
+    public void testExcel() {
+        Assert.assertEquals("AB", excel(28));
+        Assert.assertEquals("ABC", excel(731));
+        Assert.assertEquals(28, excel(excel(28)));
+        Assert.assertEquals(731, excel(excel(731)));
+    }
+
+    public static int excel(String s) {
+        int columns = 0;
+        int set = 26;
+        for (int i = 0; i < s.length() - 1; i++) {
+            columns += set;
+            set *= 26;
+        }
+
+        set = 1;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            columns += set * (int)(s.charAt(i) - 'A');
+            set *= 26;
+        }
+
+        return columns + 1;
+    }
+
+    public static String excel(int n) {
+        StringBuilder sb = new StringBuilder();
+
+        int set = 26;
+        for (int i = 0; n > 0; i++) {
+            if (n > set) {
+                n -= set;
+                set *= 26;
+            } else {
+                n -= 1;
+                for (int j = 0; j <= i; j++) {
+                    sb.insert(0, (char)((int)'A' + n % 26));
+                    n /= 26;
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
+    // Design a card game http://math.hws.edu/javanotes/c5/s4.html
+    interface Deck {
+        void suffle();
+        int cardsLeft();
+        Card dealCard() throws IllegalStateException; // if the deck is empty.
+    }
+
+    interface Card {
+        int getSuit();
+        int getValue();
+    }
+
+    interface Hand {
+        void addCard(Card c);
+        boolean removeCard(Card card) throws NoSuchElementException;
+        boolean removeCard(int position) throws IndexOutOfBoundsException;
+        int getCardCount();
+        void clear();
+        Card getCard(int position);
+        void sortBySuit();
+        void sortByValue();
+    }
+
+    interface Game {
+        int getGamesPlayed();
+        int getScoresAchived();
+        void setUp(); // new Deck() and shuffle();
+        void tearDown(); // 
+        Card getCurrentCard();
+        Card getNextCard();
+    }
+
+    public static void subsets(int n) {
+        Boolean a[] = new Boolean[n];
+        backtrack(a, 0, n - 1);
+    }
+
+    public static boolean isSolution(Boolean a[], int k, int level) {
+        return k == level;
+    }
+
+    public static void backtrack(Boolean a[], int k, int level) {
+        if (isSolution(a, k, level)) {
+            System.out.print(Joiner.on(" ,").join(a));
+        } else {
+            boolean candidates[] = {true, false}; // constructCandidates(a, k, n);
+            for (int i = 0; i < candidates.length; i++) {
+                a[k] = candidates[i];
+                // move
+                backtrack(a, k, level);
+                // back
+            }
+        }
+    }
+
     public static class DNode<T> {
         public T item;
         public DNode<T> next;
