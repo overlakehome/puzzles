@@ -16,6 +16,48 @@ import com.google.common.collect.ImmutableList;
 
 public class puzzles {
     @Test
+    public void testFindSmallest() {
+        try {
+            findSmallest(null);
+            Assert.fail("'numbers' must be non-null.");
+        } catch (IllegalArgumentException e) {
+        }
+
+        try {
+            findSmallest(new int[0]);
+            Assert.fail("'numbers' must not be empty.");
+        } catch (IllegalArgumentException e) {
+        }
+
+        Assert.assertEquals(6, findSmallest(new int[] {6}));
+        Assert.assertEquals(6, findSmallest(new int[] {6, 7}));
+        Assert.assertEquals(6, findSmallest(new int[] {7, 6}));
+        Assert.assertEquals(6, findSmallest(new int[] {38, 40, 55, 89, 6, 13, 20, 23, 36}));
+        Assert.assertEquals(6, findSmallest(new int[] {6, 13, 20, 23, 36, 38, 40, 55, 89}));
+        Assert.assertEquals(6, findSmallest(new int[] {13, 20, 23, 36, 38, 40, 55, 89, 6}));
+    }
+
+    public static int findSmallest(int... numbers) {
+        if (null == numbers) throw new IllegalArgumentException("'numbers' must be non-null.");
+        if (0 == numbers.length) throw new IllegalArgumentException("'numbers' must not be empty.");
+
+        return findSmallest(0, numbers.length - 1, numbers);
+    }
+
+    private static int findSmallest(int left, int right, int... numbers) {
+        if (right == left) {
+            return numbers[left];
+        } else {
+            int middle = (left + right) / 2;
+            if (numbers[right] < numbers[middle]) {
+                return findSmallest(middle + 1, right, numbers);
+            } else {
+                return findSmallest(left, middle, numbers);
+            }
+        }
+    }
+
+    @Test
     public void testToAndFromExcelColumn() {
         Assert.assertEquals("AB", toExcelColumn(28));
         Assert.assertEquals("ABC", toExcelColumn(731));
