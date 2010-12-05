@@ -16,48 +16,47 @@ import com.google.common.collect.ImmutableList;
 
 public class puzzles {
     @Test
-    public void testExcel() {
-        Assert.assertEquals("AB", excel(28));
-        Assert.assertEquals("ABC", excel(731));
-        Assert.assertEquals(28, excel(excel(28)));
-        Assert.assertEquals(731, excel(excel(731)));
+    public void testToAndFromExcelColumn() {
+        Assert.assertEquals("AB", toExcelColumn(28));
+        Assert.assertEquals("ABC", toExcelColumn(731));
+        Assert.assertEquals(28, fromExcelColumn(toExcelColumn(28)));
+        Assert.assertEquals(731, fromExcelColumn(toExcelColumn(731)));
     }
 
-    public static int excel(String s) {
-        int columns = 0;
-        int set = 26;
-        for (int i = 0; i < s.length() - 1; i++) {
-            columns += set;
-            set *= 26;
-        }
+    public static String toExcelColumn(int n) {
+        //   26 cases :   A -   Z
+        // 26^2 cases :  AA -  ZZ
+        // 26^3 cases : AAA - ZZZ
 
-        set = 1;
-        for (int i = s.length() - 1; i >= 0; i--) {
-            columns += set * (int)(s.charAt(i) - 'A');
-            set *= 26;
-        }
-
-        return columns + 1;
-    }
-
-    public static String excel(int n) {
         StringBuilder sb = new StringBuilder();
-
-        int set = 26;
-        for (int i = 0; n > 0; i++) {
-            if (n > set) {
-                n -= set;
-                set *= 26;
+        int cases = 26;
+        for (int k = 0; n > 0; k++) { // k is the level of recursion.
+            if (n > cases) {
+                n -= cases;
+                cases *= 26;
             } else {
-                n -= 1;
-                for (int j = 0; j <= i; j++) {
-                    sb.insert(0, (char)((int)'A' + n % 26));
+                n -= 1; // n falls between 0 and (26^k - 1).
+                for (int i = 0; i <= k; i++) {
+                    sb.insert(0, (char)(n % 26 + 'A'));
                     n /= 26;
                 }
             }
         }
 
         return sb.toString();
+    }
+
+    public static int fromExcelColumn(String s) {
+        int columns = 0;
+        for (int k = 1, cases = 26; k < s.length(); k++, cases *= 26) {
+            columns += cases;
+        }
+
+        for (int k = s.length() - 1, cases = 1; k >= 0; k--, cases *= 26) {
+            columns += cases * (int)(s.charAt(k) - 'A');
+        }
+
+        return columns + 1;
     }
 
     // Design a card game http://math.hws.edu/javanotes/c5/s4.html
