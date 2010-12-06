@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,103 @@ import org.junit.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 public class puzzles {
+    @Test
+    public void testProducts() {
+        Iterables.elementsEqual(ImmutableList.of(120, 60, 40, 30, 24), ImmutableList.of(products(1, 2, 3, 4, 5)));
+    }
+
+    public static int[] products(int... numbers) {
+        int[] exclusiveProducts = new int[numbers.length];
+        int[] prefixProducts = new int[numbers.length];
+        int[] postfixProducts = new int[numbers.length];
+
+        prefixProducts[0] = 1;
+        for (int i = 1; i < numbers.length; i++) {
+            prefixProducts[i] = prefixProducts[i-1] * numbers[i-1];
+        }
+
+        postfixProducts[numbers.length - 1] = 1;
+        for (int i = numbers.length - 2; i >= 0; i--) {
+            postfixProducts[i] = postfixProducts[i+1] * numbers[i+1];
+        }
+
+        for (int i = 0; i < numbers.length; i++) {
+            exclusiveProducts[i] = prefixProducts[i] * postfixProducts[i];
+        }
+
+        return exclusiveProducts;
+    }
+    
+    @Test
+    public void testPermutate() {
+        Assert.assertTrue(
+                Iterables.elementsEqual(
+                    ImmutableList.of("abc", "acb", "bac", "bca", "cba", "cab"),
+                    permutate("abc".toCharArray(), 0)));
+        Assert.assertTrue(
+                Iterables.elementsEqual(
+                    ImmutableList.of("abab", "abba", "aabb", "baab", "baba", "bbaa"),
+                    permutate("abab".toCharArray(), 0)));
+    }
+
+    // http://n1b-algo.blogspot.com/2009/01/string-permutations.html
+    public static Iterable<String> permutate(char[] chars, int k) {
+        if (chars.length == k) {
+            return ImmutableList.of(String.valueOf(chars));
+        }
+
+        List<String> permutations = new ArrayList<String>();
+        BitSet bits = new BitSet(128);
+        for (int i = k; i < chars.length; i++) {
+            if (bits.get(chars[i])) {
+                continue;
+            } else {
+                bits.set(chars[i]);
+                swap(chars, k, i);
+                Iterables.addAll(permutations, permutate(chars, k + 1));
+                swap(chars, k, i);
+            }
+        }
+
+        return permutations;
+    }
+
+    public static void swap(char[] chars, int i, int j) {
+        if (chars[i] != chars[j]) {
+            chars[i] ^= chars[j];
+            chars[j] ^= chars[i];
+            chars[i] ^= chars[j];
+        }
+    }
+
+    @Test
+    public void testDivide() {
+        Assert.assertEquals(1024768/7, divide(1024768, 7));
+    }
+
+    public static int divide(int dividend, int divisor) {
+        int bit = 1;
+        int quotient = 0;
+        while (divisor <= dividend) {
+            divisor <<= 1;
+            bit <<= 1;
+        }
+
+        while (divisor > 0) {
+            divisor >>= 1;
+            bit >>= 1;
+            if (dividend >= divisor) {
+                dividend -= divisor;
+                quotient |= bit;
+            }
+        }
+
+        return quotient;
+    }
+
     @Test
     public void testKadane() {
         int[] a = { -2, 1, -3, 4, -1, 2, 1, -5, 4};
