@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,74 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 public class puzzles {
+    @Test
+    public void testKadane() {
+        int[] a = { -2, 1, -3, 4, -1, 2, 1, -5, 4};
+        Assert.assertTrue(Arrays.equals(new int[]{6, 3, 6}, kadane(a)));
+        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 2, 2}, kadane(new int[][] {{1, 0, 1}, {0, -1, 0}, {1, 0, 1}})));
+        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 0, 1}, kadane(new int[][] {{1, 2, -1}, {-3, -1, -4}, {1, -5, 2}})));
+    }
+
+    public static int[] kadane(int[][] m) {
+        int[][] prefixSums = new int[m.length][m[0].length];
+        for (int i = 0; i < m[0].length; i++) {
+            prefixSums[0][i] = m[0][i];
+            for (int j = 1; j < m.length; j++) {
+                prefixSums[j][i] = prefixSums[j - 1][i] + m[j][i];
+            }
+        }
+
+        int maxTop = 0, maxLeft = 0, maxBottom = 0, maxRight = 0, maxSum = m[0][0];
+        for (int top = 0; top < m[0].length; top++) {
+            for (int bottom = top; bottom < m[0].length; bottom++) {
+                int minimum = 0, maximum = 0;
+                for (int left = 0, right = 0; right < m.length; right++) {
+                    if (top == 0) {
+                        maximum += prefixSums[bottom][right];
+                    } else {
+                        maximum += prefixSums[bottom][right] - prefixSums[top - 1][right];
+                    }
+
+                    if (maximum <= minimum) {
+                        minimum = maximum;
+                        left = right;
+                    }
+
+                    if (maximum - minimum > maxSum) {
+                        maxTop = top;
+                        maxBottom = bottom;
+                        maxLeft = left;
+                        maxRight = right;
+                        maxSum = maximum - minimum;
+                    }
+                }
+            }
+        }
+
+        return new int[] { maxSum, maxTop, maxLeft, maxBottom, maxRight };
+    }
+
+    // Kadane's algorithm http://en.wikipedia.org/wiki/Maximum_subarray_problem
+    public static int[] kadane(int... a) {
+        int maxHead = 0, maxTail = 0, maxSum = a[0];
+        for (int head = 0, tail = 1, sum = a[0]; tail < a.length; tail++) {
+            sum = sum + a[tail];
+            if (sum > maxSum) {
+                maxHead = head; maxTail = tail; maxSum = sum;
+            }
+
+            if (0 > sum) {
+                head = tail + 1; sum = 0;
+            }
+        }
+
+        return new int[] { maxSum, maxHead, maxTail };
+    }
+
+    public void sortMillionNumbers() {
+        ;
+    }
+
     @Test
     public void testFindSmallest() {
         try {
