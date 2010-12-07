@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -591,6 +592,25 @@ public class puzzles {
 
             return -1; // disjoint
         }
+    }
+
+    public static List<Integer> reservoirSamples(Iterator<Integer> iterator, int k) {
+        List<Integer> samples = new ArrayList<Integer>();
+        int count = 0;
+        Random random = new Random();
+        while (iterator.hasNext()) {
+            count++;
+            if (samples.size() < k) {
+                samples.add(iterator.next());
+            } else {
+                int s = random.nextInt(count);
+                if (s < k) {
+                    samples.set(s, iterator.next());
+                }
+            }
+        }
+
+        return samples;
     }
 
     public static void knuthShuffle(List<Integer> list) {
