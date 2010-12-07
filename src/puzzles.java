@@ -20,43 +20,6 @@ import com.google.common.collect.Iterables;
 
 public class puzzles {
 
-    public static void mergeSort(int[] elements) {
-        int[] temp = new int[elements.length];
-        mergeSort(elements, temp, 0, elements.length - 1);
-    }
-
-    private static void mergeSort(int[] input, int[] temp, int left, int right) {
-        if (left < right) {
-            int center = (left + right) / 2;
-            mergeSort(input, temp, left, center);
-            mergeSort(input, temp, center + 1, right);
-            merge(input, temp, left, center + 1, right);
-        }
-    }
-
-    private static void merge(int[] input, int[] temp, int left, int right, int rightEnd) {
-        int leftEnd = right - 1;
-        int position = 0;
-        int leftBegin = left;
-        while (left <= leftEnd && right <= rightEnd) {
-            if (input[left] <= input[right]) {
-                temp[position++] = input[left++];
-            } else {
-                temp[position++] = input[right++];
-            }
-        }
-
-        while (left <= leftEnd) {
-            temp[position++] = input[right++];
-        }
-
-        while (right <= rightEnd) {
-            temp[position++] = input[right++];
-        }
-
-        System.arraycopy(temp, leftBegin, input, leftBegin, rightEnd - leftBegin + 1);
-    }
-
     public static class LinkedList<T> {
         public static class Node<T> {
             public T getValue() { throw new UnsupportedOperationException(); }
@@ -416,6 +379,43 @@ public class puzzles {
                 // back
             }
         }
+    }
+
+    public static void mergeSort(int[] elements) {
+        int[] temp = new int[elements.length];
+        mergeSort(elements, temp, 0, elements.length - 1);
+    }
+
+    private static void mergeSort(int[] input, int[] temp, int left, int right) {
+        if (left < right) {
+            int center = (left + right) / 2;
+            mergeSort(input, temp, left, center);
+            mergeSort(input, temp, center + 1, right);
+            merge(input, temp, left, center + 1, right);
+        }
+    }
+
+    private static void merge(int[] input, int[] temp, int left, int right, int rightEnd) {
+        int leftEnd = right - 1;
+        int position = 0;
+        int leftBegin = left;
+        while (left <= leftEnd && right <= rightEnd) {
+            if (input[left] <= input[right]) {
+                temp[position++] = input[left++];
+            } else {
+                temp[position++] = input[right++];
+            }
+        }
+
+        while (left <= leftEnd) {
+            temp[position++] = input[right++];
+        }
+
+        while (right <= rightEnd) {
+            temp[position++] = input[right++];
+        }
+
+        System.arraycopy(temp, leftBegin, input, leftBegin, rightEnd - leftBegin + 1);
     }
 
     public static class SNode<T> implements Comparable<SNode<T>> {
