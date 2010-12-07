@@ -19,6 +19,44 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
+
+    public static void mergeSort(int[] elements) {
+        int[] temp = new int[elements.length];
+        mergeSort(elements, temp, 0, elements.length - 1);
+    }
+
+    private static void mergeSort(int[] input, int[] temp, int left, int right) {
+        if (left < right) {
+            int center = (left + right) / 2;
+            mergeSort(input, temp, left, center);
+            mergeSort(input, temp, center + 1, right);
+            merge(input, temp, left, center + 1, right);
+        }
+    }
+
+    private static void merge(int[] input, int[] temp, int left, int right, int rightEnd) {
+        int leftEnd = right - 1;
+        int position = 0;
+        int leftBegin = left;
+        while (left <= leftEnd && right <= rightEnd) {
+            if (input[left] <= input[right]) {
+                temp[position++] = input[left++];
+            } else {
+                temp[position++] = input[right++];
+            }
+        }
+
+        while (left <= leftEnd) {
+            temp[position++] = input[right++];
+        }
+
+        while (right <= rightEnd) {
+            temp[position++] = input[right++];
+        }
+
+        System.arraycopy(temp, leftBegin, input, leftBegin, rightEnd - leftBegin + 1);
+    }
+
     public static class LinkedList<T> {
         public static class Node<T> {
             public T getValue() { throw new UnsupportedOperationException(); }
@@ -107,7 +145,7 @@ public class puzzles {
 
         return exclusiveProducts;
     }
-    
+
     @Test
     public void testPermutate() {
         Assert.assertTrue(
@@ -237,10 +275,6 @@ public class puzzles {
         }
 
         return new int[] { maxSum, maxHead, maxTail };
-    }
-
-    public void sortMillionNumbers() {
-        ;
     }
 
     @Test
@@ -381,6 +415,60 @@ public class puzzles {
                 backtrack(a, k, level);
                 // back
             }
+        }
+    }
+
+    public static class SNode<T> implements Comparable<SNode<T>> {
+        public T item;
+        public SNode<T> next;
+
+        public SNode<T> mergeSort(SNode<T> p) {
+            if (null == p || null == p.next) return p;
+            SNode<T> q = partition(p);
+            p = mergeSort(p);
+            q = mergeSort(q);
+            p = merge(p, q);
+            return p;
+        }
+
+        public SNode<T> partition(SNode<T> p) {
+            SNode<T> p1 = p;
+            SNode<T> p2 = p.next;
+            while (null != p2 && null != p2.next) {
+                p2 = p2.next.next;
+                p2 = p1.next;
+            }
+
+            SNode<T> q = p1.next;
+            p1.next = null;
+            return q;
+        }
+
+        public SNode<T> merge(SNode<T> p, SNode<T> q) {
+            SNode<T> head = null, r = null;
+            while (null != p && null != q) {
+                SNode<T> next;
+                if (p.compareTo(q) < 0) {
+                    next = p; p = p.next;
+                } else {
+                    next = q; q = q.next;
+                }
+
+                if (null == head) {
+                    head = r = next;
+                } else {
+                    r.next = next; r = r.next;
+                }
+            }
+
+            if (null == p) r.next = q;
+            if (null == q) r.next = p;
+            return head;
+        }
+
+        @Override
+        public int compareTo(SNode<T> o) {
+            return 0;
         }
     }
 
