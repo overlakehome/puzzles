@@ -1,3 +1,4 @@
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -18,6 +19,68 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
+    public static class LinkedList<T> {
+        public static class Node<T> {
+            public T getValue() { throw new UnsupportedOperationException(); }
+            public Node<T> getNext() { throw new UnsupportedOperationException(); }
+            public Node<T> getPrevious() { throw new UnsupportedOperationException(); }
+        }
+
+        public boolean isEmpty() { throw new UnsupportedOperationException(); }
+        public T getFirst() { throw new UnsupportedOperationException(); }
+        public Node<T> getLastNode() { throw new UnsupportedOperationException(); }
+        public void remove(Node<T> t) { throw new UnsupportedOperationException(); }
+        public void removeFirst() { throw new UnsupportedOperationException(); }
+        public void addLast(Node<T> t) { throw new UnsupportedOperationException(); }
+        public void addLast(T t) { throw new UnsupportedOperationException(); }
+    }
+
+    public static class LinkedDictionary<K, V> {
+        private final LinkedList<SimpleEntry<K, V>> linkedList = new LinkedList<SimpleEntry<K, V>>();
+        private final Map<K, LinkedList.Node<SimpleEntry<K, V>>> dictionary = new HashMap<K, LinkedList.Node<SimpleEntry<K, V>>>();
+        private final int capacity = 1024;
+
+        public void trimEldest() {
+            SimpleEntry<K, V> eldest = this.linkedList.getFirst();
+            this.dictionary.remove(eldest.getKey());
+            this.linkedList.removeFirst();
+        }
+
+        private void access(LinkedList.Node<SimpleEntry<K, V>> node) {
+            this.linkedList.remove(node);
+            this.linkedList.addLast(node);
+        }
+
+        public void put(K key, V value) {
+            this.remove(key);
+            this.linkedList.addLast(new SimpleEntry<K, V>(key, value));
+            this.dictionary.put(key, this.linkedList.getLastNode());
+
+            while (this.dictionary.size() > this.capacity) {
+                this.trimEldest();
+            }
+        }
+
+        public V get(K key) {
+            if (!dictionary.containsKey(key)) {
+                return null;
+            }
+
+            access(dictionary.get(key));
+            return dictionary.get(key).getValue().getValue();
+        }
+
+        public boolean remove(K key) {
+            if (!dictionary.containsKey(key)) {
+                return false;
+            }
+
+            linkedList.remove(dictionary.get(key));
+            dictionary.remove(key);
+            return true;
+        }
+    }
+
     @Test
     public void testProducts() {
         Iterables.elementsEqual(ImmutableList.of(120, 60, 40, 30, 24), ImmutableList.of(products(1, 2, 3, 4, 5)));
