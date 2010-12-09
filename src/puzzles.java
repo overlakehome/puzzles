@@ -21,22 +21,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
-    public static class LinkedList<T> {
-        public static class Node<T> {
-            public T getValue() { throw new UnsupportedOperationException(); }
-            public Node<T> getNext() { throw new UnsupportedOperationException(); }
-            public Node<T> getPrevious() { throw new UnsupportedOperationException(); }
-        }
-
-        public boolean isEmpty() { throw new UnsupportedOperationException(); }
-        public T getFirst() { throw new UnsupportedOperationException(); }
-        public Node<T> getLastNode() { throw new UnsupportedOperationException(); }
-        public void remove(Node<T> t) { throw new UnsupportedOperationException(); }
-        public void removeFirst() { throw new UnsupportedOperationException(); }
-        public void addLast(Node<T> t) { throw new UnsupportedOperationException(); }
-        public void addLast(T t) { throw new UnsupportedOperationException(); }
-    }
-
     public static class LinkedDictionary<K, V> {
         private final LinkedList<SimpleEntry<K, V>> linkedList = new LinkedList<SimpleEntry<K, V>>();
         private final Map<K, LinkedList.Node<SimpleEntry<K, V>>> dictionary = new HashMap<K, LinkedList.Node<SimpleEntry<K, V>>>();
@@ -81,45 +65,44 @@ public class puzzles {
             dictionary.remove(key);
             return true;
         }
-    }
 
-    @Test
-    public void testProducts() {
-        Iterables.elementsEqual(ImmutableList.of(120, 60, 40, 30, 24), ImmutableList.of(products(1, 2, 3, 4, 5)));
+        static class LinkedList<T> {
+            public static class Node<T> {
+                public T getValue() { throw new UnsupportedOperationException(); }
+                public Node<T> getNext() { throw new UnsupportedOperationException(); }
+                public Node<T> getPrevious() { throw new UnsupportedOperationException(); }
+            }
+
+            public boolean isEmpty() { throw new UnsupportedOperationException(); }
+            public T getFirst() { throw new UnsupportedOperationException(); }
+            public Node<T> getLastNode() { throw new UnsupportedOperationException(); }
+            public void remove(Node<T> t) { throw new UnsupportedOperationException(); }
+            public void removeFirst() { throw new UnsupportedOperationException(); }
+            public void addLast(Node<T> t) { throw new UnsupportedOperationException(); }
+            public void addLast(T t) { throw new UnsupportedOperationException(); }
+        }
     }
 
     public static int[] products(int... numbers) {
-        int[] exclusiveProducts = new int[numbers.length];
-        int[] prefixProducts = new int[numbers.length];
-        int[] postfixProducts = new int[numbers.length];
+        int[] products = new int[numbers.length];
+        int[] productsOfHeader = new int[numbers.length];
+        int[] productsOfFooter = new int[numbers.length];
 
-        prefixProducts[0] = 1;
+        productsOfHeader[0] = 1;
         for (int i = 1; i < numbers.length; i++) {
-            prefixProducts[i] = prefixProducts[i-1] * numbers[i-1];
+            productsOfHeader[i] = productsOfHeader[i-1] * numbers[i-1];
         }
 
-        postfixProducts[numbers.length - 1] = 1;
+        productsOfFooter[numbers.length - 1] = 1;
         for (int i = numbers.length - 2; i >= 0; i--) {
-            postfixProducts[i] = postfixProducts[i+1] * numbers[i+1];
+            productsOfFooter[i] = productsOfFooter[i+1] * numbers[i+1];
         }
 
         for (int i = 0; i < numbers.length; i++) {
-            exclusiveProducts[i] = prefixProducts[i] * postfixProducts[i];
+            products[i] = productsOfHeader[i] * productsOfFooter[i];
         }
 
-        return exclusiveProducts;
-    }
-
-    @Test
-    public void testPermutate() {
-        Assert.assertTrue(
-                Iterables.elementsEqual(
-                    ImmutableList.of("abc", "acb", "bac", "bca", "cba", "cab"),
-                    permutate("abc".toCharArray(), 0)));
-        Assert.assertTrue(
-                Iterables.elementsEqual(
-                    ImmutableList.of("abab", "abba", "aabb", "baab", "baba", "bbaa"),
-                    permutate("abab".toCharArray(), 0)));
+        return products;
     }
 
     // http://n1b-algo.blogspot.com/2009/01/string-permutations.html
@@ -144,19 +127,6 @@ public class puzzles {
         return permutations;
     }
 
-    public static void swap(char[] chars, int i, int j) {
-        if (chars[i] != chars[j]) {
-            chars[i] ^= chars[j];
-            chars[j] ^= chars[i];
-            chars[i] ^= chars[j];
-        }
-    }
-
-    @Test
-    public void testDivide() {
-        Assert.assertEquals(1024768/7, divide(1024768, 7));
-    }
-
     public static int divide(int dividend, int divisor) {
         int bit = 1;
         int quotient = 0;
@@ -175,14 +145,6 @@ public class puzzles {
         }
 
         return quotient;
-    }
-
-    @Test
-    public void testKadane() {
-        int[] a = { -2, 1, -3, 4, -1, 2, 1, -5, 4};
-        Assert.assertTrue(Arrays.equals(new int[]{6, 3, 6}, kadane(a)));
-        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 2, 2}, kadane(new int[][] {{1, 0, 1}, {0, -1, 0}, {1, 0, 1}})));
-        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 0, 1}, kadane(new int[][] {{1, 2, -1}, {-3, -1, -4}, {1, -5, 2}})));
     }
 
     public static int[] kadane(int[][] m) {
@@ -241,56 +203,6 @@ public class puzzles {
         return new int[] { maxSum, maxHead, maxTail };
     }
 
-    @Test
-    public void testFindSmallest() {
-        try {
-            findSmallest(null);
-            Assert.fail("'numbers' must be non-null.");
-        } catch (IllegalArgumentException e) {
-        }
-
-        try {
-            findSmallest(new int[0]);
-            Assert.fail("'numbers' must not be empty.");
-        } catch (IllegalArgumentException e) {
-        }
-
-        Assert.assertEquals(6, findSmallest(new int[] {6}));
-        Assert.assertEquals(6, findSmallest(new int[] {6, 7}));
-        Assert.assertEquals(6, findSmallest(new int[] {7, 6}));
-        Assert.assertEquals(6, findSmallest(new int[] {38, 40, 55, 89, 6, 13, 20, 23, 36}));
-        Assert.assertEquals(6, findSmallest(new int[] {6, 13, 20, 23, 36, 38, 40, 55, 89}));
-        Assert.assertEquals(6, findSmallest(new int[] {13, 20, 23, 36, 38, 40, 55, 89, 6}));
-    }
-
-    public static int findSmallest(int... numbers) {
-        if (null == numbers) throw new IllegalArgumentException("'numbers' must be non-null.");
-        if (0 == numbers.length) throw new IllegalArgumentException("'numbers' must not be empty.");
-
-        return findSmallest(0, numbers.length - 1, numbers);
-    }
-
-    private static int findSmallest(int left, int right, int... numbers) {
-        if (right == left) {
-            return numbers[left];
-        } else {
-            int middle = (left + right) / 2;
-            if (numbers[right] < numbers[middle]) {
-                return findSmallest(middle + 1, right, numbers);
-            } else {
-                return findSmallest(left, middle, numbers);
-            }
-        }
-    }
-
-    @Test
-    public void testToAndFromExcelColumn() {
-        Assert.assertEquals("AB", toExcelColumn(28));
-        Assert.assertEquals("ABC", toExcelColumn(731));
-        Assert.assertEquals(28, fromExcelColumn(toExcelColumn(28)));
-        Assert.assertEquals(731, fromExcelColumn(toExcelColumn(731)));
-    }
-
     public static String toExcelColumn(int n) {
         //   26 cases :   A -   Z
         // 26^2 cases :  AA -  ZZ
@@ -325,38 +237,6 @@ public class puzzles {
         }
 
         return columns + 1;
-    }
-
-    // Design a card game http://math.hws.edu/javanotes/c5/s4.html
-    interface Deck {
-        void suffle();
-        int cardsLeft();
-        Card dealCard() throws IllegalStateException; // if the deck is empty.
-    }
-
-    interface Card {
-        int getSuit();
-        int getValue();
-    }
-
-    interface Hand {
-        void addCard(Card c);
-        boolean removeCard(Card card) throws NoSuchElementException;
-        boolean removeCard(int position) throws IndexOutOfBoundsException;
-        int getCardCount();
-        void clear();
-        Card getCard(int position);
-        void sortBySuit();
-        void sortByValue();
-    }
-
-    interface Game {
-        int getGamesPlayed();
-        int getScoresAchived();
-        void setUp(); // new Deck() and shuffle();
-        void tearDown(); // 
-        Card getCurrentCard();
-        Card getNextCard();
     }
 
     public static void subsets(int n) {
@@ -492,7 +372,7 @@ public class puzzles {
         }
     }
 
-    public static class BNode<T> {
+    public static class BNode<T> implements Comparable<BNode<T>> {
         public T item;
         public BNode<T> left;
         public BNode<T> right;
@@ -509,6 +389,19 @@ public class puzzles {
 
             return reverseInorder(current.left, n, k);
         }
+
+        // http://crackinterviewtoday.wordpress.com/2010/03/12/check-whether-given-binary-tree-is-a-bst-or-not/
+        public static <T> boolean isBST(BNode<T> current) {
+            if (null == current) return true;
+            if (null != current.left && maximum(current.left).compareTo(current) > 0) { return false; }
+            if (null != current.right && minimum(current.right).compareTo(current) < 0) { return false; }
+
+            if (!isBST(current.left) || isBST(current.right)) return false;
+            return true;
+        }
+
+        public static <T> BNode<T> maximum(BNode<T> node) { while (null != node.right) { node = node.right; } return node; }
+        public static <T> BNode<T> minimum(BNode<T> node) { while (null != node.left) { node = node.left; } return node; }
 
         public static <T> List<BNode<T>> yieldInorder(BNode<T> current) {
             if (null ==  current) return ImmutableList.of();
@@ -593,6 +486,11 @@ public class puzzles {
 
             return -1; // disjoint
         }
+
+        @Override
+        public int compareTo(BNode<T> o) {
+            return 0;
+        }
     }
 
     public static List<Integer> reservoirSamples(Iterator<Integer> iterator, int k) {
@@ -635,6 +533,10 @@ public class puzzles {
         return rand21 % 7 + 1; // 1, 2, ..., 7
     }
 
+    public static int rand5() {
+        return new Random().nextInt() % 5 + 1;
+    }
+
     public boolean matchesWildcard(String pattern, String input) {
         if (pattern.equals(input)) return true;
 
@@ -652,7 +554,7 @@ public class puzzles {
 
         if (i == pattern.length() && j == input.length()) return true;
         if ('*' == pattern.charAt(i)) return true;
-        
+
         return false;
     }
 
@@ -677,8 +579,137 @@ public class puzzles {
         return (0 == (x & x - 1)) && (x > 0);
     }
 
-    public static int rand5() {
-        return new Random().nextInt() % 5 + 1;
+    // Design a card game http://math.hws.edu/javanotes/c5/s4.html
+    interface Deck {
+        void suffle();
+        int cardsLeft();
+        Card dealCard() throws IllegalStateException; // if the deck is empty.
+    }
+
+    interface Card {
+        int getSuit();
+        int getValue();
+    }
+
+    interface Hand {
+        void addCard(Card c);
+        boolean removeCard(Card card) throws NoSuchElementException;
+        boolean removeCard(int position) throws IndexOutOfBoundsException;
+        int getCardCount();
+        void clear();
+        Card getCard(int position);
+        void sortBySuit();
+        void sortByValue();
+    }
+
+    interface Game {
+        int getGamesPlayed();
+        int getScoresAchived();
+        void setUp(); // new Deck() and shuffle();
+        void tearDown(); // 
+        Card getCurrentCard();
+        Card getNextCard();
+    }
+
+    public static class TicTacToeGameEngine {
+        public enum TicTacToePiece { None, X, O; }
+        public enum TicTacToeState { Uninitialized, Initialized, InProgress, Over; }
+        public enum TicTacToeEngineResponse { IllegalPiece, IllegalPosition, GameOver, GameInProgress }
+
+        private TicTacToeState gameState = TicTacToeState.InProgress;
+        private TicTacToePiece winningPiece = TicTacToePiece.None;
+        private TicTacToePiece currentPiece = TicTacToePiece.None;
+        private TicTacToePiece[] boardArray = new TicTacToePiece[9];
+        private final static int[][] boardLines = new int[][] {
+            {0, 1}, {3, 1}, {6, 1}, // horizontal lines
+            {0, 3}, {1, 3}, {2, 3}, // vertical lines
+            {0, 4}, {2, 2} }; // diagonal lines
+
+        // FIXME:
+        // public TicTacToeEngine(TicTacToePiece firstPiece) { initialize(firstPiece); }
+        // public TicTacToeEngineResponse reset(TicTacToePiece firstPiece) { initialize(firstPiece); }
+
+        private void initialize(TicTacToePiece firstPiece) {
+            this.boardArray = new TicTacToePiece[9];
+            this.currentPiece = firstPiece;
+            this.gameState = TicTacToeState.Initialized;
+            this.winningPiece = TicTacToePiece.None;
+        }
+
+        public TicTacToeEngineResponse movePiece(TicTacToePiece piece, int offset) {
+            if (gameState == TicTacToeState.Over) {
+                return TicTacToeEngineResponse.GameOver;
+            }
+
+            if (piece != currentPiece) {
+                return TicTacToeEngineResponse.IllegalPiece;
+            }
+
+            if (offset < 0 || offset > 9 || boardArray[offset] != TicTacToePiece.None) {
+                return TicTacToeEngineResponse.IllegalPosition;
+            }
+
+            boardArray[offset] = currentPiece;
+            updateGameState();
+
+            if (gameState == TicTacToeState.Over) {
+                return TicTacToeEngineResponse.GameOver;
+            } else {
+                return TicTacToeEngineResponse.GameInProgress;
+            }
+        }
+
+        public void updateGameState() {
+            for (int i = 0; i < boardLines.length; i++) {
+                if (3 == countPiecesUsingSteps(boardLines[i][0], boardLines[i][1], this.currentPiece)) {
+                    winningPiece = currentPiece;
+                }
+            }
+
+            gameState = TicTacToeState.Over;
+            if (winningPiece == TicTacToePiece.None) {
+                for (int i = 0; i < 9; i++) {
+                    if (boardArray[i] == TicTacToePiece.None) {
+                        gameState = TicTacToeState.InProgress;
+                        break;
+                    }
+                }
+            }
+
+            if (gameState == TicTacToeState.InProgress) {
+                currentPiece = (currentPiece == TicTacToePiece.X) ? TicTacToePiece.O : TicTacToePiece.X;
+            }
+        }
+
+        private int countPiecesUsingSteps(int offset, int step, TicTacToePiece current) {
+            for (int count = 0; count < 3; count++, offset += step) {
+                if (current != boardArray[offset]) {
+                    return count;
+                }
+            }
+
+            return 3;
+        }
+    }
+
+    public static int findSmallestOutOfCycle(int... numbers) {
+        if (null == numbers) throw new IllegalArgumentException("'numbers' must be non-null.");
+        if (0 == numbers.length) throw new IllegalArgumentException("'numbers' must not be empty.");
+
+        return findSmallestOutOfCycle(0, numbers.length - 1, numbers);
+    }
+
+    private static int findSmallestOutOfCycle(int left, int right, int... numbers) {
+        if (right == left) {
+            return numbers[left];
+        } else {
+            int middle = (left + right) / 2;
+            if (numbers[right] < numbers[middle]) {
+                return findSmallestOutOfCycle(middle + 1, right, numbers);
+            } else {
+                return findSmallestOutOfCycle(left, middle, numbers);
+            }
+        }
     }
 
     /*
@@ -806,84 +837,69 @@ public class puzzles {
         return modes;
     }
 
-    public static class TicTacToeGameEngine {
-        public enum TicTacToePiece { None, X, O; }
-        public enum TicTacToeState { Uninitialized, Initialized, InProgress, Over; }
-        public enum TicTacToeEngineResponse { IllegalPiece, IllegalPosition, GameOver, GameInProgress }
+    public static void swap(char[] chars, int i, int j) {
+        if (chars[i] != chars[j]) {
+            chars[i] ^= chars[j];
+            chars[j] ^= chars[i];
+            chars[i] ^= chars[j];
+        }
+    }
 
-        private TicTacToeState gameState = TicTacToeState.InProgress;
-        private TicTacToePiece winningPiece = TicTacToePiece.None;
-        private TicTacToePiece currentPiece = TicTacToePiece.None;
-        private TicTacToePiece[] boardArray = new TicTacToePiece[9];
-        private final static int[][] boardLines = new int[][] {
-            {0, 1}, {3, 1}, {6, 1}, // horizontal lines
-            {0, 3}, {1, 3}, {2, 3}, // vertical lines
-            {0, 4}, {2, 2} }; // diagonal lines
+    @Test
+    public void testKadane() {
+        int[] a = { -2, 1, -3, 4, -1, 2, 1, -5, 4};
+        Assert.assertTrue(Arrays.equals(new int[]{6, 3, 6}, kadane(a)));
+        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 2, 2}, kadane(new int[][] {{1, 0, 1}, {0, -1, 0}, {1, 0, 1}})));
+        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 0, 1}, kadane(new int[][] {{1, 2, -1}, {-3, -1, -4}, {1, -5, 2}})));
+    }
 
-        // FIXME:
-        // public TicTacToeEngine(TicTacToePiece firstPiece) { InitializeEngine(firstPiece); }
-        // public TicTacToeEngineResponse reset(TicTacToePiece firstPiece) { InitializeEngine(firstPiece); }
+    @Test
+    public void testProducts() {
+        Iterables.elementsEqual(ImmutableList.of(120, 60, 40, 30, 24), ImmutableList.of(products(1, 2, 3, 4, 5)));
+    }
 
-        private void InitializeEngine(TicTacToePiece firstPiece) {
-            this.boardArray = new TicTacToePiece[9];
-            this.currentPiece = firstPiece;
-            this.gameState = TicTacToeState.Initialized;
-            this.winningPiece = TicTacToePiece.None;
+    @Test
+    public void testDivide() {
+        Assert.assertEquals(1024768/7, divide(1024768, 7));
+    }
+
+    @Test
+    public void testPermutate() {
+        Assert.assertTrue(Iterables.elementsEqual(
+            ImmutableList.of("abc", "acb", "bac", "bca", "cba", "cab"),
+            permutate("abc".toCharArray(), 0)));
+        Assert.assertTrue(Iterables.elementsEqual(
+            ImmutableList.of("abab", "abba", "aabb", "baab", "baba", "bbaa"),
+            permutate("abab".toCharArray(), 0)));
+    }
+
+    @Test
+    public void testFindSmallestOutOfCycle() {
+        try {
+            findSmallestOutOfCycle(null);
+            Assert.fail("'numbers' must be non-null.");
+        } catch (IllegalArgumentException e) {
         }
 
-        public TicTacToeEngineResponse movePiece(TicTacToePiece piece, int offset) {
-            if (gameState == TicTacToeState.Over) {
-                return TicTacToeEngineResponse.GameOver;
-            }
-
-            if (piece != currentPiece) {
-                return TicTacToeEngineResponse.IllegalPiece;
-            }
-
-            if (offset < 0 || offset > 9 || boardArray[offset] != TicTacToePiece.None) {
-                return TicTacToeEngineResponse.IllegalPosition;
-            }
-
-            boardArray[offset] = currentPiece;
-            updateGameState();
-
-            if (gameState == TicTacToeState.Over) {
-                return TicTacToeEngineResponse.GameOver;
-            } else {
-                return TicTacToeEngineResponse.GameInProgress;
-            }
+        try {
+            findSmallestOutOfCycle(new int[0]);
+            Assert.fail("'numbers' must not be empty.");
+        } catch (IllegalArgumentException e) {
         }
 
-        public void updateGameState() {
-            for (int i = 0; i < boardLines.length; i++) {
-                if (3 == countPiecesUsingSteps(boardLines[i][0], boardLines[i][1], this.currentPiece)) {
-                    winningPiece = currentPiece;
-                }
-            }
+        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {6}));
+        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {6, 7}));
+        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {7, 6}));
+        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {38, 40, 55, 89, 6, 13, 20, 23, 36}));
+        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {6, 13, 20, 23, 36, 38, 40, 55, 89}));
+        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {13, 20, 23, 36, 38, 40, 55, 89, 6}));
+    }
 
-            gameState = TicTacToeState.Over;
-            if (winningPiece == TicTacToePiece.None) {
-                for (int i = 0; i < 9; i++) {
-                    if (boardArray[i] == TicTacToePiece.None) {
-                        gameState = TicTacToeState.InProgress;
-                        break;
-                    }
-                }
-            }
-
-            if (gameState == TicTacToeState.InProgress) {
-                currentPiece = (currentPiece == TicTacToePiece.X) ? TicTacToePiece.O : TicTacToePiece.X;
-            }
-        }
-
-        private int countPiecesUsingSteps(int offset, int step, TicTacToePiece current) {
-            for (int count = 0; count < 3; count++, offset += step) {
-                if (current != boardArray[offset]) {
-                    return count;
-                }
-            }
-
-            return 3;
-        }
+    @Test
+    public void testToAndFromExcelColumn() {
+        Assert.assertEquals("AB", toExcelColumn(28));
+        Assert.assertEquals("ABC", toExcelColumn(731));
+        Assert.assertEquals(28, fromExcelColumn(toExcelColumn(28)));
+        Assert.assertEquals(731, fromExcelColumn(toExcelColumn(731)));
     }
 }
