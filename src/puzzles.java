@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
 
@@ -20,7 +21,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
-
     public static class LinkedList<T> {
         public static class Node<T> {
             public T getValue() { throw new UnsupportedOperationException(); }
@@ -498,15 +498,16 @@ public class puzzles {
         public BNode<T> right;
         public BNode<T> parent;
 
-        public static <T> void findKthLargest(BNode<T> current, int k) {
-            if (null == current || k == 0) return;
+        public static <T> BNode<T> reverseInorder(BNode<T> current, int n, AtomicInteger k) {
+            if (null == current) return current;
 
-            findKthLargest(current.right, k);
-            if (0 == --k) {
+            reverseInorder(current.right, n, k);
+            if (k.incrementAndGet() == n) {
                 System.out.print(current.item);
+                return current;
             }
 
-            findKthLargest(current.left, k);
+            return reverseInorder(current.left, n, k);
         }
 
         public static <T> List<BNode<T>> yieldInorder(BNode<T> current) {
@@ -803,5 +804,86 @@ public class puzzles {
         }
 
         return modes;
+    }
+
+    public static class TicTacToeGameEngine {
+        public enum TicTacToePiece { None, X, O; }
+        public enum TicTacToeState { Uninitialized, Initialized, InProgress, Over; }
+        public enum TicTacToeEngineResponse { IllegalPiece, IllegalPosition, GameOver, GameInProgress }
+
+        private TicTacToeState gameState = TicTacToeState.InProgress;
+        private TicTacToePiece winningPiece = TicTacToePiece.None;
+        private TicTacToePiece currentPiece = TicTacToePiece.None;
+        private TicTacToePiece[] boardArray = new TicTacToePiece[9];
+        private final static int[][] boardLines = new int[][] {
+            {0, 1}, {3, 1}, {6, 1}, // horizontal lines
+            {0, 3}, {1, 3}, {2, 3}, // vertical lines
+            {0, 4}, {2, 2} }; // diagonal lines
+
+        // FIXME:
+        // public TicTacToeEngine(TicTacToePiece firstPiece) { InitializeEngine(firstPiece); }
+        // public TicTacToeEngineResponse reset(TicTacToePiece firstPiece) { InitializeEngine(firstPiece); }
+
+        private void InitializeEngine(TicTacToePiece firstPiece) {
+            this.boardArray = new TicTacToePiece[9];
+            this.currentPiece = firstPiece;
+            this.gameState = TicTacToeState.Initialized;
+            this.winningPiece = TicTacToePiece.None;
+        }
+
+        public TicTacToeEngineResponse movePiece(TicTacToePiece piece, int offset) {
+            if (gameState == TicTacToeState.Over) {
+                return TicTacToeEngineResponse.GameOver;
+            }
+
+            if (piece != currentPiece) {
+                return TicTacToeEngineResponse.IllegalPiece;
+            }
+
+            if (offset < 0 || offset > 9 || boardArray[offset] != TicTacToePiece.None) {
+                return TicTacToeEngineResponse.IllegalPosition;
+            }
+
+            boardArray[offset] = currentPiece;
+            updateGameState();
+
+            if (gameState == TicTacToeState.Over) {
+                return TicTacToeEngineResponse.GameOver;
+            } else {
+                return TicTacToeEngineResponse.GameInProgress;
+            }
+        }
+
+        public void updateGameState() {
+            for (int i = 0; i < boardLines.length; i++) {
+                if (3 == countPiecesUsingSteps(boardLines[i][0], boardLines[i][1], this.currentPiece)) {
+                    winningPiece = currentPiece;
+                }
+            }
+
+            gameState = TicTacToeState.Over;
+            if (winningPiece == TicTacToePiece.None) {
+                for (int i = 0; i < 9; i++) {
+                    if (boardArray[i] == TicTacToePiece.None) {
+                        gameState = TicTacToeState.InProgress;
+                        break;
+                    }
+                }
+            }
+
+            if (gameState == TicTacToeState.InProgress) {
+                currentPiece = (currentPiece == TicTacToePiece.X) ? TicTacToePiece.O : TicTacToePiece.X;
+            }
+        }
+
+        private int countPiecesUsingSteps(int offset, int step, TicTacToePiece current) {
+            for (int count = 0; count < 3; count++, offset += step) {
+                if (current != boardArray[offset]) {
+                    return count;
+                }
+            }
+
+            return 3;
+        }
     }
 }
