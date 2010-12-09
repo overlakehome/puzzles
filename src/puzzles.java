@@ -285,6 +285,7 @@ public class puzzles {
             swap(elements, i, j);
         }
 
+        // to print the k-th smallest, if (i == k) System.out.print(elements[i]);
         swap(elements, i, right);
         quicksort(elements, left, i - 1);
         quicksort(elements, i + 1, right);
