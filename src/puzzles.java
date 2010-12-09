@@ -401,13 +401,21 @@ public class puzzles {
         }
     }
 
-    public static class BNode<T> implements Comparable<BNode<T>> {
+    public static class BNode<T extends Comparable<T>> implements Comparable<BNode<T>> {
         public T item;
         public BNode<T> left;
         public BNode<T> right;
         public BNode<T> parent;
 
-        public static <T> BNode<T> reverseInorder(BNode<T> current, int n, AtomicInteger k) {
+        public static <T extends Comparable<T>> BNode<T> of(T item, BNode<T> left, BNode<T> right) {
+            BNode<T> node = new BNode<T>();
+            node.item = item;
+            node.left = left;
+            node.right = right;
+            return node;
+        }
+
+        public static <T extends Comparable<T>> BNode<T> reverseInorder(BNode<T> current, int n, AtomicInteger k) {
             if (null == current) return current;
 
             reverseInorder(current.right, n, k);
@@ -420,7 +428,7 @@ public class puzzles {
         }
 
         // http://crackinterviewtoday.wordpress.com/2010/03/12/check-whether-given-binary-tree-is-a-bst-or-not/
-        public static <T> boolean isBST(BNode<T> current) {
+        public static <T extends Comparable<T>> boolean isBST(BNode<T> current) {
             if (null == current) return true;
             if (null != current.left && maximum(current.left).compareTo(current) > 0) { return false; }
             if (null != current.right && minimum(current.right).compareTo(current) < 0) { return false; }
@@ -429,10 +437,38 @@ public class puzzles {
             return true;
         }
 
-        public static <T> BNode<T> maximum(BNode<T> node) { while (null != node.right) { node = node.right; } return node; }
-        public static <T> BNode<T> minimum(BNode<T> node) { while (null != node.left) { node = node.left; } return node; }
+        public static <T extends Comparable<T>> BNode<T> maximum(BNode<T> node) { while (null != node.right) { node = node.right; } return node; }
+        public static <T extends Comparable<T>> BNode<T> minimum(BNode<T> node) { while (null != node.left) { node = node.left; } return node; }
 
-        public static <T> List<BNode<T>> yieldInorder(BNode<T> current) {
+        public static <T extends Comparable<T>> List<T> yieldInorder(BNode<T> current, BNode<T> left, BNode<T> right) {
+            // BNode<T> ancestor = findLowestCommonAncestor(current, left, right);
+            if (null ==  current) return ImmutableList.of();
+
+            List<T> output = new ArrayList<T>();
+            if (current.compareTo(left) >= 0 && current.compareTo(right) <= 0)
+                output.add(current.item);
+            if (current.compareTo(left) > 0)
+                output.addAll(yieldInorder(current.left, left, right));
+            if (current.compareTo(right) < 0)
+                output.addAll(yieldInorder(current.right, left, right));
+            return output;
+        }
+
+        public static <T extends Comparable<T>> BNode<T> findLowestCommonAncestor(BNode<T> current, BNode<T> left, BNode<T> right) {
+            if (null == current) {
+                return current;
+            }
+
+            if (current.compareTo(left) > 0 && current.compareTo(right) > 0) {
+                return findLowestCommonAncestor(current.left, left, right);
+            } else if (current.compareTo(left) < 0 && current.compareTo(right) < 0) {
+                return findLowestCommonAncestor(current.right, left, right);
+            }
+
+            return current;
+        }
+
+        public static <T extends Comparable<T>> List<BNode<T>> yieldInorder(BNode<T> current) {
             if (null ==  current) return ImmutableList.of();
 
             List<BNode<T>> output = new ArrayList<BNode<T>>();
@@ -442,7 +478,7 @@ public class puzzles {
             return output;
         }
 
-        public static <T> List<BNode<T>> yieldInorderFast(BNode<T> current) {
+        public static <T extends Comparable<T>> List<BNode<T>> yieldInorderFast(BNode<T> current) {
             List<BNode<T>> output = new ArrayList<BNode<T>>();
             Stack<BNode<T>> stack = new Stack<BNode<T>>();
 
@@ -460,7 +496,7 @@ public class puzzles {
             return output;
         }
 
-        public static <T> List<BNode<T>> yieldPreorder(BNode<T> current) {
+        public static <T extends Comparable<T>> List<BNode<T>> yieldPreorder(BNode<T> current) {
             List<BNode<T>> output = new ArrayList<BNode<T>>();
             Stack<BNode<T>> stack = new Stack<BNode<T>>();
 
@@ -477,7 +513,7 @@ public class puzzles {
             return output;
         }
 
-        public static <T> List<BNode<T>> yieldPostorder(BNode<T> current) {
+        public static <T extends Comparable<T>> List<BNode<T>> yieldPostorder(BNode<T> current) {
             List<BNode<T>> output = new ArrayList<BNode<T>>();
             Stack<BNode<T>> stack = new Stack<BNode<T>>();
 
@@ -498,11 +534,11 @@ public class puzzles {
             return output;
         }
 
-        public static <T> int findHeight(BNode<T> current) {
+        public static <T extends Comparable<T>> int findHeight(BNode<T> current) {
             return null == current ? -1 : 1 + Math.max(findHeight(current.left), findHeight(current.right));
         }
 
-        public static <T> int findDistance(BNode<T> lhs, BNode<T> rhs) {
+        public static <T extends Comparable<T>> int findDistance(BNode<T> lhs, BNode<T> rhs) {
             Map<BNode<T>, Integer> map = new HashMap<BNode<T>, Integer>();
             for (int i = 0; null != lhs; lhs = lhs.parent) {
                 map.put(lhs, i++);
@@ -518,7 +554,12 @@ public class puzzles {
 
         @Override
         public int compareTo(BNode<T> o) {
-            return 0;
+            return this.item.compareTo(o.item);
+        }
+
+        @Override
+        public String toString() {
+            return item.toString();
         }
     }
 
@@ -640,7 +681,7 @@ public class puzzles {
         Card getNextCard();
     }
 
-    public static class TicTacToeGameEngine {
+    public static class TicTacToeEngine {
         public enum TicTacToePiece { None, X, O; }
         public enum TicTacToeState { Uninitialized, Initialized, InProgress, Over; }
         public enum TicTacToeEngineResponse { IllegalPiece, IllegalPosition, GameOver, GameInProgress }
@@ -654,10 +695,8 @@ public class puzzles {
             {0, 3}, {1, 3}, {2, 3}, // vertical lines
             {0, 4}, {2, 2} }; // diagonal lines
 
-        // FIXME:
-        // public TicTacToeEngine(TicTacToePiece firstPiece) { initialize(firstPiece); }
-        // public TicTacToeEngineResponse reset(TicTacToePiece firstPiece) { initialize(firstPiece); }
-
+        public TicTacToeEngine(TicTacToePiece firstPiece) { initialize(firstPiece); }
+        public TicTacToeEngineResponse reset(TicTacToePiece firstPiece) { initialize(firstPiece); return null; }
         private void initialize(TicTacToePiece firstPiece) {
             this.boardArray = new TicTacToePiece[9];
             this.currentPiece = firstPiece;
@@ -945,5 +984,26 @@ public class puzzles {
         Assert.assertEquals("ABC", toExcelColumn(731));
         Assert.assertEquals(28, fromExcelColumn(toExcelColumn(28)));
         Assert.assertEquals(731, fromExcelColumn(toExcelColumn(731)));
+    }
+
+    @Test
+    public void testYieldInorderLeftToRight() {
+        BNode<Integer> i12 = BNode.of(12, null, null);
+        BNode<Integer> i17 = BNode.of(17, null, null);
+        BNode<Integer> i15 = BNode.of(15, i12, i17);
+        BNode<Integer> i8 = BNode.of(8, null, null);
+        BNode<Integer> i10 = BNode.of(10, i8, i15);
+        BNode<Integer> i2 = BNode.of(2, null, null);
+        BNode<Integer> i5 = BNode.of(5, i2, i10);
+        BNode<Integer> i20 = BNode.of(20, null, null);
+        BNode<Integer> i24 = BNode.of(24, null, null);
+        BNode<Integer> i22 = BNode.of(22, i20, i24);
+        BNode<Integer> i27 = BNode.of(27, null, null);
+        BNode<Integer> i25 = BNode.of(25, i22, i27);
+        BNode<Integer> i19 = BNode.of(19, i5, i25);
+        List<Integer> i13_21 = BNode.yieldInorder(i19, BNode.of(13, null, null), BNode.of(21, null, null));
+        List<Integer> i12_22 = BNode.yieldInorder(i19, BNode.of(12, null, null), BNode.of(22, null, null));
+        Assert.assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 17, 20), i13_21));
+        Assert.assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 12, 17, 22, 20), i12_22));
     }
 }
