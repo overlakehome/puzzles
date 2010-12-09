@@ -57,9 +57,9 @@ public class puzzles {
                 } else if (!processed[e.y] || directed) {
                     System.out.print(String.format("processed edge (%d, %d)", v, e.y));
                 }
-            }
 
-            processed[v] = true;
+                processed[v] = true;
+            }
         }
 
         public void bfs(int start) {
@@ -71,14 +71,13 @@ public class puzzles {
                 int v = queue.remove();
                 processed[v] = true;
                 for (Edge e : edges[v]) {
-                    if (!processed[e.y] || directed) {
-                        System.out.print(String.format("processed edge (%d, %d)", v, e.y));
-                    }
-
                     if (!discovered[e.y]) {
                         queue.add(e.y);
                         discovered[e.y] = true;
                         parents[e.y] = v;
+                        System.out.print(String.format("processed edge (%d, %d)", v, e.y));
+                    } else if (!processed[e.y] || directed) {
+                        System.out.print(String.format("processed edge (%d, %d)", v, e.y));
                     }
                 }
 
@@ -154,6 +153,21 @@ public class puzzles {
                     if (!isInTrees[x] && distance > distances[x]) {
                         v = x;
                         distance = distances[x];
+                    }
+                }
+            }
+        }
+
+        public void floyd() {
+            int[][] matrix = new int[3][3];
+            int throughK;
+            for (int k = 0; k < matrix.length; k++) {
+                for (int i = 0; i < matrix.length; i++) {
+                    for (int j = 0; j < matrix.length; j++) {
+                        throughK = matrix[i][k] + matrix[k][j];
+                        if (throughK < matrix[i][j]) {
+                            matrix[i][j] = throughK;
+                        }
                     }
                 }
             }
