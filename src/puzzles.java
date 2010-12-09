@@ -23,8 +23,29 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
-    
+    public static List<String> findLongestCommonSubstring(char[] lhs, char[] rhs) {
+        int[][] spans = new int[lhs.length][rhs.length];
+        int longest = 0;
+        List<String> lcs = new ArrayList<String>();
 
+        for (int i = 0; i < lhs.length; i++) {
+            for (int j = 0; j < rhs.length; j++) {
+                if (lhs[i] == rhs[j]) {
+                    spans[i][j] = (i == 0 || j == 0) ? 1 : spans[i - 1][j - 1] + 1;
+                    if (spans[i][j] > longest) {
+                        longest = spans[i][j];
+                        lcs.clear();
+                    }
+
+                    if (spans[i][j] == longest) {
+                        lcs.add(new String(lhs, i - longest + 1, longest));
+                    }
+                }
+            }
+        }
+
+        return lcs;
+    }
 
     public static class Edge {
         public int y;
