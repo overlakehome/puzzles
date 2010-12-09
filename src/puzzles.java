@@ -23,14 +23,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
-
     public static List<Integer> knapsackUnbounded(int[] values, int[] costs, int capacity) {
         int[] sums = new int[capacity + 1];
         int[] bests = new int[capacity + 1];
-        for (int c = 0; c < costs.length; c++)
-        {
-            for (int i = 0; i <= capacity; i++)
-            {
+        for (int c = 0; c < costs.length; c++) {
+            for (int i = 0; i <= capacity; i++) {
                 if (costs[c] > i) continue;
                 if (sums[i] > sums[i - costs[c]] + values[c]) continue;
                 sums[i] = sums[i - costs[c]] + values[c];
@@ -39,17 +36,16 @@ public class puzzles {
         }
 
         List<Integer> knapsack = new ArrayList<Integer>();
-        while (capacity > 0)
-        {
+        while (capacity > 0) {
             knapsack.add(bests[capacity]);
             capacity -= costs[bests[capacity]];
         }
+
         return knapsack;
     }
 
     // http://www.animal.ahrgr.de/showAnimationDetails.php3?lang=en&anim=18
-    public static List<Integer> knapsack01(int[] values, int[] costs, int capacity)
-    {
+    public static List<Integer> knapsack01(int[] values, int[] costs, int capacity) {
         int[][] sums = new int[costs.length + 1][capacity + 1];
         for (int n = 0; n < sums[0][1]; n++) { sums[0][n] = 0; }
 
@@ -65,8 +61,7 @@ public class puzzles {
         }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < sums.length; i++)
-        {
+        for (int i = 0; i < sums.length; i++) {
             for (int j = 0; j < sums[0].length; j++)
                 sb.append(String.format("{0,2}, ", sums[i][j]));
             sb.append("\r\n");
@@ -74,10 +69,8 @@ public class puzzles {
         System.out.print(sb);
 
         List<Integer> knapsack = new ArrayList<Integer>();
-        for (int k = values.length, c = k - 1; k > 0; k--, c--)
-        {
-            if (sums[k][capacity] != sums[k - 1][capacity])
-            {
+        for (int k = values.length, c = k - 1; k > 0; k--, c--) {
+            if (sums[k][capacity] != sums[k - 1][capacity]) {
                 knapsack.add(c);
                 capacity -= costs[c];
             }
