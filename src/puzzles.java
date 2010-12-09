@@ -262,6 +262,34 @@ public class puzzles {
         }
     }
 
+    public static int median3(int[] elements, int left, int right) {
+        int center = (left + right) / 2;
+        if (elements[left] > elements[center]) swap(elements, left, center);
+        if (elements[left] > elements[right]) swap(elements, left, right);
+        if (elements[center] > elements[right]) swap(elements, center, right);
+        swap(elements, center, right - 1); // place pivot at position right - 1;
+        return elements[right - 1];
+    }
+
+    public static void quicksort(int[] elements, int left, int right) {
+        if (left >= right) return;
+
+        int pivot = elements[right];
+        int i = left;
+        int j = right - 1;
+
+        while (true) {
+            while (elements[i] < pivot) i++;
+            while (j > 0 && elements[j] > pivot) j--;
+            if (i >= j) break;
+            swap(elements, i, j);
+        }
+
+        swap(elements, i, right);
+        quicksort(elements, left, i - 1);
+        quicksort(elements, i + 1, right);
+    }
+
     public static void mergeSort(int[] elements) {
         int[] temp = new int[elements.length];
         mergeSort(elements, temp, 0, elements.length - 1);
@@ -843,6 +871,21 @@ public class puzzles {
             chars[j] ^= chars[i];
             chars[i] ^= chars[j];
         }
+    }
+
+    public static void swap(int[] ints, int i, int j) {
+        if (ints[i] != ints[j]) {
+            ints[i] ^= ints[j];
+            ints[j] ^= ints[i];
+            ints[i] ^= ints[j];
+        }
+    }
+
+    @Test
+    public void testQuicksort() {
+        int[] input = new int[] {44, 75, 23, 43, 55, 12, 64, 77, 33};
+        quicksort(input, 0, 8);
+        Assert.assertTrue(Arrays.equals(new int[]{12, 23, 33, 43, 44, 55, 64, 75, 77}, input));
     }
 
     @Test
