@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
@@ -24,6 +23,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
+    
+
+
     public static class Edge {
         public int y;
         public int weight;
@@ -668,6 +670,21 @@ public class puzzles {
         }
     }
 
+    public static int weighedChoice(int... weights) {
+        int sum = 0;
+        for (int i = 0; i < weights.length; i++) {
+            sum += weights[i];
+        }
+
+        int random = new Random().nextInt(sum);
+        for (int i = 0; i < weights.length; i++, random -= weights[i]) {
+            if (random < weights[i]) return i;
+        }
+
+        // http://download.oracle.com/javase/1.4.2/docs/guide/lang/assert.html
+        throw new RuntimeException("This bug should go unhandled.");
+    }
+
     public static List<Integer> reservoirSamples(Iterator<Integer> iterator, int k) {
         List<Integer> samples = new ArrayList<Integer>();
         int count = 0;
@@ -1111,4 +1128,44 @@ public class puzzles {
         Assert.assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 17, 20), i13_21));
         Assert.assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 12, 17, 22, 20), i12_22));
     }
+    
+//  public static int CountOnes(int value) {
+//      unchecked {
+//          uint x = (uint)value;
+//          x = ((0xaaaaaaaa & x) >> 1) + (0x55555555 & x);
+//          x = ((0xcccccccc & x) >> 2) + (0x33333333 & x);
+//          x = ((0xf0f0f0f0 & x) >> 4) + (0x0f0f0f0f & x);
+//          x = ((0xff00ff00 & x) >> 8) + (0x00ff00ff & x);
+//          x = (x >> 16) + (0x0000ffff & x);
+//          return (int)x;
+//      }
+//  }
+//
+//  public static int Reverse(int value) {
+//      unchecked {
+//          uint x = (uint)value;
+//          x = x >> 16 | (0x0000ffff & x) << 16;
+//          x = (0xff00ff00 & x) >> 8 | (0x00ff00ff & x) << 8;
+//          x = (0xf0f0f0f0 & x) >> 4 | (0x0f0f0f0f & x) << 4;
+//          x = (0xcccccccc & x) >> 2 | (0x33333333 & x) << 2;
+//          x = (0xaaaaaaaa & x) >> 1 | (0x55555555 & x) << 1;
+//          return (int)x;
+//      };
+//  }
+//
+//  public static int CountTrailingZeros(int value) {
+//      return CountOnes((value & -value) - 1);
+//  }
+//
+//  public static int CountLeadingZeros(int value) {
+//      unchecked {
+//          uint x = (uint)value;
+//          x |= x >>= 1;
+//          x |= x >>= 2;
+//          x |= x >>= 4;
+//          x |= x >>= 8;
+//          x |= x >>= 16;
+//          return CountOnes((int)~x);
+//      }
+//  }
 }
