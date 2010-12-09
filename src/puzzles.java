@@ -4,11 +4,14 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
@@ -21,6 +24,108 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
+    public static class Edge {
+        public int y;
+        public int weight;
+        public static Edge of(int y, int weight) { Edge e = new Edge(); e.y = y; e.weight = weight; return e; }
+    }
+
+    public static class Graph {
+        public List<Edge>[] edges;
+        int verticeCount; 
+        int edgeCount;
+        boolean directed;
+
+        boolean[] discovered = new boolean[edges.length];
+        boolean[] processed = new boolean[edges.length];
+        int[] parents = new int[edges.length];
+        int[] colors = new int[edges.length];
+
+        public void addEdge(int x, int y, int weight) {
+            edges[x].add(Edge.of(y, weight));
+            if (!directed) {
+                edges[y].add(Edge.of(x, weight));
+            }
+        }
+
+        public void dfs(int v) {
+            discovered[v] = true;
+            for (Edge e : edges[v]) {
+                if (!discovered[e.y]) {
+                    parents[e.y] = v;
+                    System.out.print(String.format("processed edge (%d, %d)", v, e.y));
+                    dfs(e.y);
+                } else if (!processed[e.y] || directed) {
+                    System.out.print(String.format("processed edge (%d, %d)", v, e.y));
+                }
+            }
+
+            processed[v] = true;
+        }
+
+        public void bfs(int start) {
+            Queue<Integer> queue = new LinkedList<Integer>();
+            queue.add(start);
+            discovered[start] = true;
+
+            while (!queue.isEmpty()) {
+                int v = queue.remove();
+                processed[v] = true;
+                for (Edge e : edges[v]) {
+                    if (!processed[e.y] || directed) {
+                        System.out.print(String.format("processed edge (%d, %d)", v, e.y));
+                    }
+
+                    if (!discovered[e.y]) {
+                        queue.add(e.y);
+                        discovered[e.y] = true;
+                        parents[e.y] = v;
+                    }
+                }
+
+                System.out.print(String.format("processed vertex (%d)", v));
+            }
+        }
+
+        public int countConnectedComponents() {
+            int count = 0;
+            for (int v = 0; v < edges.length; v++) {
+                if (!discovered[v]) {
+                    count++;
+                    bfs(v);
+                }
+            }
+
+            return count;
+        }
+
+        public void findPath(int start, int end) {
+            if (end == start || -1 == end) {
+                System.out.print(String.format("%d ", start));
+            } else {
+                findPath(start, parents[end]);
+                System.out.print(String.format("%d", end));
+            }
+        }
+
+        Function<Pair<Integer, Integer>, Boolean> processEdge = new Function<puzzles.Pair<Integer,Integer>, Boolean>() {
+            @Override
+            public Boolean apply(Pair<Integer, Integer> edge) {
+                if (colors[edge.First] == colors[edge.Second]) {
+                    return false;
+                }
+
+                colors[edge.Second] = ~colors[edge.First]; // complement the color.
+                return true;
+            }
+        };
+    }
+
+    public static class Pair<K, V> {
+        public K First;
+        public V Second;
+    }
+
     public static class LinkedDictionary<K, V> {
         private final LinkedList<SimpleEntry<K, V>> linkedList = new LinkedList<SimpleEntry<K, V>>();
         private final Map<K, LinkedList.Node<SimpleEntry<K, V>>> dictionary = new HashMap<K, LinkedList.Node<SimpleEntry<K, V>>>();
