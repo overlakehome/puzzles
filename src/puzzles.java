@@ -23,6 +23,36 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
+    public int matchPattern(String t, String p) {
+        int m = p.length();
+        int hashP = hash(p.toCharArray(), 0, m);
+        int hashT = hash(t.toCharArray(), 0, m);
+        if (hashP == hashT) { return 0; }
+
+        int a_to_m_minus_1 = 1; // 31 ^ (m - 1)
+        for (int i = 0; i < m - 1; i++) {
+            a_to_m_minus_1 = (a_to_m_minus_1 << 5) - a_to_m_minus_1;
+        }
+
+        for (int i = 1; i < t.length() - m + 1; i++) {
+            hashT = hashT - a_to_m_minus_1 * t.toCharArray()[i - 1];
+            hashT = (hashT << 5) - hashT;
+            hashT = hashT + t.toCharArray()[i + m - 1];
+            if (hashP == hashT) { return i; }
+        }
+
+        return -1;
+    }
+
+    public static int hash(char[] chars, int offset, int length) {
+        int hash = 0;
+        for (int i = 0; i < length; i++) {
+            hash = (hash << 5) - hash + chars[offset + i];
+        }
+
+        return hash;
+    }
+
     public static class Edge {
         public int y;
         public int weight;
@@ -1195,6 +1225,16 @@ public class puzzles {
             ints[j] ^= ints[i];
             ints[i] ^= ints[j];
         }
+    }
+
+    @Test
+    public void testMatchPattern() {
+        Assert.assertEquals(2, matchPattern("aaabc", "abc"));
+        Assert.assertEquals(2, matchPattern("aaabcc", "abc"));
+        Assert.assertEquals(0, matchPattern("abc", "abc"));
+        Assert.assertEquals(0, matchPattern("abcc", "abc"));
+        Assert.assertEquals(-1, matchPattern("abc", "xyz"));
+        Assert.assertEquals(-1, matchPattern("abcc", "xyz"));
     }
 
     @Test
