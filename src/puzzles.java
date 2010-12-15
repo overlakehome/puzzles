@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
-import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
@@ -24,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
+
     public static class Edge {
         public int y;
         public int weight;
@@ -291,6 +291,36 @@ public class puzzles {
         }
 
         return hash;
+    }
+
+    public static class MinStack<T extends Comparable<T>> {
+        private T mininum;
+        private Stack<T> stack = new Stack<T>();
+
+        public T getMin() {
+            return mininum;
+        }
+
+        public MinStack<T> push(T element) {
+            if (null == mininum || element.compareTo(mininum) <= 0) {
+                stack.push(mininum);
+                stack.push(element);
+                mininum = element;
+            } else {
+                stack.push(element);
+            }
+
+            return this;
+        }
+
+        public T pop() {
+            T element = stack.pop();
+            if (element.compareTo(mininum) == 0) {
+                mininum = stack.pop();
+            }
+
+            return element;
+        }
     }
 
     public static int[] products(int... numbers) {
@@ -1226,6 +1256,25 @@ public class puzzles {
             ints[j] ^= ints[i];
             ints[i] ^= ints[j];
         }
+    }
+
+    @Test
+    public void testMinStack() {
+        MinStack<Integer> stack = new MinStack<Integer>();
+        stack.push(2).push(6).push(4).push(1).push(5).push(1);
+        Assert.assertTrue(1 == stack.getMin());
+        Assert.assertTrue(1 == stack.pop());
+        Assert.assertTrue(1 == stack.getMin());
+        Assert.assertTrue(5 == stack.pop());
+        Assert.assertTrue(1 == stack.getMin());
+        Assert.assertTrue(1 == stack.pop());
+        Assert.assertTrue(2 == stack.getMin());
+        Assert.assertTrue(4 == stack.pop());
+        Assert.assertTrue(2 == stack.getMin());
+        Assert.assertTrue(6 == stack.pop());
+        Assert.assertTrue(2 == stack.getMin());
+        Assert.assertTrue(2 == stack.pop());
+        Assert.assertTrue(null == stack.getMin());
     }
 
     @Test
