@@ -63,7 +63,7 @@ public class puzzles {
             }
         }
 
-        public void bfs(int start, Function<Integer, Void> enter, Function<Integer, Void> leave) {
+        public void bfs(int start, Function<Integer, Void> enter, Function<Pair<Integer, Integer>, Void> cross, Function<Integer, Void> leave) {
             Queue<Integer> queue = new LinkedList<Integer>();
             queue.add(start);
             discovered[start] = true;
@@ -86,17 +86,30 @@ public class puzzles {
             }
         }
 
-        public int countConnectedComponents() {
+        public int twoColorComponents() {
             int count = 0;
             for (int v = 0; v < edges.length; v++) {
                 if (!discovered[v]) {
                     count++;
-                    bfs(v, null, null);
+                    colors[v] = 0;
+                    bfs(v, null, complementColor, null);
                 }
             }
 
             return count;
         }
+
+        private Function<Pair<Integer, Integer>, Void> complementColor = new Function<puzzles.Pair<Integer, Integer>, Void>() {
+            @Override
+            public Void apply(Pair<Integer, Integer> edge) {
+                if (colors[edge.First] == colors[edge.Second]) {
+                    throw new IllegalStateException(String.format("This is not a bipartitle due to (%d, %d)", edge.First, edge.Second));
+                }
+
+                colors[edge.Second] = ~colors[edge.First];
+                return null;
+            }
+        };
 
         public void prim(int start) {
             boolean[] isInTrees = new boolean [this.edges.length];
@@ -183,17 +196,6 @@ public class puzzles {
             }
         }
 
-        Function<Pair<Integer, Integer>, Boolean> processEdge = new Function<puzzles.Pair<Integer,Integer>, Boolean>() {
-            @Override
-            public Boolean apply(Pair<Integer, Integer> edge) {
-                if (colors[edge.First] == colors[edge.Second]) {
-                    return false;
-                }
-
-                colors[edge.Second] = ~colors[edge.First]; // complement the color.
-                return true;
-            }
-        };
     }
 
     public static class Pair<K, V> {
