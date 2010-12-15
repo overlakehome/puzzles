@@ -23,6 +23,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
+    public interface Action<T> {
+        void apply(T t);
+    }
+
+    public interface Action2<T, V> {
+        void apply(T t, V v);
+    }
 
     public static class Edge {
         public int y;
@@ -48,22 +55,24 @@ public class puzzles {
             }
         }
 
-        public void dfs(int v) {
+        public void dfs(int v, Action<Integer> enter, Action2<Integer, Integer> cross, Action<Integer> leave) {
             discovered[v] = true;
+            enter.apply(v);
             for (Edge e : edges[v]) {
                 if (!discovered[e.y]) {
                     parents[e.y] = v;
-                    System.out.print(String.format("processed edge (%d, %d)", v, e.y));
-                    dfs(e.y);
+                    cross.apply(v, e.y);
+                    dfs(e.y, enter, cross, leave);
                 } else if (!processed[e.y] || directed) {
-                    System.out.print(String.format("processed edge (%d, %d)", v, e.y));
+                    cross.apply(v, e.y);
                 }
 
+                leave.apply(v);
                 processed[v] = true;
             }
         }
 
-        public void bfs(int start, Function<Integer, Void> enter, Function<Pair<Integer, Integer>, Void> cross, Function<Integer, Void> leave) {
+        public void bfs(int start, Action<Integer> enter, Action2<Integer, Integer> cross, Action<Integer> leave) {
             Queue<Integer> queue = new LinkedList<Integer>();
             queue.add(start);
             discovered[start] = true;
@@ -73,12 +82,14 @@ public class puzzles {
                 enter.apply(v);
                 processed[v] = true;
                 for (Edge e : edges[v]) {
+                    if (!processed[e.y] || directed) {
+                        cross.apply(v, e.y);
+                    }
+
                     if (!discovered[e.y]) {
                         queue.add(e.y);
                         discovered[e.y] = true;
                         parents[e.y] = v;
-                    } else if (!processed[e.y] || directed) {
-                        System.out.print(String.format("processed edge (%d, %d)", v, e.y));
                     }
                 }
 
@@ -99,15 +110,14 @@ public class puzzles {
             return count;
         }
 
-        private Function<Pair<Integer, Integer>, Void> complementColor = new Function<puzzles.Pair<Integer, Integer>, Void>() {
+        private Action2<Integer, Integer> complementColor = new Action2<Integer, Integer>() {
             @Override
-            public Void apply(Pair<Integer, Integer> edge) {
-                if (colors[edge.First] == colors[edge.Second]) {
-                    throw new IllegalStateException(String.format("This is not a bipartitle due to (%d, %d)", edge.First, edge.Second));
+            public void apply(Integer v, Integer y) {
+                if (colors[v] == colors[y]) {
+                    throw new IllegalStateException(String.format("This is not a bipartitle due to (%d, %d).", v, y));
                 }
 
-                colors[edge.Second] = ~colors[edge.First];
-                return null;
+                colors[y] = ~colors[v];
             }
         };
 
@@ -195,12 +205,6 @@ public class puzzles {
                 System.out.print(String.format("%d", end));
             }
         }
-
-    }
-
-    public static class Pair<K, V> {
-        public K First;
-        public V Second;
     }
 
     public static class LinkedDictionary<K, V> {
