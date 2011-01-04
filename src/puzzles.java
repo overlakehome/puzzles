@@ -2,6 +2,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
+import java.math.BigInteger;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,44 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
-    @Test
-    public void testPrime() {
-        assertEquals(2, prime(1));
-        assertEquals(2, prime(2));
-        assertEquals(3, prime(3));
-        assertEquals(5, prime(4));
-        assertEquals(17, prime(15));
-    }
-
-    public static long prime(long n) {
-        int lnN = (int)Math.ceil(Math.log(n));
-        Random random = new Random();
-
-        if (1 == n) return 2;
-        if (3 >= n) return n;
-
-        for (long prime = 0 == n % 2 ? 1 + n : n; prime <= n + lnN; prime += 2) {
-            boolean isPrime = true;
-            for (int test = 0; test < prime/lnN; test++) {
-                long a = 1 + random.nextInt((int)n - 1); // 1 plus [0, n - 2] == [1, n - 1]
-                long a2TheNminus1 = a;
-                for (int i = 1; i < prime - 1; i++) {
-                    a2TheNminus1 *= a;
-                }
-
-                if (1L != a2TheNminus1 % prime) {
-                    isPrime = false;
-                    break;
-                }
-            }
-
-            if (isPrime) {
-                return prime;
-            }
-        }
-
-        return -1;
-    }
+    private static final Random random = new Random();
 
     public interface Action<V> {
         void apply(V v);
@@ -322,6 +286,52 @@ public class puzzles {
             public void addLast(Node<T> t) { throw new UnsupportedOperationException(); }
             public void addLast(T t) { throw new UnsupportedOperationException(); }
         }
+    }
+
+    @Test
+    public void testPrime() {
+        assertEquals(919, prime(912));
+        assertEquals(2, prime(1));
+        assertEquals(2, prime(2));
+        assertEquals(3, prime(3));
+        assertEquals(5, prime(4));
+        assertEquals(17, prime(15));
+    }
+
+    /*
+     * This function returns a number when the probability that the number is prime exceeds (1 - 0.5^certainty).
+     */
+    public static long prime(long n) {
+        return prime(n, 5); // the is 96.875% prime.
+    }
+
+    public static long prime(long n, int certainty) {
+
+        if (n <= 2) return 2;
+        if (n <= 3) return 3;
+
+        long lnN = (int)Math.ceil(Math.log(n));
+        for (long prime = (0 == n % 2 ? 1 + n : n); prime < n + lnN * 3/2; prime += 2) {
+            boolean found = true;
+            for (int i = 0; i < certainty; i++) { // an iteration of rabin miller tests.
+                BigInteger a = BigInteger.valueOf(1 + random.nextInt((int)n - 1));
+                BigInteger a2theNminus1 = a; // a uniform random on (1, n - 1)
+                for (int e = 1; e < prime - 1; e++) {
+                    a2theNminus1 = a2theNminus1.multiply(a);
+                }
+
+                if (!BigInteger.ONE.equals(a2theNminus1.mod(BigInteger.valueOf(prime)))) {
+                    found = false;
+                    break;
+                }
+            }
+
+            if (found) {
+                return prime;
+            }
+        }
+
+        return -1;
     }
 
     public int rabinKarp(String t, String p) {
