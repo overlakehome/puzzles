@@ -1,3 +1,7 @@
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +17,6 @@ import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import com.google.common.base.Function;
@@ -23,13 +25,43 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
-    public static int prime(int n) {
-        int lnN = (int)Math.floor(Math.log(n));
+    @Test
+    public void testPrime() {
+        assertEquals(2, prime(1));
+        assertEquals(2, prime(2));
+        assertEquals(3, prime(3));
+        assertEquals(5, prime(4));
+        assertEquals(17, prime(15));
+    }
+
+    public static long prime(long n) {
+        int lnN = (int)Math.ceil(Math.log(n));
         Random random = new Random();
-        int prime = n;
-        for (int prime = n; i <
-        random.nextInt(n)
-        return lnN;
+
+        if (1 == n) return 2;
+        if (3 >= n) return n;
+
+        for (long prime = 0 == n % 2 ? 1 + n : n; prime <= n + lnN; prime += 2) {
+            boolean isPrime = true;
+            for (int test = 0; test < prime/lnN; test++) {
+                long a = 1 + random.nextInt((int)n - 1); // 1 plus [0, n - 2] == [1, n - 1]
+                long a2TheNminus1 = a;
+                for (int i = 1; i < prime - 1; i++) {
+                    a2TheNminus1 *= a;
+                }
+
+                if (1L != a2TheNminus1 % prime) {
+                    isPrime = false;
+                    break;
+                }
+            }
+
+            if (isPrime) {
+                return prime;
+            }
+        }
+
+        return -1;
     }
 
     public interface Action<V> {
@@ -1214,21 +1246,21 @@ public class puzzles {
     public void testFindModes(Function<int[], List<Integer>> findModes) {
         try {
             findModes.apply(null);
-            Assert.fail("findsModes should have thrown NPE.");
+            fail("findsModes should have thrown NPE.");
         } catch (AssertionError ae) {
         } catch (NullPointerException npe) {
         } catch (Exception e) {
-            Assert.fail("findsModes should have thrown NPE.");
+            fail("findsModes should have thrown NPE.");
         }
 
-        Assert.assertEquals(ImmutableList.of(), findModes.apply(new int[0]));
+        assertEquals(ImmutableList.of(), findModes.apply(new int[0]));
 
-        Assert.assertEquals(ImmutableList.of(1), findModes.apply(new int[] {1}));
-        Assert.assertEquals(ImmutableList.of(2), findModes.apply(new int[] {1, 2, 2}));
-        Assert.assertEquals(ImmutableList.of(3), findModes.apply(new int[] {1, 2, 2, 3, 3, 3}));
+        assertEquals(ImmutableList.of(1), findModes.apply(new int[] {1}));
+        assertEquals(ImmutableList.of(2), findModes.apply(new int[] {1, 2, 2}));
+        assertEquals(ImmutableList.of(3), findModes.apply(new int[] {1, 2, 2, 3, 3, 3}));
 
-        Assert.assertEquals(ImmutableList.of(2), findModes.apply(new int[] {2, 2}));
-        Assert.assertEquals(ImmutableList.of(1, 2), findModes.apply(new int[] {1, 1, 2, 2}));
+        assertEquals(ImmutableList.of(2), findModes.apply(new int[] {2, 2}));
+        assertEquals(ImmutableList.of(1, 2), findModes.apply(new int[] {1, 1, 2, 2}));
     }
 
     public static List<Integer> findModesUsingMap(int... numbers) {
@@ -1330,44 +1362,44 @@ public class puzzles {
     public void testMinStack() {
         MinStack<Integer> stack = new MinStack<Integer>();
         stack.push(2).push(6).push(4).push(1).push(5).push(1);
-        Assert.assertTrue(1 == stack.getMin());
-        Assert.assertTrue(1 == stack.pop());
-        Assert.assertTrue(1 == stack.getMin());
-        Assert.assertTrue(5 == stack.pop());
-        Assert.assertTrue(1 == stack.getMin());
-        Assert.assertTrue(1 == stack.pop());
-        Assert.assertTrue(2 == stack.getMin());
-        Assert.assertTrue(4 == stack.pop());
-        Assert.assertTrue(2 == stack.getMin());
-        Assert.assertTrue(6 == stack.pop());
-        Assert.assertTrue(2 == stack.getMin());
-        Assert.assertTrue(2 == stack.pop());
-        Assert.assertTrue(null == stack.getMin());
+        assertTrue(1 == stack.getMin());
+        assertTrue(1 == stack.pop());
+        assertTrue(1 == stack.getMin());
+        assertTrue(5 == stack.pop());
+        assertTrue(1 == stack.getMin());
+        assertTrue(1 == stack.pop());
+        assertTrue(2 == stack.getMin());
+        assertTrue(4 == stack.pop());
+        assertTrue(2 == stack.getMin());
+        assertTrue(6 == stack.pop());
+        assertTrue(2 == stack.getMin());
+        assertTrue(2 == stack.pop());
+        assertTrue(null == stack.getMin());
     }
 
     @Test
     public void testMatchPattern() {
-        Assert.assertEquals(2, rabinKarp("aaabc", "abc"));
-        Assert.assertEquals(2, rabinKarp("aaabcc", "abc"));
-        Assert.assertEquals(0, rabinKarp("abc", "abc"));
-        Assert.assertEquals(0, rabinKarp("abcc", "abc"));
-        Assert.assertEquals(-1, rabinKarp("abc", "xyz"));
-        Assert.assertEquals(-1, rabinKarp("abcc", "xyz"));
+        assertEquals(2, rabinKarp("aaabc", "abc"));
+        assertEquals(2, rabinKarp("aaabcc", "abc"));
+        assertEquals(0, rabinKarp("abc", "abc"));
+        assertEquals(0, rabinKarp("abcc", "abc"));
+        assertEquals(-1, rabinKarp("abc", "xyz"));
+        assertEquals(-1, rabinKarp("abcc", "xyz"));
     }
 
     @Test
     public void testQuicksort() {
         int[] input = new int[] {44, 75, 23, 43, 55, 12, 64, 77, 33};
         quicksort(input, 0, 8);
-        Assert.assertTrue(Arrays.equals(new int[]{12, 23, 33, 43, 44, 55, 64, 75, 77}, input));
+        assertTrue(Arrays.equals(new int[]{12, 23, 33, 43, 44, 55, 64, 75, 77}, input));
     }
 
     @Test
     public void testKadane() {
         int[] a = { -2, 1, -3, 4, -1, 2, 1, -5, 4};
-        Assert.assertTrue(Arrays.equals(new int[]{6, 3, 6}, kadane(a)));
-        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 2, 2}, kadane(new int[][] {{1, 0, 1}, {0, -1, 0}, {1, 0, 1}})));
-        Assert.assertTrue(Arrays.equals(new int[]{3, 0, 0, 0, 1}, kadane(new int[][] {{1, 2, -1}, {-3, -1, -4}, {1, -5, 2}})));
+        assertTrue(Arrays.equals(new int[]{6, 3, 6}, kadane(a)));
+        assertTrue(Arrays.equals(new int[]{3, 0, 0, 2, 2}, kadane(new int[][] {{1, 0, 1}, {0, -1, 0}, {1, 0, 1}})));
+        assertTrue(Arrays.equals(new int[]{3, 0, 0, 0, 1}, kadane(new int[][] {{1, 2, -1}, {-3, -1, -4}, {1, -5, 2}})));
     }
 
     @Test
@@ -1377,15 +1409,15 @@ public class puzzles {
 
     @Test
     public void testDivide() {
-        Assert.assertEquals(1024768/7, divide(1024768, 7));
+        assertEquals(1024768/7, divide(1024768, 7));
     }
 
     @Test
     public void testPermutate() {
-        Assert.assertTrue(Iterables.elementsEqual(
+        assertTrue(Iterables.elementsEqual(
             ImmutableList.of("abc", "acb", "bac", "bca", "cba", "cab"),
             permutate("abc".toCharArray(), 0)));
-        Assert.assertTrue(Iterables.elementsEqual(
+        assertTrue(Iterables.elementsEqual(
             ImmutableList.of("abab", "abba", "aabb", "baab", "baba", "bbaa"),
             permutate("abab".toCharArray(), 0)));
     }
@@ -1394,30 +1426,30 @@ public class puzzles {
     public void testFindSmallestOutOfCycle() {
         try {
             findSmallestOutOfCycle(null);
-            Assert.fail("'numbers' must be non-null.");
+            fail("'numbers' must be non-null.");
         } catch (IllegalArgumentException e) {
         }
 
         try {
             findSmallestOutOfCycle(new int[0]);
-            Assert.fail("'numbers' must not be empty.");
+            fail("'numbers' must not be empty.");
         } catch (IllegalArgumentException e) {
         }
 
-        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {6}));
-        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {6, 7}));
-        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {7, 6}));
-        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {38, 40, 55, 89, 6, 13, 20, 23, 36}));
-        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {6, 13, 20, 23, 36, 38, 40, 55, 89}));
-        Assert.assertEquals(6, findSmallestOutOfCycle(new int[] {13, 20, 23, 36, 38, 40, 55, 89, 6}));
+        assertEquals(6, findSmallestOutOfCycle(new int[] {6}));
+        assertEquals(6, findSmallestOutOfCycle(new int[] {6, 7}));
+        assertEquals(6, findSmallestOutOfCycle(new int[] {7, 6}));
+        assertEquals(6, findSmallestOutOfCycle(new int[] {38, 40, 55, 89, 6, 13, 20, 23, 36}));
+        assertEquals(6, findSmallestOutOfCycle(new int[] {6, 13, 20, 23, 36, 38, 40, 55, 89}));
+        assertEquals(6, findSmallestOutOfCycle(new int[] {13, 20, 23, 36, 38, 40, 55, 89, 6}));
     }
 
     @Test
     public void testToAndFromExcelColumn() {
-        Assert.assertEquals("AB", toExcelColumn(28));
-        Assert.assertEquals("ABC", toExcelColumn(731));
-        Assert.assertEquals(28, fromExcelColumn(toExcelColumn(28)));
-        Assert.assertEquals(731, fromExcelColumn(toExcelColumn(731)));
+        assertEquals("AB", toExcelColumn(28));
+        assertEquals("ABC", toExcelColumn(731));
+        assertEquals(28, fromExcelColumn(toExcelColumn(28)));
+        assertEquals(731, fromExcelColumn(toExcelColumn(731)));
     }
 
     @Test
@@ -1437,8 +1469,8 @@ public class puzzles {
         BNode<Integer> i19 = BNode.of(19, i5, i25);
         List<Integer> i13_21 = BNode.yieldInorder(i19, BNode.of(13, null, null), BNode.of(21, null, null));
         List<Integer> i12_22 = BNode.yieldInorder(i19, BNode.of(12, null, null), BNode.of(22, null, null));
-        Assert.assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 17, 20), i13_21));
-        Assert.assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 12, 17, 22, 20), i12_22));
+        assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 17, 20), i13_21));
+        assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 12, 17, 22, 20), i12_22));
     }
 
 //  public static int CountOnes(int value) {
