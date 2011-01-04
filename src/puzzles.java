@@ -23,12 +23,21 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 public class puzzles {
-    public interface Action<T> {
-        void apply(T t);
+    public static int prime(int n) {
+        int lnN = (int)Math.floor(Math.log(n));
+        Random random = new Random();
+        int prime = n;
+        for (int prime = n; i <
+        random.nextInt(n)
+        return lnN;
     }
 
-    public interface Action2<T, V> {
-        void apply(T t, V v);
+    public interface Action<V> {
+        void apply(V v);
+    }
+
+    public interface Action2<V, W> {
+        void apply(V v, W w);
     }
 
     public static class Edge {
@@ -38,6 +47,7 @@ public class puzzles {
     }
 
     public static class Graph {
+        public Stack<Integer> sort;
         public List<Edge>[] edges;
         int verticeCount; 
         int edgeCount;
@@ -67,10 +77,16 @@ public class puzzles {
                     cross.apply(v, e.y);
                 }
 
-                leave.apply(v);
+                leave.apply(v); // leave might be an action for topological sort.
                 processed[v] = true;
             }
         }
+
+        private Action<Integer> topologicalSort = new Action<Integer>() {
+            public void apply(Integer v) {
+                sort.add(v);
+            }
+        };
 
         public void bfs(int start, Action<Integer> enter, Action2<Integer, Integer> cross, Action<Integer> leave) {
             Queue<Integer> queue = new LinkedList<Integer>();
@@ -111,13 +127,20 @@ public class puzzles {
         }
 
         private Action2<Integer, Integer> complementColor = new Action2<Integer, Integer>() {
-            @Override
             public void apply(Integer v, Integer y) {
                 if (colors[v] == colors[y]) {
                     throw new IllegalStateException(String.format("This is not a bipartitle due to (%d, %d).", v, y));
                 }
 
                 colors[y] = ~colors[v];
+            }
+        };
+
+        private Action2<Integer, Integer> throwIfCyclic = new Action2<Integer, Integer>() {
+            public void apply(Integer v, Integer y) {
+                if (v == y) {
+                    throw new IllegalStateException();
+                }
             }
         };
 
@@ -1039,6 +1062,45 @@ public class puzzles {
                 return findSmallestOutOfCycle(left, middle, numbers);
             }
         }
+    }
+
+    @Test
+    public void testPartitionBookshelf() {
+        partition(3, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    }
+
+    public static void partition(int sections, int... books) {
+        int[][] pivots = new int[books.length + 1][sections + 1];
+        int[][] pages = new int[books.length + 1][sections + 1];
+        int[] ps = new int[books.length+1]; // prefix sums
+
+        ps[0] = 0;
+        for (int i = 1; i <= books.length; i++) {
+            ps[i] = ps[i-1] + books[i-1];
+        }
+
+        for (int i = 1; i <= books.length; i++) {
+            pages[i][1] = ps[i];
+        }
+
+        for (int k = 1; k <= sections; k++) {
+            pages[1][k] = books[0];
+        }
+
+        for (int n = 2; n <= books.length; n++) {
+            for (int k = 2; k <= sections; k++) {
+                pages[n][k] = Integer.MAX_VALUE;
+                for (int book = 1; book <= n-1; book++) {
+                    int value = Math.max(pages[book][k-1], ps[n] - ps[book]);
+                    if (pages[n][k] > value) {
+                        pages[n][k] = value;
+                        pivots[n][k] = book;
+                    }
+                }
+            }
+        }
+
+        pivots[0][0] = 0;
     }
 
     public static List<Integer> knapsackUnbounded(int[] values, int[] costs, int capacity) {
