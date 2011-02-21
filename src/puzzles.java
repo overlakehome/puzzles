@@ -25,6 +25,16 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+// Heapsort competes with quicksort, another very efficient nearly-in-place sort algorithm
+// Quicksort is typically somewhat faster, due to better cache behavior and other factors.
+// The worst-case running time for quicksort is makes it unacceptable for large data sets.
+// Heapsort relies strongly on random access, and its poor locality of reference requires
+// efficient random access to be practical.
+// Mergesort is a stable sort, unlike quicksort and heapsort, and can be easily adapted
+// to operate on linked lists and very large set on slow media with long access time.
+// Heapsort requires only @(1) auxiliary space instead of Mergesort @(n) auxiliary space,
+// quicksort with in-place partitioning and tail recursion uses only O(log n) space.
+
 public class puzzles {
     private static final Random random = new Random();
 
@@ -393,22 +403,21 @@ public class puzzles {
     }
 
     public static int[] products(int... numbers) {
-        int[] products = new int[numbers.length];
-        int[] productsOfHeader = new int[numbers.length];
-        int[] productsOfFooter = new int[numbers.length];
-
-        productsOfHeader[0] = 1;
+        int[] prefixProducts = new int[numbers.length];
+        prefixProducts[0] = 1;
         for (int i = 1; i < numbers.length; i++) {
-            productsOfHeader[i] = productsOfHeader[i-1] * numbers[i-1];
+            prefixProducts[i] = prefixProducts[i-1] * numbers[i-1];
         }
 
-        productsOfFooter[numbers.length - 1] = 1;
+        int[] postfixProducts = new int[numbers.length];
+        postfixProducts[numbers.length - 1] = 1;
         for (int i = numbers.length - 2; i >= 0; i--) {
-            productsOfFooter[i] = productsOfFooter[i+1] * numbers[i+1];
+            postfixProducts[i] = postfixProducts[i+1] * numbers[i+1];
         }
 
+        int[] products = new int[numbers.length];
         for (int i = 0; i < numbers.length; i++) {
-            products[i] = productsOfHeader[i] * productsOfFooter[i];
+            products[i] = prefixProducts[i] * postfixProducts[i];
         }
 
         return products;
@@ -438,12 +447,12 @@ public class puzzles {
 
     public static int divide(int dividend, int divisor) {
         int bit = 1;
-        int quotient = 0;
         while (divisor <= dividend) {
             divisor <<= 1;
             bit <<= 1;
         }
 
+        int quotient = 0;
         while (divisor > 0) {
             divisor >>= 1;
             bit >>= 1;
@@ -517,19 +526,18 @@ public class puzzles {
         // 26^2 cases :  AA -  ZZ
         // 26^3 cases : AAA - ZZZ
 
-        StringBuilder sb = new StringBuilder();
         int cases = 26;
-        for (int k = 0; n > 0; k++) { // k is the level of recursion.
-            if (n > cases) {
-                n -= cases;
-                cases *= 26;
-            } else {
-                n -= 1; // n falls between 0 and (26^k - 1).
-                for (int i = 0; i <= k; i++) {
-                    sb.insert(0, (char)(n % 26 + 'A'));
-                    n /= 26;
-                }
-            }
+        int k = 0;
+        for (; n > cases; k++) { // k is the level of recursion.
+            n -= cases;
+            cases *= 26;
+        }
+
+        n -= 1; // n falls between 0 and (26^k - 1).
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i <= k; i++) {
+            sb.insert(0, (char)(n % 26 + 'A'));
+            n /= 26;
         }
 
         return sb.toString();
@@ -616,8 +624,8 @@ public class puzzles {
 
     private static void merge(int[] input, int[] temp, int left, int right, int rightEnd) {
         int leftEnd = right - 1;
-        int position = 0;
         int leftBegin = left;
+        int position = 0;
         while (left <= leftEnd && right <= rightEnd) {
             if (input[left] <= input[right]) {
                 temp[position++] = input[left++];
@@ -634,7 +642,7 @@ public class puzzles {
             temp[position++] = input[right++];
         }
 
-        System.arraycopy(temp, leftBegin, input, leftBegin, rightEnd - leftBegin + 1);
+        System.arraycopy(temp, 0, input, leftBegin, rightEnd - leftBegin + 1);
     }
 
     public static class SNode<T> implements Comparable<SNode<T>> {
@@ -741,8 +749,8 @@ public class puzzles {
             if (null == current) return true;
             if (null != current.left && maximum(current.left).compareTo(current) > 0) { return false; }
             if (null != current.right && minimum(current.right).compareTo(current) < 0) { return false; }
+            if (!isBST(current.left) || !isBST(current.right)) return false;
 
-            if (!isBST(current.left) || isBST(current.right)) return false;
             return true;
         }
 
@@ -988,7 +996,7 @@ public class puzzles {
     interface Hand {
         void addCard(Card c);
         boolean removeCard(Card card) throws NoSuchElementException;
-        boolean removeCard(int position) throws IndexOutOfBoundsException;
+        Card removeCard(int position) throws IndexOutOfBoundsException;
         int getCardCount();
         void clear();
         Card getCard(int position);
