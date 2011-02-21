@@ -53,7 +53,7 @@ public class puzzles {
     }
 
     public static class Graph {
-        public Stack<Integer> sort;
+        public Stack<Integer> topologicalSort;
         public List<Edge>[] edges;
         int verticeCount; 
         int edgeCount;
@@ -74,6 +74,7 @@ public class puzzles {
         public void dfs(int v, Action<Integer> enter, Action2<Integer, Integer> cross, Action<Integer> leave) {
             discovered[v] = true;
             enter.apply(v);
+
             for (Edge e : edges[v]) {
                 if (!discovered[e.y]) {
                     parents[e.y] = v;
@@ -82,15 +83,15 @@ public class puzzles {
                 } else if (!processed[e.y] || directed) {
                     cross.apply(v, e.y);
                 }
-
-                leave.apply(v); // leave might be an action for topological sort.
-                processed[v] = true;
             }
+
+            leave.apply(v); // leave might be an action for topological sort.
+            processed[v] = true;
         }
 
-        private Action<Integer> topologicalSort = new Action<Integer>() {
+        private Action<Integer> sort = new Action<Integer>() {
             public void apply(Integer v) {
-                sort.add(v);
+                topologicalSort.add(v);
             }
         };
 
@@ -103,6 +104,7 @@ public class puzzles {
                 int v = queue.remove();
                 enter.apply(v);
                 processed[v] = true;
+
                 for (Edge e : edges[v]) {
                     if (!processed[e.y] || directed) {
                         cross.apply(v, e.y);
