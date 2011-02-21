@@ -213,13 +213,11 @@ public class puzzles {
             }
         }
 
-        public void floyd() {
-            int[][] matrix = new int[3][3];
-            int throughK;
+        public void floyd(int[][] matrix) { // non-edges has Integer.MAX_VALUE
             for (int k = 0; k < matrix.length; k++) {
                 for (int i = 0; i < matrix.length; i++) {
                     for (int j = 0; j < matrix.length; j++) {
-                        throughK = matrix[i][k] + matrix[k][j];
+                        int throughK = matrix[i][k] + matrix[k][j];
                         if (throughK < matrix[i][j]) {
                             matrix[i][j] = throughK;
                         }
