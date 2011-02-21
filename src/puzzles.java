@@ -227,47 +227,47 @@ public class puzzles {
     }
 
     public static class LinkedDictionary<K, V> {
-        private final LinkedList<SimpleEntry<K, V>> linkedList = new LinkedList<SimpleEntry<K, V>>();
-        private final Map<K, LinkedList.Node<SimpleEntry<K, V>>> dictionary = new HashMap<K, LinkedList.Node<SimpleEntry<K, V>>>();
+        private final LinkedList<SimpleEntry<K, V>> list = new LinkedList<SimpleEntry<K, V>>();
+        private final Map<K, LinkedList.Node<SimpleEntry<K, V>>> map = new HashMap<K, LinkedList.Node<SimpleEntry<K, V>>>();
         private final int capacity = 1024;
 
         public void trimEldest() {
-            SimpleEntry<K, V> eldest = this.linkedList.getFirst();
-            this.dictionary.remove(eldest.getKey());
-            this.linkedList.removeFirst();
+            SimpleEntry<K, V> eldest = this.list.getFirst();
+            this.map.remove(eldest.getKey());
+            this.list.removeFirst();
         }
 
         private void access(LinkedList.Node<SimpleEntry<K, V>> node) {
-            this.linkedList.remove(node);
-            this.linkedList.addLast(node);
+            this.list.remove(node);
+            this.list.addLast(node);
         }
 
         public void put(K key, V value) {
             this.remove(key);
-            this.linkedList.addLast(new SimpleEntry<K, V>(key, value));
-            this.dictionary.put(key, this.linkedList.getLastNode());
+            this.list.addLast(new SimpleEntry<K, V>(key, value));
+            this.map.put(key, this.list.getLastNode());
 
-            while (this.dictionary.size() > this.capacity) {
+            while (this.map.size() > this.capacity) {
                 this.trimEldest();
             }
         }
 
         public V get(K key) {
-            if (!dictionary.containsKey(key)) {
+            if (!map.containsKey(key)) {
                 return null;
             }
 
-            access(dictionary.get(key));
-            return dictionary.get(key).getValue().getValue();
+            access(map.get(key));
+            return map.get(key).getValue().getValue();
         }
 
         public boolean remove(K key) {
-            if (!dictionary.containsKey(key)) {
+            if (!map.containsKey(key)) {
                 return false;
             }
 
-            linkedList.remove(dictionary.get(key));
-            dictionary.remove(key);
+            list.remove(map.get(key));
+            map.remove(key);
             return true;
         }
 
@@ -375,12 +375,10 @@ public class puzzles {
         public MinStack<T> push(T element) {
             if (null == mininum || element.compareTo(mininum) <= 0) {
                 stack.push(mininum);
-                stack.push(element);
                 mininum = element;
-            } else {
-                stack.push(element);
             }
 
+            stack.push(element);
             return this;
         }
 
