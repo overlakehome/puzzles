@@ -724,6 +724,57 @@ public class puzzles {
         public BNode<T> right;
         public BNode<T> parent;
 
+        public static void fromStrings(BNode<Character> root, String inorder, String preorder, int left, int right) {
+            root.item = preorder.charAt(left);
+            int pivot = inorder.indexOf(root.item);
+            int r = left + 1;
+            for (; r <= right && -1 == inorder.indexOf(preorder.charAt(r), pivot + 1); r++) {
+            }
+
+            if (left + 1 <= r - 1) {
+                fromStrings(root.left = BNode.of(root), inorder, preorder, left + 1, r - 1);
+            }
+
+            if (r <= right) {
+                fromStrings(root.right = BNode.of(root), inorder, preorder, r, right);
+            }
+        }
+
+        //        a
+        //     b      d
+        //  c       e   g
+        //        f       h
+        //
+        // preorder: a b c d e f g h
+        // inorder : c b a f e d g h
+        @Test
+        public void testFromStrings() {
+            BNode<Character> root = new BNode<Character>();
+            fromStrings(root, "cbafedgh", "abcdefgh", 0, 7);
+            assertEquals('a', root.item.charValue());
+
+            assertEquals('b', root.left.item.charValue());
+            assertEquals('d', root.right.item.charValue());
+
+            assertEquals('c', root.left.left.item.charValue());
+            assertEquals(null, root.left.right);
+
+            assertEquals('e', root.right.left.item.charValue());
+            assertEquals('g', root.right.right.item.charValue());
+
+            assertEquals('f', root.right.left.left.item.charValue());
+            assertEquals(null, root.right.left.right);
+
+            assertEquals(null, root.right.right.left);
+            assertEquals('h', root.right.right.right.item.charValue());
+        }
+
+        public static <T extends Comparable<T>> BNode<T> of(BNode<T> parent) {
+            BNode<T> node = new BNode<T>();
+            node.parent = parent;
+            return node;
+        }
+
         public static <T extends Comparable<T>> BNode<T> of(T item, BNode<T> left, BNode<T> right) {
             BNode<T> node = new BNode<T>();
             node.item = item;
