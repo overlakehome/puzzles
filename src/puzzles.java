@@ -18,10 +18,14 @@ import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -36,6 +40,201 @@ import com.google.common.collect.Iterables;
 // quicksort with in-place partitioning and tail recursion uses only O(log n) space.
 
 public class puzzles {
+    public static class Feb21st2011 {
+        // 3 interviewers challenged Erin with 6 technical questions for me to design, implement, and test.
+        // 1 interviewer challenged Erin with a few behavioral interview questions such as resolving conflicts.
+
+        // [Mike] Find the number of words in a string.
+        // [Erin] Can I use the white board to take notes? [Mike] go ahead.
+        // [Erin] First of all, I like to clarify functional requirements (input and output)
+        // What happens if the input is 'null'? What about an empty "" string?
+        // 10+ questions worked out a bunch of input and output cases as follows: 
+        // null: error out, "": 0, " a ": 1, and " a b ": 2
+        // [Erin] What are delimeters? [Mike] ' ' (a space) [Erin] so, tabs and crLF, we assume, are words.
+        // [Erin] Moving on, I like to clarify non-functional requirements (irrelevant to I/O)
+        // Performance (time & space), security, parallel, s/w & h/w platform (OS, CPU w/ L2 cache, memory)
+        // Will a linear time, constant space algorithm work for you? Yes, it will.
+        // Miscellaneous: Does the string fits all in memory, or should it be partially on disk?
+        // How big the string is? How many CPUs and computers do we use?
+
+        // How to indicate an error given these options?
+        // to return errors, throw exceptions, out parameters, or side effects (static, or instance fields).
+        //
+        // ** side notes on Erin's standard procedures:
+        // 1. to specify functionalities and non-functionalities with 15 to 30 clarifying questions.
+        //    classical input and output cases, boundary conditions, error indications,
+        //    constraints: time & space, performance, security, parallel algorithms, etc.
+        // 2. to specify function signature and then describe the algorithm before you write any code.
+        // 3. to short-circuit cases for null, empty string or collections.
+        // 4. to note time and space complexities in-between iterations as follows:
+        public static int getWordCount(String s) {
+            if (null == s) throw new IllegalArgumentException("'s' must be non-null.");
+            if (Strings.isNullOrEmpty(s)) return 0;
+
+            // [Mike] what is the time and space complexity?
+            // [Erin] time complexity: O(n), space complexity: O(1)
+            // [Mike] can you make it better?
+            // [Erin] No as there is an essential complexity where we must scan the chars in the string.
+            int count = 0;
+            char previous = ' ';
+            for (int i = 0; i < s.length(); i++) {
+                if (' ' == previous && ' ' != s.charAt(i)) {
+                    count++;
+                }
+
+                previous = s.charAt(i);
+            }
+
+            return count;
+        }
+
+        // [Mike] Design test cases for your algorithm
+        // [Erin] I would do positive and negative cases.
+        // positive cases (also called verification tests):
+        // "", " ", "  ", "aa", "  aa", "aa  ", "  ab  cd", "ab  cd  ", and the like.
+        // negative cases (also called falsification tests):
+        // 'null' should return an exception.
+        //
+        // ** side note: do not forget to note why you design this way, BVA, and EQ-partitioning.
+        @Test
+        public void testTestGetWordCount() {
+            try {
+                assertEquals(0, getWordCount(null));
+                Assert.fail("getWordCount(null) must throw IllegalArgumentException.");
+            } catch (IllegalArgumentException e) {
+            }
+
+            // 0 alternation
+            assertEquals(0, getWordCount(""));
+            assertEquals(0, getWordCount("  "));
+            assertEquals(1, getWordCount("ab"));
+
+            // 1 alternation
+            assertEquals(1, getWordCount("  ab"));
+            assertEquals(1, getWordCount("ab  "));
+
+            // 2 alternations
+            assertEquals(1, getWordCount("  ab  cd"));
+            assertEquals(2, getWordCount("ab  cd  "));
+        }
+
+        // [Mike] Find a string is anagram of another?
+        // [Erin] Let's see if this function signature makes sense to you.
+        // [Mike] That totally makes sense to me.
+        // [Erin] What are the time and space requirements?
+        // [Mike] I like your best algorithm.
+        // [Erin] Let me give you alternatives with pros and cons.
+        // One way is to keep a map where the key is a distinct char,
+        // and the value is the number of occurrences of the char.
+        // Count up occurrences of each char of 's', and then down with 't'.
+        // Then, in the end, we must see all zeros in the map of occurrences.
+        // Time: O(n), Space: O(n)
+        // [Erin] Another way is to sort chars in s and t and compare them.
+        // Time: n*log(n) for quick-sort, merge-sort, and heap-sort.
+        // Space (stack depth): log(n) for quick-sort with randomization, and tail-recursion.
+        // [Erin] The other way is to generate permutations of s and see if they contains t.
+        // Time & Space: this factorial algorithm is worse than an exponential algorithm.
+        public static boolean isAnagram(String s, String t) {
+            throw new NotImplementedException();
+        }
+
+        // ** Side-talks with Mike: map, hash, collisions, designing hash functions.
+        // [Erin] blah, blah, Java's String hash function uses MOD 31.
+        // [Mike] How would you design a hash function for 26 letters.
+        // [Erin] MOD 29, a prime greater than 26; I don't have Ph. D on number theories.
+
+        // [Todd] Write a function that return a number that is occurring odd number of times in an integer array.
+        // ** specification w/ functionalities & non-functionalities, alternatives and trade-offs.
+        // alternatives: 
+        // - counting occurrences on map, and then scanning (time & space: linear)
+        // - alternating bit-array, and then scanning (same as the counting map)
+        // - sorting & scanning (time: n*log(n), space: log(n) stack depth)
+        public static int findOddOccuringNumber(int[] ia) {
+            throw new NotImplementedException();
+        }
+
+        // [Todd] Serialize and de-serialize a binary tree into a string; this problem is too big to solve in 20 minutes.
+        // ** there were specification, and algorithm design with reasonings.
+        // [Todd] Serialization seems too straightforward w/ your approach; let us move on to implementing de-serialization.
+        // ** talks on recurrence relationship; base and recursive cases.
+        // Erin turned down Sam's suggestion in the middle, as Sam's approach is to store a complete binary tree with nulls.
+        // He agreed with Erin that a sparse binary tree like a linked list uses up a memory that is 2 to the power of height.
+        public static void fromStrings(BNode<Character> root, String inorder, String preorder, int left, int right) {
+            root.item = preorder.charAt(left);
+            int pivot = inorder.indexOf(root.item);
+            int r = left + 1;
+            for (; r <= right && -1 == inorder.indexOf(preorder.charAt(r), pivot + 1); r++) {
+            }
+
+            if (left + 1 <= r - 1) {
+                fromStrings(root.left = BNode.of(root), inorder, preorder, left + 1, r - 1);
+            }
+
+            if (r <= right) {
+                fromStrings(root.right = BNode.of(root), inorder, preorder, r, right);
+            }
+        }
+
+        //        a
+        //     b      d
+        //  c       e   g
+        //        f       h
+        //
+        // preorder: a b c d e f g h
+        // inorder : c b a f e d g h
+        @Test
+        public void testFromStrings() {
+            BNode<Character> root = new BNode<Character>();
+            fromStrings(root, "cbafedgh", "abcdefgh", 0, 7);
+
+            assertEquals('a', root.item.charValue());
+            assertEquals('b', root.left.item.charValue());
+            assertEquals('d', root.right.item.charValue());
+            assertEquals('c', root.left.left.item.charValue());
+            assertEquals(null, root.left.right);
+            assertEquals('e', root.right.left.item.charValue());
+            assertEquals('g', root.right.right.item.charValue());
+            assertEquals('f', root.right.left.left.item.charValue());
+            assertEquals(null, root.right.left.right);
+            assertEquals(null, root.right.right.left);
+            assertEquals('h', root.right.right.right.item.charValue());
+        }
+
+        // [Naga] Find if a directed acyclic graph (DAG) has a cycle or not.
+        // ** there were specification, designed Edge, Graph, and then DFS.
+        public boolean hasCycle() {
+            try {
+                dfs();
+                return false;
+            } catch (IllegalStateException e) {
+                return true;
+            }
+        }
+
+        public void dfs() {
+            // TODO:
+            // set and clear a flag on 'processed' boolean array when you enter and leave a node.
+            // throw an illegal state exception if 'processed' is true when extending to children.
+        }
+
+        // [Naga] Design classes for Tetris game
+        // ** some clarifications, and then a number of classes, fields, and methods
+        public static interface GameEngine {
+            // TODO:
+            // fields such as currentPiece, nextPieces, boardArray, gameState
+            //   gameStore, gamesPlayed, bestScores, currentLeve, currentSpeed.
+            // methods: setUp, takeDown, clear, movePiece, updateState, removeLines.
+        }
+
+        public static interface Piece {
+            // fields such as location, direction, shape, and color.
+        }
+
+        public static enum Shape {
+            Line, Square, ZigZag, ZagZig, L, InverseL
+        }
+    }
+
     private static final Random random = new Random();
 
     public interface Action<V> {
@@ -723,51 +922,6 @@ public class puzzles {
         public BNode<T> left;
         public BNode<T> right;
         public BNode<T> parent;
-
-        public static void fromStrings(BNode<Character> root, String inorder, String preorder, int left, int right) {
-            root.item = preorder.charAt(left);
-            int pivot = inorder.indexOf(root.item);
-            int r = left + 1;
-            for (; r <= right && -1 == inorder.indexOf(preorder.charAt(r), pivot + 1); r++) {
-            }
-
-            if (left + 1 <= r - 1) {
-                fromStrings(root.left = BNode.of(root), inorder, preorder, left + 1, r - 1);
-            }
-
-            if (r <= right) {
-                fromStrings(root.right = BNode.of(root), inorder, preorder, r, right);
-            }
-        }
-
-        //        a
-        //     b      d
-        //  c       e   g
-        //        f       h
-        //
-        // preorder: a b c d e f g h
-        // inorder : c b a f e d g h
-        @Test
-        public void testFromStrings() {
-            BNode<Character> root = new BNode<Character>();
-            fromStrings(root, "cbafedgh", "abcdefgh", 0, 7);
-            assertEquals('a', root.item.charValue());
-
-            assertEquals('b', root.left.item.charValue());
-            assertEquals('d', root.right.item.charValue());
-
-            assertEquals('c', root.left.left.item.charValue());
-            assertEquals(null, root.left.right);
-
-            assertEquals('e', root.right.left.item.charValue());
-            assertEquals('g', root.right.right.item.charValue());
-
-            assertEquals('f', root.right.left.left.item.charValue());
-            assertEquals(null, root.right.left.right);
-
-            assertEquals(null, root.right.right.left);
-            assertEquals('h', root.right.right.right.item.charValue());
-        }
 
         public static <T extends Comparable<T>> BNode<T> of(BNode<T> parent) {
             BNode<T> node = new BNode<T>();
