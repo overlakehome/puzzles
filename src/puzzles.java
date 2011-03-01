@@ -25,7 +25,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -40,7 +39,7 @@ import com.google.common.collect.Iterables;
 // quicksort with in-place partitioning and tail recursion uses only O(log n) space.
 
 public class puzzles {
-    public static class Feb21st2011 {
+    public static class Feb21st2011AtWestlake {
         // There were 4 interviewers in a day loop; 40 minutes are assigned each interviewer.
         // 3 of interviewers challenged Erin with 6 technical problems to design, code, and test.
         // 1 of interviewers challenged Erin with 3+ behavioral interview questions, e.g. resolving conflicts.
@@ -148,15 +147,15 @@ public class puzzles {
             throw new NotImplementedException();
         }
 
-        // ** Side-talks with Mike: map, hash, collisions, designing hash functions.
+        // ** Side-talks with Mike: map, hash functions, resolving collisions, designing hash functions.
         // [Mike] why your algorithm is linear? i.e. why your hash map has constant time operations?
-        // [Erin] I assume that we use well designed hash function. blah, bash, bash, Java's String hash function uses MOD 31.
+        // [Erin] I assume that we use well designed hash function. blah, bash, bash, Java's String hash uses Multiply 31.
         // [Mike] How would you design a hash function for 26 letters (lower case 'a' - 'z').
-        // [Erin] MOD 29, that is a prime number greater than 26; I don't have Ph. D on number theories.
+        // [Erin] Multiply by 29, that is a prime number greater than 26; I don't have Ph. D on number theories, do you?
 
-        // [Todd] Write a function that return a number that is occurring odd number of times in an integer array.
+        // [Todd] Write a function that returns a number that is occurring odd number of times in an integer array.
         // ** like usual, specified functionalities & non-functionalities, explored alternatives w/ trade-offs.
-        // alternatives: 
+        // the alternatives: 
         // - counting occurrences on map, and then scanning (time & space: linear)
         // - alternating bit-array, and then scanning (same as the counting map)
         // - sorting & scanning (time: n*log(n), space: log(n) stack depth)
@@ -169,7 +168,7 @@ public class puzzles {
         // [Todd] Serialization seems too straightforward w/ your approach; let us move on to implementing de-serialization.
         // ** talks on deriving recurrence relationship; spent 5+ minutes wrestling with base and recursive cases.
         // Erin turned down Sam's suggestion in the middle, as Sam's approach is to store a complete binary tree with nulls.
-        // He agreed with Erin that a sparse binary tree like uses up a memory that is 2 to the power of height at the worst case.
+        // Todd agreed w/ Erin that a sparse binary tree uses up a memory that is 2 to the power of height at the worst case.
         public static void fromStrings(BNode<Character> root, String inorder, String preorder, int left, int right) {
             root.item = preorder.charAt(left);
             int pivot = inorder.indexOf(root.item);
@@ -194,9 +193,10 @@ public class puzzles {
         // preorder: a b c d e f g h
         // inorder : c b a f e d g h
         // 
-        // ** side-notes: Erin verified the dev code w/ a test case after the interview loop.
+        // ** side-notes: Erin verified the dev code w/ a test case when she came home after the interview as follows:
         @Test
         public void testFromStrings() {
+            // the infix and prefix are given as a serialized form of a tree.
             BNode<Character> root = new BNode<Character>();
             fromStrings(root, "cbafedgh", "abcdefgh", 0, 7);
 
@@ -214,7 +214,7 @@ public class puzzles {
         }
 
         // [Naga] Find if a directed acyclic graph (DAG) has a cycle or not.
-        // ** there were specification, designed Edge, Graph, and then DFS.
+        // ** there were specification, class designs of Edge, Graph, and then DFS.
         public boolean hasCycle() {
             try {
                 dfs();
@@ -233,7 +233,7 @@ public class puzzles {
             throw new IllegalStateException("This is not a tree as there is a cyle");
         }
 
-        // [Naga] Design classes for Tetris game
+        // [Naga] Design classes for a Tetris game
         // Originally, Erin was asked to design classes for expressions such as (1 * 2 + 3 ** 4).
         // There was no need to implement any functions, but the overall class design was expected.
         // ** some clarifications, and then a number of classes, enums, fields, and methods.
