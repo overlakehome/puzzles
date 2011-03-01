@@ -41,35 +41,38 @@ import com.google.common.collect.Iterables;
 
 public class puzzles {
     public static class Feb21st2011 {
-        // 3 interviewers challenged Erin with 6 technical questions for me to design, implement, and test.
-        // 1 interviewer challenged Erin with a few behavioral interview questions such as resolving conflicts.
+        // There were 4 interviewers in a day loop; 40 minutes are assigned each interviewer.
+        // 3 of interviewers challenged Erin with 6 technical problems to design, code, and test.
+        // 1 of interviewers challenged Erin with 3+ behavioral interview questions, e.g. resolving conflicts.
 
-        // [Mike] Find the number of words in a string.
-        // [Erin] Can I use the white board to take notes? [Mike] go ahead.
-        // [Erin] First of all, I like to clarify functional requirements (input and output)
+        // [Mike] Can you write me a program that returns the number of words in a string?
+        // [Erin] Can I use the white board to take notes about this problem? [Mike] go ahead.
+        // [Erin] First of all, I like to clarify functional requirements (cases of input and output)
         // What happens if the input is 'null'? What about an empty "" string?
-        // 10+ questions worked out a bunch of input and output cases as follows: 
-        // null: error out, "": 0, " a ": 1, and " a b ": 2
-        // [Erin] What are delimeters? [Mike] ' ' (a space) [Erin] so, tabs and crLF, we assume, are words.
+        // 15+ questions worked out a bunch of input and output cases as follows: 
+        // null: error out, "": 0, " a ": 1, " aa ": 1, " a b ": 2, and the like.
+        // [Erin] What are delimiters? [Mike] ' ' (a space) [Erin] so, we assume, tabs and crLF yield words.
+        // 
         // [Erin] Moving on, I like to clarify non-functional requirements (irrelevant to I/O)
-        // Performance (time & space), security, parallel, s/w & h/w platform (OS, CPU w/ L2 cache, memory)
-        // Will a linear time, constant space algorithm work for you? Yes, it will.
-        // Miscellaneous: Does the string fits all in memory, or should it be partially on disk?
-        // How big the string is? How many CPUs and computers do we use?
-
-        // How to indicate an error given these options?
-        // to return errors, throw exceptions, out parameters, or side effects (static, or instance fields).
+        // Performance (time & space), security, parallel executions, s/w & h/w platforms (OS, CPU w/ L2 cache, memory)
+        // Will a linear-time, constant-space algorithm work for you? [Mike] Yes, it will.
+        // How big the string is? Does the string fits all in RAM, or not? Should it be partially loaded from disk?
+        // How many CPUs and computers do we use? Can we use String#split function? [Mike] Let's assume that we cannot.
+        // 
+        // [Erin] How to indicate an error given these options?
+        // to return errors, throw exceptions, set out parameters, or side effects into fields. [Mike] Your choice.
         //
         // ** side notes on Erin's standard procedures:
         // 1. to specify functionalities and non-functionalities with 15 to 30 clarifying questions.
-        //    classical input and output cases, boundary conditions, error indications,
-        //    constraints: time & space, performance, security, parallel algorithms, etc.
-        // 2. to specify function signature and then describe the algorithm before you write any code.
-        // 3. to short-circuit cases for null, empty string or collections.
-        // 4. to note time and space complexities in-between iterations as follows:
+        //    classical input and output cases, and interesting cases,
+        //    boundary conditions, legal and illegal input cases, and error indications,
+        //    constraints: time & space, performance, security, configuration, concurrent executions, and the like.
+        // 2. to agree on function signatures and then the algorithms before you begin writing any code.
+        // 3. to validate input argument, and short-circuit cases for null, empty string or collections.
+        // 4. to make notes on time and space complexities in-between iterations as follows:
         public static int getWordCount(String s) {
             if (null == s) throw new IllegalArgumentException("'s' must be non-null.");
-            if (Strings.isNullOrEmpty(s)) return 0;
+            if ("".equals(s)) return 0;
 
             // [Mike] what is the time and space complexity?
             // [Erin] time complexity: O(n), space complexity: O(1)
@@ -95,7 +98,9 @@ public class puzzles {
         // negative cases (also called falsification tests):
         // 'null' should return an exception.
         //
-        // ** side note: do not forget to note why you design this way, BVA, and EQ-partitioning.
+        // ** side notes on Erin's standard procedures: 
+        // - do not forget to note why you design test cases this way, BVA, EQ-partitioning, and PICT.
+        // - do not forget to note on condition coverage, path coverage, quality risks, and FMEA.
         @Test
         public void testTestGetWordCount() {
             try {
@@ -116,35 +121,41 @@ public class puzzles {
             // 2 alternations
             assertEquals(1, getWordCount("  ab  cd"));
             assertEquals(2, getWordCount("ab  cd  "));
+
+            // [Erin] I assume that further iterations belong to EQ classes of 0, 1, and 2 iterations.
         }
 
-        // [Mike] Find a string is anagram of another?
-        // [Erin] Let's see if this function signature makes sense to you.
-        // [Mike] That totally makes sense to me.
-        // [Erin] What are the time and space requirements?
-        // [Mike] I like your best algorithm.
+        // [Mike] Find a string is anagram of another? [Erin] What is it?
+        // [Erin] Does this function signature make sense to you? [Mike] That totally makes sense to me.
+        // [Erin] What are the time and space requirements? [Mike] I like your best algorithm.
         // [Erin] Let me give you alternatives with pros and cons.
-        // One way is to keep a map where the key is a distinct char,
+        // One approach is to keep a map where the key is a distinct char,
         // and the value is the number of occurrences of the char.
         // Count up occurrences of each char of 's', and then down with 't'.
         // Then, in the end, we must see all zeros in the map of occurrences.
-        // Time: O(n), Space: O(n)
+        // This algorithm runs with time: O(n), and space: O(n).
         // [Erin] Another way is to sort chars in s and t and compare them.
         // Time: n*log(n) for quick-sort, merge-sort, and heap-sort.
         // Space (stack depth): log(n) for quick-sort with randomization, and tail-recursion.
-        // [Erin] The other way is to generate permutations of s and see if they contains t.
-        // Time & Space: this factorial algorithm is worse than an exponential algorithm.
+        // [Erin] The other way is to generate permutations of 's' and see if they contains t.
+        // Time & Space: this factorial algorithm, O(n!) is worse than exponential algorithms such as O(2^^n).
         public static boolean isAnagram(String s, String t) {
+            if (s == t) return true;
+            if (null == s || null == t) return false;
+            if (s.length() != t.length()) return false;
+
+            // TODO: code the approach with a occurrence counting map.
             throw new NotImplementedException();
         }
 
         // ** Side-talks with Mike: map, hash, collisions, designing hash functions.
-        // [Erin] blah, blah, Java's String hash function uses MOD 31.
-        // [Mike] How would you design a hash function for 26 letters.
-        // [Erin] MOD 29, a prime greater than 26; I don't have Ph. D on number theories.
+        // [Mike] why your algorithm is linear? i.e. why your hash map has constant time operations?
+        // [Erin] I assume that we use well designed hash function. blah, bash, bash, Java's String hash function uses MOD 31.
+        // [Mike] How would you design a hash function for 26 letters (lower case 'a' - 'z').
+        // [Erin] MOD 29, that is a prime number greater than 26; I don't have Ph. D on number theories.
 
         // [Todd] Write a function that return a number that is occurring odd number of times in an integer array.
-        // ** specification w/ functionalities & non-functionalities, alternatives and trade-offs.
+        // ** like usual, specified functionalities & non-functionalities, explored alternatives w/ trade-offs.
         // alternatives: 
         // - counting occurrences on map, and then scanning (time & space: linear)
         // - alternating bit-array, and then scanning (same as the counting map)
@@ -154,11 +165,11 @@ public class puzzles {
         }
 
         // [Todd] Serialize and de-serialize a binary tree into a string; this problem is too big to solve in 20 minutes.
-        // ** there were specification, and algorithm design with reasonings.
+        // ** like usual, specified functionalities & non-functionalities; described approach w/ infix and postfix expressions.
         // [Todd] Serialization seems too straightforward w/ your approach; let us move on to implementing de-serialization.
-        // ** talks on recurrence relationship; base and recursive cases.
+        // ** talks on deriving recurrence relationship; spent 5+ minutes wrestling with base and recursive cases.
         // Erin turned down Sam's suggestion in the middle, as Sam's approach is to store a complete binary tree with nulls.
-        // He agreed with Erin that a sparse binary tree like a linked list uses up a memory that is 2 to the power of height.
+        // He agreed with Erin that a sparse binary tree like uses up a memory that is 2 to the power of height at the worst case.
         public static void fromStrings(BNode<Character> root, String inorder, String preorder, int left, int right) {
             root.item = preorder.charAt(left);
             int pivot = inorder.indexOf(root.item);
@@ -182,6 +193,8 @@ public class puzzles {
         //
         // preorder: a b c d e f g h
         // inorder : c b a f e d g h
+        // 
+        // ** side-notes: Erin verified the dev code w/ a test case after the interview loop.
         @Test
         public void testFromStrings() {
             BNode<Character> root = new BNode<Character>();
@@ -213,24 +226,29 @@ public class puzzles {
 
         public void dfs() {
             // TODO:
-            // set and clear a flag on 'processed' boolean array when you enter and leave a node.
-            // throw an illegal state exception if 'processed' is true when extending to children.
+            // - set and clear a flag on 'processed' boolean array when you enter and leave a node.
+            // - throw an illegal state exception if 'processed' is true when crossing to child nodes.
+            // ** side note: there was a logical bug on one line, and worked out the fix w/ Naga's help.
+
+            throw new IllegalStateException("This is not a tree as there is a cyle");
         }
 
         // [Naga] Design classes for Tetris game
-        // ** some clarifications, and then a number of classes, fields, and methods
-        public static interface GameEngine {
+        // Originally, Erin was asked to design classes for expressions such as (1 * 2 + 3 ** 4).
+        // There was no need to implement any functions, but the overall class design was expected.
+        // ** some clarifications, and then a number of classes, enums, fields, and methods.
+        public static interface TetrisEngine {
             // TODO:
-            // fields such as currentPiece, nextPieces, boardArray, gameState
-            //   gameStore, gamesPlayed, bestScores, currentLeve, currentSpeed.
+            // fields such as currentPiece, queuedPieces, boardArray, gameState
+            //   gamesPlayed, bestScores, currentLevel, currentScore, currentSpeed.
             // methods: setUp, takeDown, clear, movePiece, updateState, removeLines.
         }
 
-        public static interface Piece {
+        public static interface TetrisPiece {
             // fields such as location, direction, shape, and color.
         }
 
-        public static enum Shape {
+        public static enum TetrisShape {
             Line, Square, ZigZag, ZagZig, L, InverseL
         }
     }
