@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0 (MacOS X Default)"/>
-	<classpathentry kind="lib" path="/Users/henry/.m2/repository/com/google/guava/guava/r07/guava-r07.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM Contents (MacOS X Default)"/>
+	<classpathentry kind="lib" path="/Volumes/work/github/puzzles/lib/guava-r08.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -101,7 +101,7 @@ public class puzzles {
         // - do not forget to note why you design test cases this way, BVA, EQ-partitioning, and PICT.
         // - do not forget to note on condition coverage, path coverage, quality risks, and FMEA.
         @Test
-        public void testTestGetWordCount() {
+        public void testGetWordCount() {
             try {
                 assertEquals(0, getWordCount(null));
                 Assert.fail("getWordCount(null) must throw IllegalArgumentException.");
@@ -852,7 +852,7 @@ public class puzzles {
         }
 
         while (left <= leftEnd) {
-            temp[position++] = input[right++];
+            temp[position++] = input[left++];
         }
 
         while (right <= rightEnd) {
@@ -1312,6 +1312,56 @@ public class puzzles {
             }
 
             return 3;
+        }
+    }
+
+    @Test
+    public void testIndexOf() {
+        assertEquals(4, indexOf(30, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(3, indexOf(20, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(0, indexOf(90, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(-1, indexOf(95, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(5, indexOf(40, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(9, indexOf(80, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(8, indexOf(70, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(-1, indexOf(75, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+
+        assertEquals(4, indexOf(70, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(0, indexOf(30, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(3, indexOf(60, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(-1, indexOf(55, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(5, indexOf(80, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(9, indexOf(20, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(8, indexOf(10, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(-1, indexOf(15, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+    }
+
+    public static int indexOf(int i, int... args) {
+        return indexOf(0, args.length - 1, i, args);
+    }
+
+    private static int indexOf(int left, int right, int i, int... args) {
+        int pivot = (left + right) / 2;
+        if (i == args[pivot]) {
+            return pivot;
+        } else if (left == right) {
+            return -1;
+        } else if (i == args[right]) {
+            return right;
+        }
+
+        if (args[right] < args[pivot]) {
+            if (args[right] < i && i < args[pivot]) {
+                return indexOf(left, pivot - 1, i, args);
+            } else {
+                return indexOf(pivot + 1, right - 1, i, args);
+            }
+        } else {
+            if (args[pivot] < i && i < args[right]) {
+                return indexOf(pivot + 1, right - 1, i, args);
+            } else {
+                return indexOf(left, pivot - 1, i, args);
+            }
         }
     }
 
