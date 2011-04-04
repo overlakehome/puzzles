@@ -1315,32 +1315,11 @@ public class puzzles {
         }
     }
 
-    @Test
-    public void testIndexOf() {
-        assertEquals(4, indexOf(30, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-        assertEquals(3, indexOf(20, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-        assertEquals(0, indexOf(90, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-        assertEquals(-1, indexOf(95, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-        assertEquals(5, indexOf(40, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-        assertEquals(9, indexOf(80, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-        assertEquals(8, indexOf(70, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-        assertEquals(-1, indexOf(75, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
-
-        assertEquals(4, indexOf(70, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
-        assertEquals(0, indexOf(30, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
-        assertEquals(3, indexOf(60, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
-        assertEquals(-1, indexOf(55, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
-        assertEquals(5, indexOf(80, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
-        assertEquals(9, indexOf(20, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
-        assertEquals(8, indexOf(10, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
-        assertEquals(-1, indexOf(15, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+    public static int indexOutOfCycle(int i, int... args) {
+        return indexOutOfCycle(0, args.length - 1, i, args);
     }
 
-    public static int indexOf(int i, int... args) {
-        return indexOf(0, args.length - 1, i, args);
-    }
-
-    private static int indexOf(int left, int right, int i, int... args) {
+    private static int indexOutOfCycle(int left, int right, int i, int... args) {
         int pivot = (left + right) / 2;
         if (i == args[pivot]) {
             return pivot;
@@ -1352,35 +1331,35 @@ public class puzzles {
 
         if (args[right] < args[pivot]) {
             if (args[right] < i && i < args[pivot]) {
-                return indexOf(left, pivot - 1, i, args);
+                return indexOutOfCycle(left, pivot - 1, i, args);
             } else {
-                return indexOf(pivot + 1, right - 1, i, args);
+                return indexOutOfCycle(pivot + 1, right - 1, i, args);
             }
         } else {
             if (args[pivot] < i && i < args[right]) {
-                return indexOf(pivot + 1, right - 1, i, args);
+                return indexOutOfCycle(pivot + 1, right - 1, i, args);
             } else {
-                return indexOf(left, pivot - 1, i, args);
+                return indexOutOfCycle(left, pivot - 1, i, args);
             }
         }
     }
 
-    public static int findSmallestOutOfCycle(int... numbers) {
-        if (null == numbers) throw new IllegalArgumentException("'numbers' must be non-null.");
-        if (0 == numbers.length) throw new IllegalArgumentException("'numbers' must not be empty.");
+    public static int smallestOutOfCycle(int... args) {
+        if (null == args) throw new IllegalArgumentException("'args' must be non-null.");
+        if (0 == args.length) throw new IllegalArgumentException("'args' must not be empty.");
 
-        return findSmallestOutOfCycle(0, numbers.length - 1, numbers);
+        return smallestOutOfCycle(0, args.length - 1, args);
     }
 
-    private static int findSmallestOutOfCycle(int left, int right, int... numbers) {
+    private static int smallestOutOfCycle(int left, int right, int... args) {
         if (right == left) {
-            return numbers[left];
+            return args[left];
         } else {
-            int middle = (left + right) / 2;
-            if (numbers[right] < numbers[middle]) {
-                return findSmallestOutOfCycle(middle + 1, right, numbers);
+            int pivot = (left + right) / 2;
+            if (args[right] < args[pivot]) {
+                return smallestOutOfCycle(pivot + 1, right, args);
             } else {
-                return findSmallestOutOfCycle(left, middle, numbers);
+                return smallestOutOfCycle(left, pivot, args);
             }
         }
     }
@@ -1648,6 +1627,27 @@ public class puzzles {
     }
 
     @Test
+    public void testIndexOutOfCycle() {
+        assertEquals(4, indexOutOfCycle(30, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(3, indexOutOfCycle(20, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(0, indexOutOfCycle(90, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(-1, indexOutOfCycle(95, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(5, indexOutOfCycle(40, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(9, indexOutOfCycle(80, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(8, indexOutOfCycle(70, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+        assertEquals(-1, indexOutOfCycle(75, new int[] {90, 100, 10, 20, 30, 40, 50, 60, 70, 80}));
+
+        assertEquals(4, indexOutOfCycle(70, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(0, indexOutOfCycle(30, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(3, indexOutOfCycle(60, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(-1, indexOutOfCycle(55, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(5, indexOutOfCycle(80, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(9, indexOutOfCycle(20, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(8, indexOutOfCycle(10, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+        assertEquals(-1, indexOutOfCycle(15, new int[] {30, 40, 50, 60, 70, 80, 90, 100, 10, 20}));
+    }
+
+    @Test
     public void testMinStack() {
         MinStack<Integer> stack = new MinStack<Integer>();
         stack.push(2).push(6).push(4).push(1).push(5).push(1);
@@ -1714,23 +1714,23 @@ public class puzzles {
     @Test
     public void testFindSmallestOutOfCycle() {
         try {
-            findSmallestOutOfCycle(null);
+            smallestOutOfCycle(null);
             fail("'numbers' must be non-null.");
         } catch (IllegalArgumentException e) {
         }
 
         try {
-            findSmallestOutOfCycle(new int[0]);
+            smallestOutOfCycle(new int[0]);
             fail("'numbers' must not be empty.");
         } catch (IllegalArgumentException e) {
         }
 
-        assertEquals(6, findSmallestOutOfCycle(new int[] {6}));
-        assertEquals(6, findSmallestOutOfCycle(new int[] {6, 7}));
-        assertEquals(6, findSmallestOutOfCycle(new int[] {7, 6}));
-        assertEquals(6, findSmallestOutOfCycle(new int[] {38, 40, 55, 89, 6, 13, 20, 23, 36}));
-        assertEquals(6, findSmallestOutOfCycle(new int[] {6, 13, 20, 23, 36, 38, 40, 55, 89}));
-        assertEquals(6, findSmallestOutOfCycle(new int[] {13, 20, 23, 36, 38, 40, 55, 89, 6}));
+        assertEquals(6, smallestOutOfCycle(new int[] {6}));
+        assertEquals(6, smallestOutOfCycle(new int[] {6, 7}));
+        assertEquals(6, smallestOutOfCycle(new int[] {7, 6}));
+        assertEquals(6, smallestOutOfCycle(new int[] {38, 40, 55, 89, 6, 13, 20, 23, 36}));
+        assertEquals(6, smallestOutOfCycle(new int[] {6, 13, 20, 23, 36, 38, 40, 55, 89}));
+        assertEquals(6, smallestOutOfCycle(new int[] {13, 20, 23, 36, 38, 40, 55, 89, 6}));
     }
 
     @Test
