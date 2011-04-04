@@ -1316,6 +1316,9 @@ public class puzzles {
     }
 
     public static int indexOutOfCycle(int i, int... args) {
+        if (null == args) throw new IllegalArgumentException("'args' must be non-null.");
+        if (0 == args.length) throw new IllegalArgumentException("'args' must not be empty.");
+
         return indexOutOfCycle(0, args.length - 1, i, args);
     }
 
