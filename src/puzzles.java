@@ -1247,6 +1247,8 @@ public class puzzles {
         return false;
     }
 
+    // This function matches brackets such as [], (), and {}.
+    // For example, [ { ( a + b ) * -c } % d ] yields 'true'.
     public boolean bracketsMatching(String s) {
         Stack<Character> brackets = new Stack<Character>();
         for (int i = 0; i < s.length(); i++) {
