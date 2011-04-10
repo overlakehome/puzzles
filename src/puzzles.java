@@ -930,7 +930,7 @@ public class puzzles {
         // For example, given two linked lists, 9 -> 1 -> 8 -> 2 and 5 -> 1 ->
         // 7,
         // this function is expected to return a linked list, 9 -> 6 -> 9 -> 9.
-        public static SNode<Integer> sum_linked_numbers(SNode<Integer> lhs, SNode<Integer> rhs) {
+        public static SNode<Integer> sumLinkedNumbers(SNode<Integer> lhs, SNode<Integer> rhs) {
             lhs = reverse(lhs);
             rhs = reverse(rhs);
 
