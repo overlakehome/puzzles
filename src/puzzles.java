@@ -1,6 +1,7 @@
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static java.lang.System.out;
 
 import java.math.BigInteger;
 import java.util.AbstractMap.SimpleEntry;
@@ -1689,6 +1690,35 @@ public class puzzles {
             ints[i] ^= ints[j];
             ints[j] ^= ints[i];
             ints[i] ^= ints[j];
+        }
+    }
+
+    public static int reverseInteger(int number) {
+        int reverse = 0;
+        while (number != 0) {
+            reverse = reverse * 10 + number % 10;
+            number /= 10;
+        }
+
+        return reverse;
+    }
+
+    public static void printHex(int i) {
+        if (i < 0) {
+           out.print("-");
+           i = -i;
+        }
+
+        Stack<Integer> stack = new Stack<Integer>();
+        stack.push(i);
+        while (!stack.isEmpty()) {
+            i = stack.pop();
+            if (i < 16) {
+                out.print((char)((i < 10) ? ((int)'0' + i) : ((int)'A' + i - 10)));
+            } else {
+                stack.push(i % 16);
+                stack.push(i / 16);
+            }
         }
     }
 
