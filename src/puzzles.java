@@ -925,6 +925,41 @@ public class puzzles {
             }
         }
 
+        // This function sums two linked lists where each node holds a digit.
+        // The operands and result are linked lists as we sum 9182 + 517 = 9699.
+        // For example, given two linked lists, 9 -> 1 -> 8 -> 2 and 5 -> 1 ->
+        // 7,
+        // this function is expected to return a linked list, 9 -> 6 -> 9 -> 9.
+        public static SNode<Integer> sum_linked_numbers(SNode<Integer> lhs, SNode<Integer> rhs) {
+            lhs = reverse(lhs);
+            rhs = reverse(rhs);
+
+            SNode<Integer> head = null;
+            SNode<Integer> prev = null;
+            int tens = 0; // carry over
+            while (null != lhs || null != rhs) {
+                int ones = 0;
+
+                if (null == lhs) ones = rhs.item;
+                else if (null == rhs) ones = lhs.item;
+                else {
+                    ones = (lhs.item + rhs.item) % 10;
+                }
+
+                if (null != head) { head = new SNode<Integer>(); head.item = ones + tens; prev = head; }
+                else { prev.next = new SNode<Integer>(); prev.next.item = ones + tens; prev = prev.next; }
+                tens = (null != lhs && null != rhs) ? (lhs.item + rhs.item) / 10 : 0; // carry over
+                lhs = lhs.next;
+                rhs = rhs.next;
+            }
+
+            if (tens > 0) {
+                prev.next = new SNode<Integer>(); prev.next.item = tens;
+            }
+
+            return reverse(head);
+        }
+
         public SNode<T> mergeSort(SNode<T> p) {
             if (null == p || null == p.next) return p;
             SNode<T> q = partition(p);
