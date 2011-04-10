@@ -1052,6 +1052,57 @@ public class puzzles {
 
             return current;
         }
+
+        // This function clones a given linked list,
+        // where 'next' link forms a linear linked list,
+        // but, 'prev' link points to any node or nothing (which means 'null').
+        //
+        // e.g., 'next' link forms a linear linked list. 'prev' link forms a
+        // graph.
+        // 'next' : A -> B -> C -> D -> NULL (linear, ordered)
+        // 'prev' : A -> C, B -> NULL, C -> D, D -> C (disordered)
+        DNode<Integer> clone(DNode<Integer> head) {
+            // We short-circuit known cases.
+            if (null == head) return null;
+
+         // We stores mappings from source nodes to target nodes. 
+         Map<DNode<Integer>, DNode<Integer>> map = new HashMap<DNode<Integer>, DNode<Integer>>();
+         DNode<Integer> source = head; // It keeps a source node.
+         DNode<Integer> target = null; // It keeps a target node.
+         DNode<Integer> previous = null; // It keeps a previous node.
+         DNode<Integer> result = null; // It keeps a cloned linked list.
+
+         // Time to clone: O(n)
+         while (null != source) {
+             target = new DNode<Integer>(); // What if out-of-memory?
+             target.item = source.item;
+             target.prev = source.prev;
+             target.next = null;
+
+             if (null != previous) {
+                 previous.next = target;
+             }
+             else {
+                 result = target;
+             }
+
+             // We stores a mapping from a source node to a target node.
+             map.put(source, target);
+
+             // We move on to the next node.
+             source = source.next;
+             previous = target;
+         }
+
+         // Time to re-map: O(n)
+         target = result;
+         while (null != target) {
+             target.prev = map.get(target.prev);
+             target = target.next;
+         }
+
+         return result;
+     }
     }
 
     public static class BNode<T extends Comparable<T>> implements Comparable<BNode<T>> {
