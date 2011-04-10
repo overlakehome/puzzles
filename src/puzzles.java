@@ -925,6 +925,26 @@ public class puzzles {
             }
         }
 
+        // This function swaps every two nodes in a single linked list.
+        // Given 1 -> 2 -> 3 -> 4 -> 5, it returns 2 -> 1 -> 4 -> 3 -> 5.
+        public static <T> SNode<T> swapEveryTwo(SNode<T> head) {
+            if (null == head) throw new NullPointerException("head");
+            if (null == head.next) return head;
+
+            SNode<T> current = head;
+            head = current.next;
+            while (null != current && null != current.next) {
+                SNode<T> next = current.next;
+                SNode<T> next2 = current.next.next;
+
+                next.next = current;
+                current.next = null != next2 ? next2.next : next2;
+                current = next2;
+            }
+
+            return head;
+        }
+
         // This function sums two linked lists where each node holds a digit.
         // The operands and result are linked lists as we sum 9182 + 517 = 9699.
         // For example, given two linked lists, 9 -> 1 -> 8 -> 2 and 5 -> 1 ->
