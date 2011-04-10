@@ -866,6 +866,18 @@ public class puzzles {
         public T item;
         public SNode<T> next;
 
+        public static <T> SNode<T> reverse(SNode<T> current) {
+            SNode<T> result = null;
+            while (null != current) {
+                SNode<T> save = current.next;
+                current.next = result;
+                result = current;
+                current = save;
+            }
+
+            return result;
+        }
+
         public SNode<T> mergeSort(SNode<T> p) {
             if (null == p || null == p.next) return p;
             SNode<T> q = partition(p);
