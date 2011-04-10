@@ -878,6 +878,52 @@ public class puzzles {
             return result;
         }
 
+        public static <T> SNode<T> insertIntoSerted(SNode<T> head, SNode<T> insert) {
+            if (null == insert) return head;
+            if (null == head) return insert;
+
+            SNode<T> current = head;
+            SNode<T> previous = null;
+
+            for (; null != current; previous = current, current = current.next) {
+                if (insert.compareTo(current) <= 0) {
+                    break;
+                }
+            }
+
+            if (null == previous) {
+                head = insert;
+            } else {
+                previous.next = insert;
+            }
+
+            insert.next = current;
+            return head;
+        }
+
+        public static <T> void deleteInConstantTime(SNode<T> current) {
+            // We mark the current node for 'deleted' in cases
+            // - it is the tail, or
+            // - its next node is marked for 'deleted'.
+            boolean nextNodeNotAvailable = null == current.next || null == current.next.item;
+            if (nextNodeNotAvailable) {
+                current.item = null;
+                return;
+            }
+
+            // We copy the next node's data to the current node.
+            // Then, delete the next node from the memory space.
+            SNode<T> next = current.next;
+            current.item = next.item;
+            current.next = next.next;
+
+            // We move on to the next node and collect garbage.
+            while (null != current.next && null == current.next.item) {
+                next = current.next;
+                current.next = next.next;
+            }
+        }
+
         public SNode<T> mergeSort(SNode<T> p) {
             if (null == p || null == p.next) return p;
             SNode<T> q = partition(p);
@@ -887,7 +933,7 @@ public class puzzles {
             return p;
         }
 
-        public SNode<T> partition(SNode<T> p) {
+        public SNode<T> middle(SNode<T> p) {
             SNode<T> p1 = p;
             SNode<T> p2 = p.next;
             while (null != p2 && null != p2.next) {
@@ -895,8 +941,13 @@ public class puzzles {
                 p2 = p1.next;
             }
 
-            SNode<T> q = p1.next;
-            p1.next = null;
+            return p1;
+        }
+
+        public SNode<T> partition(SNode<T> p) {
+            p = middle(p);
+            SNode<T> q = p.next;
+            p.next = null;
             return q;
         }
 
