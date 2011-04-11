@@ -1858,6 +1858,68 @@ public class puzzles {
         }
     }
 
+    public static String ToString(int num) { // itoa in C/C++ runtime time library
+        boolean negative = false;
+        if (num < 0) {
+            num = -num;
+            negative = true;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (num > 0) {
+            sb.insert(0, (char)('0' + num % 10));
+            num /= 10;
+        }
+
+        if (negative) {
+            sb.insert(0, '-');
+        }
+
+        return sb.toString();
+    }
+    
+    public static int parse(String str) {
+        int num = 0;
+        boolean negative = false;
+        int i = 0;
+        if (str.charAt(i) == '-') {
+            i++; negative = true;
+        }
+
+        for (; i < str.length(); i++) {
+            if (str.charAt(i) < '0' && str.charAt(i) > '9') throw new IllegalArgumentException("Invalid format");
+            num *= 10;
+            num += (str.charAt(i) - '0');
+        }
+
+        return negative ? -num : num;
+    }
+
+    public static int LastIndexOfAny(String s, char... anyOf) {
+        Map<Character, Object> map = new HashMap<Character, Object>();
+        for (int i = 0; i < anyOf.length; i++) {
+            map.put(anyOf[i], null);
+        }
+
+        for (int i = s.length() - 1; i > 0; i--) {
+            if (map.containsKey(s.charAt(i))) return i;
+        }
+
+        return -1;
+    }
+
+//    public static IEnumerable<string> Tokenize(string str, string delimiters) {
+//        System.Collections.BitArray map = new System.Collections.BitArray(256); // ASCII
+//        for (int i = 0; i < delimiters.Length; i++) map[delimiters[i]] = true;
+//        for (int head = 0; head < str.Length; head++)
+//        {
+//            if (map[str[head]]) continue;
+//            int tail = head + 1;
+//            while (tail < str.Length && map[str[tail]] == false) tail++;
+//            yield return str.Substring(head, tail - head);
+//        }
+//    }
+
     public static int reverseInteger(int number) {
         int reverse = 0;
         while (number != 0) {
@@ -1898,6 +1960,29 @@ public class puzzles {
         return memoization.get(n);
     }
 
+//    public static List<String> LongestCommonSubstring(String lhs, String rhs) {
+//        int[,] spans = new int[lhs.Length, rhs.Length];
+//        int longest = 0;
+//        List<string> lcs = new List<string>();
+//
+//        for (int i = 0; i < lhs.Length; i++) {
+//            for (int j = 0; j < rhs.Length; j++) {
+//                if (lhs[i] == rhs[j]) {
+//                    spans[i, j] = (i == 0 || j == 0) ? 1 : spans[i - 1, j - 1] + 1;
+//                    if (spans[i, j] > longest) {
+//                        longest = spans[i, j];
+//                        lcs.Clear();
+//                    }
+//
+//                    if (spans[i, j] == longest) {
+//                        lcs.Add(lhs.Substring(i - longest + 1, longest));
+//                    }
+//                }
+//            }
+//        }
+//
+//        return lcs;
+//    }
 
     public static void printHex(int i) {
         if (i < 0) {
