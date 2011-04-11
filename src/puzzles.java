@@ -1433,10 +1433,6 @@ public class puzzles {
         return brackets.empty();
     }
 
-    public static boolean isPowerOf2(int x) {
-        return (0 == (x & x - 1)) && (x > 0);
-    }
-
     // Design a card game http://math.hws.edu/javanotes/c5/s4.html
     interface Deck {
         void suffle();
@@ -2058,43 +2054,53 @@ public class puzzles {
         assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 12, 17, 22, 20), i12_22));
     }
 
-//  public static int CountOnes(int value) {
-//      unchecked {
-//          uint x = (uint)value;
-//          x = ((0xaaaaaaaa & x) >> 1) + (0x55555555 & x);
-//          x = ((0xcccccccc & x) >> 2) + (0x33333333 & x);
-//          x = ((0xf0f0f0f0 & x) >> 4) + (0x0f0f0f0f & x);
-//          x = ((0xff00ff00 & x) >> 8) + (0x00ff00ff & x);
-//          x = (x >> 16) + (0x0000ffff & x);
-//          return (int)x;
+    public static class BitOperations {
+        public static boolean isPowerOf2(int x) {
+            return (0 == (x & x - 1)) && (x > 0);
+        }
+
+        public static void swap(int[] a) {
+            a[0] ^= a[1] ^= a[0] ^= a[1];
+        }
+
+//      public static int CountOnes(int value) {
+//          unchecked {
+//              uint x = (uint)value;
+//              x = ((0xaaaaaaaa & x) >> 1) + (0x55555555 & x);
+//              x = ((0xcccccccc & x) >> 2) + (0x33333333 & x);
+//              x = ((0xf0f0f0f0 & x) >> 4) + (0x0f0f0f0f & x);
+//              x = ((0xff00ff00 & x) >> 8) + (0x00ff00ff & x);
+//              x = (x >> 16) + (0x0000ffff & x);
+//              return (int)x;
+//          }
 //      }
-//  }
-//
-//  public static int Reverse(int value) {
-//      unchecked {
-//          uint x = (uint)value;
-//          x = x >> 16 | (0x0000ffff & x) << 16;
-//          x = (0xff00ff00 & x) >> 8 | (0x00ff00ff & x) << 8;
-//          x = (0xf0f0f0f0 & x) >> 4 | (0x0f0f0f0f & x) << 4;
-//          x = (0xcccccccc & x) >> 2 | (0x33333333 & x) << 2;
-//          x = (0xaaaaaaaa & x) >> 1 | (0x55555555 & x) << 1;
-//          return (int)x;
-//      };
-//  }
-//
-//  public static int CountTrailingZeros(int value) {
-//      return CountOnes((value & -value) - 1);
-//  }
-//
-//  public static int CountLeadingZeros(int value) {
-//      unchecked {
-//          uint x = (uint)value;
-//          x |= x >>= 1;
-//          x |= x >>= 2;
-//          x |= x >>= 4;
-//          x |= x >>= 8;
-//          x |= x >>= 16;
-//          return CountOnes((int)~x);
+
+//      public static int Reverse(int value) {
+//          unchecked {
+//              uint x = (uint)value;
+//              x = x >> 16 | (0x0000ffff & x) << 16;
+//              x = (0xff00ff00 & x) >> 8 | (0x00ff00ff & x) << 8;
+//              x = (0xf0f0f0f0 & x) >> 4 | (0x0f0f0f0f & x) << 4;
+//              x = (0xcccccccc & x) >> 2 | (0x33333333 & x) << 2;
+//              x = (0xaaaaaaaa & x) >> 1 | (0x55555555 & x) << 1;
+//              return (int)x;
+//          };
 //      }
-//  }
+
+//      public static int CountTrailingZeros(int value) {
+//          return CountOnes((value & -value) - 1);
+//      }
+
+//      public static int CountLeadingZeros(int value) {
+//          unchecked {
+//              uint x = (uint)value;
+//              x |= x >>= 1;
+//              x |= x >>= 2;
+//              x |= x >>= 4;
+//              x |= x >>= 8;
+//              x |= x >>= 16;
+//              return CountOnes((int)~x);
+//          }
+//      }
+    }
 }
