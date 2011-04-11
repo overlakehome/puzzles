@@ -821,7 +821,7 @@ public class puzzles {
         }
 
         // to print the k-th smallest, if (i == k) System.out.print(elements[i]);
-        swap(elements, i, right);
+        swap(elements, i, right); // restore the pivot
         quicksort(elements, left, i - 1);
         quicksort(elements, i + 1, right);
     }
@@ -902,6 +902,21 @@ public class puzzles {
             return head;
         }
 
+        // Delete (in a linear time) : Time: O(n), Space: O(1)
+        // We return existing head when non-head is deleted or new head when head is deleted.
+        public static <T> SNode<T> Delete(SNode<T> head, SNode<T> delete) {
+            if (head == null) return head;
+            if (head == delete) return head.next;
+
+            for (SNode<T> prev = head; prev.next != null; prev = prev.next) {
+                if (prev.next == delete) {
+                    prev.next = prev.next.next;  break;
+                }
+            }
+
+            return head;
+        }
+
         public static <T> void deleteInConstantTime(SNode<T> current) {
             // We mark the current node for 'deleted' in cases
             // - it is the tail, or
@@ -944,6 +959,17 @@ public class puzzles {
 
             return head;
         }
+
+        public static <T> SNode<T> findNthLastNode(SNode<T> current, int offset) {
+            Queue<SNode<T>> q = new LinkedList<SNode<T>>();
+            for (; current != null; current = current.next) {
+                if (q.size() > offset) q.remove();
+                q.add(current);
+            }
+
+            return q.size() < offset ? null : q.peek();
+        }
+
 
         // This function sums two linked lists where each node holds a digit.
         // The operands and result are linked lists as we sum 9182 + 517 = 9699.
@@ -1053,6 +1079,11 @@ public class puzzles {
             return current;
         }
 
+        public static <T> void delete(DNode<T> delete) {
+            if (delete.prev != null) delete.prev.next = delete.next;
+            if (delete.next != null) delete.next.prev = delete.prev;
+        }
+
         // This function clones a given linked list,
         // where 'next' link forms a linear linked list,
         // but, 'prev' link points to any node or nothing (which means 'null').
@@ -1063,46 +1094,46 @@ public class puzzles {
         // 'prev' : A -> C, B -> NULL, C -> D, D -> C (disordered)
         DNode<Integer> clone(DNode<Integer> head) {
             // We short-circuit known cases.
-            if (null == head) return null;
+            if (null == head)
+                return null;
 
-         // We stores mappings from source nodes to target nodes. 
-         Map<DNode<Integer>, DNode<Integer>> map = new HashMap<DNode<Integer>, DNode<Integer>>();
-         DNode<Integer> source = head; // It keeps a source node.
-         DNode<Integer> target = null; // It keeps a target node.
-         DNode<Integer> previous = null; // It keeps a previous node.
-         DNode<Integer> result = null; // It keeps a cloned linked list.
+            // We stores mappings from source nodes to target nodes.
+            Map<DNode<Integer>, DNode<Integer>> map = new HashMap<DNode<Integer>, DNode<Integer>>();
+            DNode<Integer> source = head; // It keeps a source node.
+            DNode<Integer> target = null; // It keeps a target node.
+            DNode<Integer> previous = null; // It keeps a previous node.
+            DNode<Integer> result = null; // It keeps a cloned linked list.
 
-         // Time to clone: O(n)
-         while (null != source) {
-             target = new DNode<Integer>(); // What if out-of-memory?
-             target.item = source.item;
-             target.prev = source.prev;
-             target.next = null;
+            // Time to clone: O(n)
+            while (null != source) {
+                target = new DNode<Integer>(); // What if out-of-memory?
+                target.item = source.item;
+                target.prev = source.prev;
+                target.next = null;
 
-             if (null != previous) {
-                 previous.next = target;
-             }
-             else {
-                 result = target;
-             }
+                if (null != previous) {
+                    previous.next = target;
+                } else {
+                    result = target;
+                }
 
-             // We stores a mapping from a source node to a target node.
-             map.put(source, target);
+                // We stores a mapping from a source node to a target node.
+                map.put(source, target);
 
-             // We move on to the next node.
-             source = source.next;
-             previous = target;
-         }
+                // We move on to the next node.
+                source = source.next;
+                previous = target;
+            }
 
-         // Time to re-map: O(n)
-         target = result;
-         while (null != target) {
-             target.prev = map.get(target.prev);
-             target = target.next;
-         }
+            // Time to re-map: O(n)
+            target = result;
+            while (null != target) {
+                target.prev = map.get(target.prev);
+                target = target.next;
+            }
 
-         return result;
-     }
+            return result;
+        }
     }
 
     public static class BNode<T extends Comparable<T>> implements Comparable<BNode<T>> {
@@ -1810,6 +1841,37 @@ public class puzzles {
 
         return reverse;
     }
+
+    public static int fibonacciBottomUp(int n) {
+        if (n == 0 || n == 1) return 1;
+
+        int current = 2;
+        int one_back = 1;
+        int two_back = 1;
+        for (int i = 3; i <= n; i++) {
+            current = one_back + two_back;
+            two_back = one_back;
+            one_back = current;
+        }
+
+        return current;
+    }
+
+    private static Map<Integer, Integer> memoization = new HashMap<Integer, Integer>();
+
+    static {
+        memoization.put(0, 1);
+        memoization.put(1, 1);
+    }
+
+    public static int FibonacciTopDown(int n) {
+        if (!memoization.containsKey(n)) {
+            memoization.put(n, FibonacciTopDown(n - 1) + FibonacciTopDown(n - 2));
+        }
+
+        return memoization.get(n);
+    }
+
 
     public static void printHex(int i) {
         if (i < 0) {
