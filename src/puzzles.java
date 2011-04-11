@@ -684,6 +684,50 @@ public class puzzles {
         return permutations;
     }
 
+//    public static IEnumerable<string> Combine(string s)
+//    {
+//        return combine(s.ToCharArray(), new StringBuilder(), 0); // additional d.s.; recursion level
+//    }
+//
+//    private static IEnumerable<string> combine(char[] chars, StringBuilder sb, int level)
+//    {
+//        // base cases
+//        for (int i = level; i < chars.Length; i++)
+//        {
+//            sb.Append(chars[i]);
+//            yield return sb.ToString();
+//            foreach (string s in combine(chars, sb, i + 1)) yield return s; // recursive cases
+//            sb.Length = sb.Length - 1;
+//        }
+//    }
+//
+//    public static IEnumerable<string> TelephoneWords(params int[] digits)
+//    {
+//        char[] chars = new char[digits.Length];
+//        Dictionary<string, string> dict = new Dictionary<string, string>();
+//        telephoneWords(digits, chars, dict, 0); // additional d.s. and recursion level
+//        return dict.Keys;
+//    }
+//
+//    private static void telephoneWords(int[] digits, char[] chars, Dictionary<string, string> dict, int level)
+//    {
+//        if (level == digits.Length)
+//        {
+//            string s = new string(chars);
+//            dict[s] = s;
+//            return;
+//        }
+//        for (int i = 0; i < 3; i++)
+//        {
+//            if (digits[level] == 0 || digits[level] == 1)
+//                chars[level] = (char)((int)'0' + digits[level]);
+//            else
+//                chars[level] = (char)((int)'A' + 3 * (digits[level] - 2) + i);
+//            telephoneWords(digits, chars, dict, level + 1);
+//        }
+//    }
+
+
     public static int divide(int dividend, int divisor) {
         int bit = 1;
         while (divisor <= dividend) {
@@ -1344,6 +1388,36 @@ public class puzzles {
             return -1; // disjoint
         }
 
+//        public static IEnumerable<BNode<T>> DepthFirstSearch(BNode<T> current)
+//        {
+//            Stack<BNode<T>> stack = new Stack<BNode<T>>();
+//            stack.Push(current);
+//            while (stack.Count > 0)
+//            {
+//                current = stack.Pop();
+//                yield return current;
+//                foreach (BNode<T> child in current.Children)
+//                {
+//                    stack.Push(child);
+//                }
+//            }
+//        }
+//
+//        public static IEnumerable<BNode<T>> BreadthFirstSearch(BNode<T> current)
+//        {   
+//            Queue<BNode<T>> queue = new Queue<BNode<T>>();
+//            queue.Enqueue(current);
+//            while (queue.Count > 0)
+//            {
+//                current = queue.Dequeue();
+//                yield return current;
+//                foreach (BNode<T> child in current.Children)
+//                {
+//                    queue.Enqueue(child);
+//                }
+//            }
+//        }
+
         @Override
         public int compareTo(BNode<T> o) {
             return this.item.compareTo(o.item);
@@ -1862,6 +1936,44 @@ public class puzzles {
 
         return modes;
     }
+    
+//    /// <summary>Find the multiple missing elements from a list of unsorted elements.</summary>
+//    public static IEnumerable<int>FindMissingElements(int[] set)
+//    {
+//        if (set == null || set.Length == 0) yield break;
+//
+//        int min = int.MaxValue, max = int.MinValue;
+//        foreach (int i in set) // Time to find min/max : O(n)
+//        {   
+//            min = Math.Min(min, i); max = Math.Max(max, i);
+//        }
+//
+//        if (max - min > set.Length * set.Length / 2)
+//        {
+//            Array.Sort(set); // Time to sort : O(nlogn)
+//            for (int i = 1; i < set.Length; i++)
+//            {
+//                for (int j = set[i - 1]; j < set[i]; j++) // Time to search gap : O(n)
+//                {
+//                    yield return j;
+//                }
+//            }
+//        }
+//        else if (max - min > 80 * set.Length)
+//        {   // Space to build hash map: O(10 * n)
+//            Dictionary<int, object> map = new Dictionary<int, object>();
+//            foreach (int i in set) map[i] = null; // Time to build hashmap: O(n)
+//            for (int i = min + 1; i < max; i++)
+//                if (map.ContainsKey(i) == false) yield return i; // Time to search gap : O(n)
+//        }
+//        else
+//        {   // Space to build bitmap: O(k = max - min divided by 8)
+//            System.Collections.BitArray map = new System.Collections.BitArray(max - min + 1);
+//            foreach (int i in set) map[i - min] = true; // Time to build bitmap : O(n)
+//            for (int i = min + 1; i < max; i++)
+//                if (map[i - min] == false) yield return i; // Time to search gap : O(n)
+//        }
+//    }
 
     public static void swap(char[] chars, int i, int j) {
         if (chars[i] != chars[j]) {
@@ -1928,6 +2040,38 @@ public class puzzles {
 
         return -1;
     }
+
+    public static String FindAllNonRepeated(String s) {
+        if (s == null) return null;
+
+        Object seenOnce = new Object();
+        Object seenTwice = new Object();
+        Map<Character, Object> chars = new HashMap<Character, Object>();
+
+        for (int i = 0; i < s.length(); i++) {
+            if (chars.containsKey(s.charAt(i))) chars.put(s.charAt(i), seenTwice);
+            else chars.put(s.charAt(i), seenOnce);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (chars.get(s.charAt(i)) == seenOnce) sb.append(s.charAt(i));
+        }
+
+        return sb.toString();
+    }
+
+//    public static String ReverseWords(String s) {
+//        char[] chars = s.toCharArray();
+//        Reverse(chars, 0, chars.length - 1);
+//        for (int head = 0, tail = 0; tail < s.length(); )
+//        {
+//            for (head = tail; head < s.length() && chars[head] == ' '; ) head++;
+//            for (tail = head; tail < s.length() && chars[tail] != ' '; ) tail++;
+//            Reverse(chars, head, tail - 1);
+//        }
+//        return new String(chars);
+//    }
 
 //    public static IEnumerable<string> Tokenize(string str, string delimiters) {
 //        System.Collections.BitArray map = new System.Collections.BitArray(256); // ASCII
