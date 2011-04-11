@@ -970,6 +970,36 @@ public class puzzles {
             return q.size() < offset ? null : q.peek();
         }
 
+        /// <summary>
+        /// Let's assume the length of the cycle is M and the length of the rest of the linked list is L.
+        /// Define the first node in the cycle (called joint) has position 0 and suppose two pointers
+        /// p1 and p2 meet at position p where p1 has walked (L + k1 * M * p) and p2 (L + K2 * M * p).
+        /// In other words, they meet at p = (k1 * m - L) mod M. p1 will be at position 0 after L steps.
+        /// </summary>
+        public static <T> SNode<T> fixCycle(SNode<T> current) {
+            SNode<T> p1 = current; // walk at normal speed
+            SNode<T> p2 = current; // walk at double speed
+            SNode<T> joint = current; // first node of the cycle
+            SNode<T> chain = null; // chain node to fix up
+
+            while (p2 != null && p2.next != null) {
+                p2 = p2.next.next;
+                p1 = p1.next;
+                if (p1 == p2) break;
+            }
+
+            if (p2 == null || p2.next == null) return null;
+
+            while (p1 != joint) {
+                joint = joint.next;
+                chain = p1;
+                p1 = p1.next;
+            }
+
+            if (chain != null) chain.next = null;
+            return joint;
+        }
+
 
         // This function sums two linked lists where each node holds a digit.
         // The operands and result are linked lists as we sum 9182 + 517 = 9699.
