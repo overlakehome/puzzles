@@ -1,6 +1,7 @@
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static java.lang.System.out;
 
 import java.math.BigInteger;
 import java.util.AbstractMap.SimpleEntry;
@@ -591,6 +592,27 @@ public class puzzles {
         return hash;
     }
 
+    public static class Queueable<T> {
+        Stack<T> stk1 = new Stack<T>();
+        Stack<T> stk2 = new Stack<T>();
+
+        void push(T e) {
+            stk1.push(e);
+        }
+
+        T pop() {
+            if (stk2.size() > 0) {
+                while (stk1.size() == 0) {
+                    stk2.push(stk1.pop());
+                }
+            }
+
+            T e = stk2.pop();
+            return e;
+        }
+
+    }
+
     public static class MinStack<T extends Comparable<T>> {
         private T mininum;
         private Stack<T> stack = new Stack<T>();
@@ -661,6 +683,50 @@ public class puzzles {
 
         return permutations;
     }
+
+//    public static IEnumerable<string> Combine(string s)
+//    {
+//        return combine(s.ToCharArray(), new StringBuilder(), 0); // additional d.s.; recursion level
+//    }
+//
+//    private static IEnumerable<string> combine(char[] chars, StringBuilder sb, int level)
+//    {
+//        // base cases
+//        for (int i = level; i < chars.Length; i++)
+//        {
+//            sb.Append(chars[i]);
+//            yield return sb.ToString();
+//            foreach (string s in combine(chars, sb, i + 1)) yield return s; // recursive cases
+//            sb.Length = sb.Length - 1;
+//        }
+//    }
+//
+//    public static IEnumerable<string> TelephoneWords(params int[] digits)
+//    {
+//        char[] chars = new char[digits.Length];
+//        Dictionary<string, string> dict = new Dictionary<string, string>();
+//        telephoneWords(digits, chars, dict, 0); // additional d.s. and recursion level
+//        return dict.Keys;
+//    }
+//
+//    private static void telephoneWords(int[] digits, char[] chars, Dictionary<string, string> dict, int level)
+//    {
+//        if (level == digits.Length)
+//        {
+//            string s = new string(chars);
+//            dict[s] = s;
+//            return;
+//        }
+//        for (int i = 0; i < 3; i++)
+//        {
+//            if (digits[level] == 0 || digits[level] == 1)
+//                chars[level] = (char)((int)'0' + digits[level]);
+//            else
+//                chars[level] = (char)((int)'A' + 3 * (digits[level] - 2) + i);
+//            telephoneWords(digits, chars, dict, level + 1);
+//        }
+//    }
+
 
     public static int divide(int dividend, int divisor) {
         int bit = 1;
@@ -820,7 +886,7 @@ public class puzzles {
         }
 
         // to print the k-th smallest, if (i == k) System.out.print(elements[i]);
-        swap(elements, i, right);
+        swap(elements, i, right); // restore the pivot
         quicksort(elements, left, i - 1);
         quicksort(elements, i + 1, right);
     }
@@ -866,6 +932,175 @@ public class puzzles {
         public T item;
         public SNode<T> next;
 
+        public static <T> SNode<T> reverse(SNode<T> current) {
+            SNode<T> result = null;
+            while (null != current) {
+                SNode<T> save = current.next;
+                current.next = result;
+                result = current;
+                current = save;
+            }
+
+            return result;
+        }
+
+        public static <T> SNode<T> insertIntoSerted(SNode<T> head, SNode<T> insert) {
+            if (null == insert) return head;
+            if (null == head) return insert;
+
+            SNode<T> current = head;
+            SNode<T> previous = null;
+
+            for (; null != current; previous = current, current = current.next) {
+                if (insert.compareTo(current) <= 0) {
+                    break;
+                }
+            }
+
+            if (null == previous) {
+                head = insert;
+            } else {
+                previous.next = insert;
+            }
+
+            insert.next = current;
+            return head;
+        }
+
+        // Delete (in a linear time) : Time: O(n), Space: O(1)
+        // We return existing head when non-head is deleted or new head when head is deleted.
+        public static <T> SNode<T> Delete(SNode<T> head, SNode<T> delete) {
+            if (head == null) return head;
+            if (head == delete) return head.next;
+
+            for (SNode<T> prev = head; prev.next != null; prev = prev.next) {
+                if (prev.next == delete) {
+                    prev.next = prev.next.next;  break;
+                }
+            }
+
+            return head;
+        }
+
+        public static <T> void deleteInConstantTime(SNode<T> current) {
+            // We mark the current node for 'deleted' in cases
+            // - it is the tail, or
+            // - its next node is marked for 'deleted'.
+            boolean nextNodeNotAvailable = null == current.next || null == current.next.item;
+            if (nextNodeNotAvailable) {
+                current.item = null;
+                return;
+            }
+
+            // We copy the next node's data to the current node.
+            // Then, delete the next node from the memory space.
+            SNode<T> next = current.next;
+            current.item = next.item;
+            current.next = next.next;
+
+            // We move on to the next node and collect garbage.
+            while (null != current.next && null == current.next.item) {
+                next = current.next;
+                current.next = next.next;
+            }
+        }
+
+        // This function swaps every two nodes in a single linked list.
+        // Given 1 -> 2 -> 3 -> 4 -> 5, it returns 2 -> 1 -> 4 -> 3 -> 5.
+        public static <T> SNode<T> swapEveryTwo(SNode<T> head) {
+            if (null == head) throw new NullPointerException("head");
+            if (null == head.next) return head;
+
+            SNode<T> current = head;
+            head = current.next;
+            while (null != current && null != current.next) {
+                SNode<T> next = current.next;
+                SNode<T> next2 = current.next.next;
+
+                next.next = current;
+                current.next = null != next2 ? next2.next : next2;
+                current = next2;
+            }
+
+            return head;
+        }
+
+        public static <T> SNode<T> findNthLastNode(SNode<T> current, int offset) {
+            Queue<SNode<T>> q = new LinkedList<SNode<T>>();
+            for (; current != null; current = current.next) {
+                if (q.size() > offset) q.remove();
+                q.add(current);
+            }
+
+            return q.size() < offset ? null : q.peek();
+        }
+
+        /// <summary>
+        /// Let's assume the length of the cycle is M and the length of the rest of the linked list is L.
+        /// Define the first node in the cycle (called joint) has position 0 and suppose two pointers
+        /// p1 and p2 meet at position p where p1 has walked (L + k1 * M * p) and p2 (L + K2 * M * p).
+        /// In other words, they meet at p = (k1 * m - L) mod M. p1 will be at position 0 after L steps.
+        /// </summary>
+        public static <T> SNode<T> fixCycle(SNode<T> current) {
+            SNode<T> p1 = current; // walk at normal speed
+            SNode<T> p2 = current; // walk at double speed
+            SNode<T> joint = current; // first node of the cycle
+            SNode<T> chain = null; // chain node to fix up
+
+            while (p2 != null && p2.next != null) {
+                p2 = p2.next.next;
+                p1 = p1.next;
+                if (p1 == p2) break;
+            }
+
+            if (p2 == null || p2.next == null) return null;
+
+            while (p1 != joint) {
+                joint = joint.next;
+                chain = p1;
+                p1 = p1.next;
+            }
+
+            if (chain != null) chain.next = null;
+            return joint;
+        }
+
+
+        // This function sums two linked lists where each node holds a digit.
+        // The operands and result are linked lists as we sum 9182 + 517 = 9699.
+        // For example, given two linked lists, 9 -> 1 -> 8 -> 2 and 5 -> 1 ->
+        // 7,
+        // this function is expected to return a linked list, 9 -> 6 -> 9 -> 9.
+        public static SNode<Integer> sumLinkedNumbers(SNode<Integer> lhs, SNode<Integer> rhs) {
+            lhs = reverse(lhs);
+            rhs = reverse(rhs);
+
+            SNode<Integer> head = null;
+            SNode<Integer> prev = null;
+            int tens = 0; // carry over
+            while (null != lhs || null != rhs) {
+                int ones = 0;
+
+                if (null == lhs) ones = rhs.item;
+                else if (null == rhs) ones = lhs.item;
+                else {
+                    ones = (lhs.item + rhs.item) % 10;
+                }
+
+                if (null != head) { head = new SNode<Integer>(); head.item = ones + tens; prev = head; }
+                else { prev.next = new SNode<Integer>(); prev.next.item = ones + tens; prev = prev.next; }
+                tens = (null != lhs && null != rhs) ? (lhs.item + rhs.item) / 10 : 0; // carry over
+                lhs = lhs.next;
+                rhs = rhs.next;
+            }
+
+            if (tens > 0) {
+                prev.next = new SNode<Integer>(); prev.next.item = tens;
+            }
+
+            return reverse(head);
+        }
+
         public SNode<T> mergeSort(SNode<T> p) {
             if (null == p || null == p.next) return p;
             SNode<T> q = partition(p);
@@ -875,7 +1110,7 @@ public class puzzles {
             return p;
         }
 
-        public SNode<T> partition(SNode<T> p) {
+        public SNode<T> middle(SNode<T> p) {
             SNode<T> p1 = p;
             SNode<T> p2 = p.next;
             while (null != p2 && null != p2.next) {
@@ -883,8 +1118,13 @@ public class puzzles {
                 p2 = p1.next;
             }
 
-            SNode<T> q = p1.next;
-            p1.next = null;
+            return p1;
+        }
+
+        public SNode<T> partition(SNode<T> p) {
+            p = middle(p);
+            SNode<T> q = p.next;
+            p.next = null;
             return q;
         }
 
@@ -932,6 +1172,62 @@ public class puzzles {
             }
 
             return current;
+        }
+
+        public static <T> void delete(DNode<T> delete) {
+            if (delete.prev != null) delete.prev.next = delete.next;
+            if (delete.next != null) delete.next.prev = delete.prev;
+        }
+
+        // This function clones a given linked list,
+        // where 'next' link forms a linear linked list,
+        // but, 'prev' link points to any node or nothing (which means 'null').
+        //
+        // e.g., 'next' link forms a linear linked list. 'prev' link forms a
+        // graph.
+        // 'next' : A -> B -> C -> D -> NULL (linear, ordered)
+        // 'prev' : A -> C, B -> NULL, C -> D, D -> C (disordered)
+        DNode<Integer> clone(DNode<Integer> head) {
+            // We short-circuit known cases.
+            if (null == head)
+                return null;
+
+            // We stores mappings from source nodes to target nodes.
+            Map<DNode<Integer>, DNode<Integer>> map = new HashMap<DNode<Integer>, DNode<Integer>>();
+            DNode<Integer> source = head; // It keeps a source node.
+            DNode<Integer> target = null; // It keeps a target node.
+            DNode<Integer> previous = null; // It keeps a previous node.
+            DNode<Integer> result = null; // It keeps a cloned linked list.
+
+            // Time to clone: O(n)
+            while (null != source) {
+                target = new DNode<Integer>(); // What if out-of-memory?
+                target.item = source.item;
+                target.prev = source.prev;
+                target.next = null;
+
+                if (null != previous) {
+                    previous.next = target;
+                } else {
+                    result = target;
+                }
+
+                // We stores a mapping from a source node to a target node.
+                map.put(source, target);
+
+                // We move on to the next node.
+                source = source.next;
+                previous = target;
+            }
+
+            // Time to re-map: O(n)
+            target = result;
+            while (null != target) {
+                target.prev = map.get(target.prev);
+                target = target.next;
+            }
+
+            return result;
         }
     }
 
@@ -1092,6 +1388,36 @@ public class puzzles {
             return -1; // disjoint
         }
 
+//        public static IEnumerable<BNode<T>> DepthFirstSearch(BNode<T> current)
+//        {
+//            Stack<BNode<T>> stack = new Stack<BNode<T>>();
+//            stack.Push(current);
+//            while (stack.Count > 0)
+//            {
+//                current = stack.Pop();
+//                yield return current;
+//                foreach (BNode<T> child in current.Children)
+//                {
+//                    stack.Push(child);
+//                }
+//            }
+//        }
+//
+//        public static IEnumerable<BNode<T>> BreadthFirstSearch(BNode<T> current)
+//        {   
+//            Queue<BNode<T>> queue = new Queue<BNode<T>>();
+//            queue.Enqueue(current);
+//            while (queue.Count > 0)
+//            {
+//                current = queue.Dequeue();
+//                yield return current;
+//                foreach (BNode<T> child in current.Children)
+//                {
+//                    queue.Enqueue(child);
+//                }
+//            }
+//        }
+
         @Override
         public int compareTo(BNode<T> o) {
             return this.item.compareTo(o.item);
@@ -1183,6 +1509,8 @@ public class puzzles {
         return false;
     }
 
+    // This function matches brackets such as [], (), and {}.
+    // For example, [ { ( a + b ) * -c } % d ] yields 'true'.
     public boolean bracketsMatching(String s) {
         Stack<Character> brackets = new Stack<Character>();
         for (int i = 0; i < s.length(); i++) {
@@ -1198,10 +1526,6 @@ public class puzzles {
         }
 
         return brackets.empty();
-    }
-
-    public static boolean isPowerOf2(int x) {
-        return (0 == (x & x - 1)) && (x > 0);
     }
 
     // Design a card game http://math.hws.edu/javanotes/c5/s4.html
@@ -1612,6 +1936,44 @@ public class puzzles {
 
         return modes;
     }
+    
+//    /// <summary>Find the multiple missing elements from a list of unsorted elements.</summary>
+//    public static IEnumerable<int>FindMissingElements(int[] set)
+//    {
+//        if (set == null || set.Length == 0) yield break;
+//
+//        int min = int.MaxValue, max = int.MinValue;
+//        foreach (int i in set) // Time to find min/max : O(n)
+//        {   
+//            min = Math.Min(min, i); max = Math.Max(max, i);
+//        }
+//
+//        if (max - min > set.Length * set.Length / 2)
+//        {
+//            Array.Sort(set); // Time to sort : O(nlogn)
+//            for (int i = 1; i < set.Length; i++)
+//            {
+//                for (int j = set[i - 1]; j < set[i]; j++) // Time to search gap : O(n)
+//                {
+//                    yield return j;
+//                }
+//            }
+//        }
+//        else if (max - min > 80 * set.Length)
+//        {   // Space to build hash map: O(10 * n)
+//            Dictionary<int, object> map = new Dictionary<int, object>();
+//            foreach (int i in set) map[i] = null; // Time to build hashmap: O(n)
+//            for (int i = min + 1; i < max; i++)
+//                if (map.ContainsKey(i) == false) yield return i; // Time to search gap : O(n)
+//        }
+//        else
+//        {   // Space to build bitmap: O(k = max - min divided by 8)
+//            System.Collections.BitArray map = new System.Collections.BitArray(max - min + 1);
+//            foreach (int i in set) map[i - min] = true; // Time to build bitmap : O(n)
+//            for (int i = min + 1; i < max; i++)
+//                if (map[i - min] == false) yield return i; // Time to search gap : O(n)
+//        }
+//    }
 
     public static void swap(char[] chars, int i, int j) {
         if (chars[i] != chars[j]) {
@@ -1626,6 +1988,183 @@ public class puzzles {
             ints[i] ^= ints[j];
             ints[j] ^= ints[i];
             ints[i] ^= ints[j];
+        }
+    }
+
+    public static String ToString(int num) { // itoa in C/C++ runtime time library
+        boolean negative = false;
+        if (num < 0) {
+            num = -num;
+            negative = true;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (num > 0) {
+            sb.insert(0, (char)('0' + num % 10));
+            num /= 10;
+        }
+
+        if (negative) {
+            sb.insert(0, '-');
+        }
+
+        return sb.toString();
+    }
+
+    public static int parse(String str) {
+        int num = 0;
+        boolean negative = false;
+        int i = 0;
+        if (str.charAt(i) == '-') {
+            i++; negative = true;
+        }
+
+        for (; i < str.length(); i++) {
+            if (str.charAt(i) < '0' && str.charAt(i) > '9') throw new IllegalArgumentException("Invalid format");
+            num *= 10;
+            num += (str.charAt(i) - '0');
+        }
+
+        return negative ? -num : num;
+    }
+
+    public static int LastIndexOfAny(String s, char... anyOf) {
+        Map<Character, Object> map = new HashMap<Character, Object>();
+        for (int i = 0; i < anyOf.length; i++) {
+            map.put(anyOf[i], null);
+        }
+
+        for (int i = s.length() - 1; i > 0; i--) {
+            if (map.containsKey(s.charAt(i))) return i;
+        }
+
+        return -1;
+    }
+
+    public static String FindAllNonRepeated(String s) {
+        if (s == null) return null;
+
+        Object seenOnce = new Object();
+        Object seenTwice = new Object();
+        Map<Character, Object> chars = new HashMap<Character, Object>();
+
+        for (int i = 0; i < s.length(); i++) {
+            if (chars.containsKey(s.charAt(i))) chars.put(s.charAt(i), seenTwice);
+            else chars.put(s.charAt(i), seenOnce);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (chars.get(s.charAt(i)) == seenOnce) sb.append(s.charAt(i));
+        }
+
+        return sb.toString();
+    }
+
+//    public static String ReverseWords(String s) {
+//        char[] chars = s.toCharArray();
+//        Reverse(chars, 0, chars.length - 1);
+//        for (int head = 0, tail = 0; tail < s.length(); )
+//        {
+//            for (head = tail; head < s.length() && chars[head] == ' '; ) head++;
+//            for (tail = head; tail < s.length() && chars[tail] != ' '; ) tail++;
+//            Reverse(chars, head, tail - 1);
+//        }
+//        return new String(chars);
+//    }
+
+//    public static IEnumerable<string> Tokenize(string str, string delimiters) {
+//        System.Collections.BitArray map = new System.Collections.BitArray(256); // ASCII
+//        for (int i = 0; i < delimiters.Length; i++) map[delimiters[i]] = true;
+//        for (int head = 0; head < str.Length; head++)
+//        {
+//            if (map[str[head]]) continue;
+//            int tail = head + 1;
+//            while (tail < str.Length && map[str[tail]] == false) tail++;
+//            yield return str.Substring(head, tail - head);
+//        }
+//    }
+
+    public static int reverseInteger(int number) {
+        int reverse = 0;
+        while (number != 0) {
+            reverse = reverse * 10 + number % 10;
+            number /= 10;
+        }
+
+        return reverse;
+    }
+
+    public static int fibonacciBottomUp(int n) {
+        if (n == 0 || n == 1) return 1;
+
+        int current = 2;
+        int one_back = 1;
+        int two_back = 1;
+        for (int i = 3; i <= n; i++) {
+            current = one_back + two_back;
+            two_back = one_back;
+            one_back = current;
+        }
+
+        return current;
+    }
+
+    private static Map<Integer, Integer> memoization = new HashMap<Integer, Integer>();
+
+    static {
+        memoization.put(0, 1);
+        memoization.put(1, 1);
+    }
+
+    public static int FibonacciTopDown(int n) {
+        if (!memoization.containsKey(n)) {
+            memoization.put(n, FibonacciTopDown(n - 1) + FibonacciTopDown(n - 2));
+        }
+
+        return memoization.get(n);
+    }
+
+//    public static List<String> LongestCommonSubstring(String lhs, String rhs) {
+//        int[,] spans = new int[lhs.Length, rhs.Length];
+//        int longest = 0;
+//        List<string> lcs = new List<string>();
+//
+//        for (int i = 0; i < lhs.Length; i++) {
+//            for (int j = 0; j < rhs.Length; j++) {
+//                if (lhs[i] == rhs[j]) {
+//                    spans[i, j] = (i == 0 || j == 0) ? 1 : spans[i - 1, j - 1] + 1;
+//                    if (spans[i, j] > longest) {
+//                        longest = spans[i, j];
+//                        lcs.Clear();
+//                    }
+//
+//                    if (spans[i, j] == longest) {
+//                        lcs.Add(lhs.Substring(i - longest + 1, longest));
+//                    }
+//                }
+//            }
+//        }
+//
+//        return lcs;
+//    }
+
+    public static void printHex(int i) {
+        if (i < 0) {
+           out.print("-");
+           i = -i;
+        }
+
+        Stack<Integer> stack = new Stack<Integer>();
+        stack.push(i);
+        while (!stack.isEmpty()) {
+            i = stack.pop();
+            if (i < 16) {
+                out.print((char)((i < 10) ? ((int)'0' + i) : ((int)'A' + i - 10)));
+            } else {
+                stack.push(i % 16);
+                stack.push(i / 16);
+            }
         }
     }
 
@@ -1765,43 +2304,53 @@ public class puzzles {
         assertTrue(Iterables.elementsEqual(ImmutableList.of(19, 15, 12, 17, 22, 20), i12_22));
     }
 
-//  public static int CountOnes(int value) {
-//      unchecked {
-//          uint x = (uint)value;
-//          x = ((0xaaaaaaaa & x) >> 1) + (0x55555555 & x);
-//          x = ((0xcccccccc & x) >> 2) + (0x33333333 & x);
-//          x = ((0xf0f0f0f0 & x) >> 4) + (0x0f0f0f0f & x);
-//          x = ((0xff00ff00 & x) >> 8) + (0x00ff00ff & x);
-//          x = (x >> 16) + (0x0000ffff & x);
-//          return (int)x;
+    public static class BitOperations {
+        public static boolean isPowerOf2(int x) {
+            return (0 == (x & x - 1)) && (x > 0);
+        }
+
+        public static void swap(int[] a) {
+            a[0] ^= a[1] ^= a[0] ^= a[1];
+        }
+
+//      public static int CountOnes(int value) {
+//          unchecked {
+//              uint x = (uint)value;
+//              x = ((0xaaaaaaaa & x) >> 1) + (0x55555555 & x);
+//              x = ((0xcccccccc & x) >> 2) + (0x33333333 & x);
+//              x = ((0xf0f0f0f0 & x) >> 4) + (0x0f0f0f0f & x);
+//              x = ((0xff00ff00 & x) >> 8) + (0x00ff00ff & x);
+//              x = (x >> 16) + (0x0000ffff & x);
+//              return (int)x;
+//          }
 //      }
-//  }
-//
-//  public static int Reverse(int value) {
-//      unchecked {
-//          uint x = (uint)value;
-//          x = x >> 16 | (0x0000ffff & x) << 16;
-//          x = (0xff00ff00 & x) >> 8 | (0x00ff00ff & x) << 8;
-//          x = (0xf0f0f0f0 & x) >> 4 | (0x0f0f0f0f & x) << 4;
-//          x = (0xcccccccc & x) >> 2 | (0x33333333 & x) << 2;
-//          x = (0xaaaaaaaa & x) >> 1 | (0x55555555 & x) << 1;
-//          return (int)x;
-//      };
-//  }
-//
-//  public static int CountTrailingZeros(int value) {
-//      return CountOnes((value & -value) - 1);
-//  }
-//
-//  public static int CountLeadingZeros(int value) {
-//      unchecked {
-//          uint x = (uint)value;
-//          x |= x >>= 1;
-//          x |= x >>= 2;
-//          x |= x >>= 4;
-//          x |= x >>= 8;
-//          x |= x >>= 16;
-//          return CountOnes((int)~x);
+
+//      public static int Reverse(int value) {
+//          unchecked {
+//              uint x = (uint)value;
+//              x = x >> 16 | (0x0000ffff & x) << 16;
+//              x = (0xff00ff00 & x) >> 8 | (0x00ff00ff & x) << 8;
+//              x = (0xf0f0f0f0 & x) >> 4 | (0x0f0f0f0f & x) << 4;
+//              x = (0xcccccccc & x) >> 2 | (0x33333333 & x) << 2;
+//              x = (0xaaaaaaaa & x) >> 1 | (0x55555555 & x) << 1;
+//              return (int)x;
+//          };
 //      }
-//  }
+
+//      public static int CountTrailingZeros(int value) {
+//          return CountOnes((value & -value) - 1);
+//      }
+
+//      public static int CountLeadingZeros(int value) {
+//          unchecked {
+//              uint x = (uint)value;
+//              x |= x >>= 1;
+//              x |= x >>= 2;
+//              x |= x >>= 4;
+//              x |= x >>= 8;
+//              x |= x >>= 16;
+//              return CountOnes((int)~x);
+//          }
+//      }
+    }
 }
